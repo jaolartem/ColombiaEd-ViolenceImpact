@@ -1,815 +1,1625 @@
-    CREATE SCHEMA IF NOT EXISTS RelationsAndConclusions;
-    
-    USE RelationsAndConclusions;
-    
-    CREATE TABLE `Municipalities` (
-    `id` INTEGER PRIMARY KEY,
-    `Name_municipalities` VARCHAR(255),
-    `Municipalities_id` INTEGER UNIQUE,
-    `Name_departments` VARCHAR(255),
-    `COD_DEPAR` INTEGER
-  );
-
-  CREATE TABLE `PopulationANDYearInformation` (
-    `id` INTEGER PRIMARY KEY,
-    `Municipalities_id` INTEGER UNIQUE,
-    `population` INTEGER UNIQUE,
-    `year` YEAR UNIQUE
-  );
-
-  CREATE TABLE `Helt_level` (
-    `Id` INTEGER PRIMARY KEY,
-    `Helt_level_level` VARCHAR(255)
-  );
-
-  CREATE TABLE `Education_level` (
-    `Id` INTEGER PRIMARY KEY,
-    `Education_level` VARCHAR(255)
-  );
-
-  CREATE TABLE `VulnerableGroups` (
-    `id` INTEGER PRIMARY KEY,
-    `group_name` VARCHAR(255)
-  );
-
-  CREATE TABLE `Racial_Ancenstry` (
-    `id` INTEGER PRIMARY KEY,
-    `Racial_name` VARCHAR(255)
-  );
-
-  CREATE TABLE `books_for_family` (
-    `id` INTEGER PRIMARY KEY,
-    `number_of_books_readed` VARCHAR(255)
-  );
-
-  CREATE TABLE `Stu_read_for_pleasure` (
-    `id` INTEGER PRIMARY KEY,
-    `hours_of_reading` VARCHAR(255)
-  );
-
-  CREATE TABLE `Stu_internet_dedication` (
-    `id` INTEGER PRIMARY KEY,
-    `hours_of_dedication` VARCHAR(255)
-  );
-
-  CREATE TABLE `Saber_reference` (
-    `id` INTEGER PRIMARY KEY,
-    `Student_ID` VARCHAR(255) UNIQUE,
-    `date_of_test` DATE,
-    `students_tested` INTEGER UNIQUE,
-    `municipality_where_stu_reside` INTEGER,
-     INDEX idx_date_of_test (date_of_test),
-     INDEX idx_students_tested (students_tested)
-  );
-
-  CREATE TABLE `HealthCenters` (
-    `id` INTEGER PRIMARY KEY,
-    `health_center_id` INTEGER UNIQUE,
-    `health_center_name` VARCHAR(255),
-    `care_level` VARCHAR(255),
-    `Municipalities_id` INTEGER
-  );
-
-  CREATE TABLE `EducationalCenters` (
-    `id` INTEGER PRIMARY KEY,
-    `educational_center_id` INTEGER UNIQUE,
-    `educational_center_name` VARCHAR(255),
-    `teaching_level` INTEGER,
-    `Municipalities_id` INTEGER
-  );
-
-  CREATE TABLE `RacialAncestryHomicideViolence` (
-    `id` INTEGER PRIMARY KEY,
-    `municipality_id` INTEGER,
-    `Racial_group_id` INTEGER,
-    `occurrences` INTEGER,
-    `population` INTEGER,
-    `subin_homicide` FLOAT,
-    `year` YEAR,
-    INDEX Iindx_subin_homicide (subin_homicide)
-  );
-
-  CREATE TABLE `RacialAncestrySuicideViolence` (
-    `id` INTEGER PRIMARY KEY,
-    `municipality_id` INTEGER,
-    `Racial_group_id` INTEGER,
-    `occurrences` INTEGER,
-    `population` INTEGER,
-    `subin_suicide` FLOAT,
-    `year` YEAR,
-    INDEX Iindx_subin_suicide (subin_suicide)
-  );
-
-  CREATE TABLE `VulnerableGroupsHomicideViolence` (
-    `id` INTEGER PRIMARY KEY,
-    `municipality_id` INTEGER,
-    `vulnerable_group_id` INTEGER,
-    `occurrences` INTEGER,
-    `subin_vulnerable_groups_homicide` FLOAT,
-    `year` YEAR,
-    INDEX Iindxsubin_vulnerable_groups_homicide (subin_vulnerable_groups_homicide)
-  );
-
-  CREATE TABLE `VulnerableGroupsSuicideViolence` (
-    `id` INTEGER PRIMARY KEY,
-    `municipality_id` INTEGER,
-    `vulnerable_group_id` INTEGER,
-    `occurrences` INTEGER,
-    `subin_vulnerable_groups_suicide` FLOAT,
-    `year` YEAR,
-    INDEX Iindxsubin_vulnerable_groups_suicide (subin_vulnerable_groups_suicide)
-  );
-
-  CREATE TABLE `ethnic_Influencer`  (
-    `id` INTEGER PRIMARY KEY,
-    `municipality_id` INTEGER,
-    `date_of_test` DATE,
-    `have_Ethia` BOOLEAN,
-    `cases` INTEGER,
-    `students_tested` INTEGER,
-    `ethnic_Influencer_indicator` FLOAT,
-    INDEX idx_ethnic_Influencer_indicato (ethnic_Influencer_indicator)
-  );
-
-  CREATE TABLE `books_for_family_influence` (
-    `id` INTEGER PRIMARY KEY,
-    `municipality_id` INTEGER,
-    `books_for_family` INTEGER,
-    `date_of_test` DATE,
-    `students_tested` INTEGER,
-    `books_for_family_indicator` FLOAT,
-    INDEX idx_books_for_family_indicator (books_for_family_indicator)
-  );
-
-  CREATE TABLE `Stu_read_for_pleasure_influence` (
-    `id` INTEGER PRIMARY KEY,
-    `municipality_id` INTEGER,
-    `hours_of_reading` INTEGER,
-    `date_of_test` DATE,
-    `students_tested` INTEGER,
-    `Stu_read_for_pleasure_indicator` FLOAT,
-    INDEX idx_Stu_read_for_pleasure_indicator (Stu_read_for_pleasure_indicator)
-  );
-
-  CREATE TABLE `stu_internet_influence` (
-    `id` INTEGER PRIMARY KEY,
-    `municipality_id` INTEGER,
-    `hours_of_dedication` INTEGER,
-    `date_of_test` DATE,
-    `students_tested` INTEGER,
-    `Stu_internet_influence_indicator` FLOAT,
-    INDEX idx_Stu_internet_influence_indicator (Stu_internet_influence_indicator)
-  );
-
-  CREATE TABLE `CulturalInfluence` (
-    `iid` INTEGER PRIMARY KEY,
-    `municipality_id` INTEGER,
-    `ethnic_Influencer_indicator` FLOAT,
-    `books_for_family_indicator` FLOAT,
-    `Stu_internet_influence_indicator` FLOAT,
-    `Stu_read_for_pleasure_indicator` FLOAT,
-    `subin_cultural_influence` FLOAT,
-    INDEX Iindx_subin_cultural_influence (subin_cultural_influence)
-  );
-
-  CREATE TABLE `CulturalViolenceIndex` (
-    `id` INTEGER PRIMARY KEY,
-    `Municipalities_id` INTEGER NOT NULL,
-    `year` year,
-    `subin_Ancestry_homicide` FLOAT,
-    `subin_Ancestry_suicide` FLOAT,
-    `subin_vulnerable_groups_homicide` FLOAT,
-    `subin_vulnerability_suicide` FLOAT,
-    `subin_cultural_influence` FLOAT,
-    `cultural_violence_index` FLOAT,
-    INDEX Iindx_cultural_violence_index (cultural_violence_index)
-  );
-
-  CREATE TABLE `HealthAccess` (
-    `id` INTEGER PRIMARY KEY,
-    `municipality_id` INTEGER,
-    `year` YEAR,
-    `first_level_centers_per_100k` FLOAT,
-    `second_level_centers_per_100k` FLOAT,
-    `third_level_centers_per_100k` FLOAT,
-    `subin_health` FLOAT
-  );
-
-  CREATE TABLE `EducationAccess` (
-    `id` INTEGER PRIMARY KEY,
-    `municipality_id` INTEGER,
-    `year` year,
-    `basic_education_centers_per_100k` FLOAT,
-    `middle_education_centers_per_100k` FLOAT,
-    `technical_professional_centers_per_100k` FLOAT,
-    `university_centers_per_100k` FLOAT,
-    `subin_education` FLOAT
-  );
-
-  CREATE TABLE `Inequality` (
-    `municipality_id` INTEGER PRIMARY KEY,
-    `gini_index` FLOAT
-  );
-
-  CREATE TABLE `Poverty` (
-    `municipality_id` INTEGER PRIMARY KEY,
-    `multidimensional_poverty_index` FLOAT,
-    `monetary_poverty_index` FLOAT,
-    `extreme_monetary_poverty_index` FLOAT,
-    `unsatisfied_basic_needs_index` FLOAT,
-    `subin_poverty` FLOAT
-  );
-
-  CREATE TABLE `VidegamesconsoleOwnershipcases` (
-    `id` INTEGER PRIMARY KEY,
-    `date_of_test` DATE,
-    `municipality_id` INTEGER,
-    `Student_ID` VARCHAR(255),
-    `VidegamesconsoleOwnershipcases` BOOLEAN
-  );
-
-  CREATE TABLE `VidegamesconsoleOwnership_influence` (
-    `id` INTEGER PRIMARY KEY,
-    `municipality_id` INTEGER,
-    `date_of_test` DATE,
-    `count_cases_true` INTEGER,
-    `count_cases_false` INTEGER,
-    `subin_VidegamesconsoleOwnership` FLOAT
-  );
-
-  CREATE TABLE `CarOwnershipcases` (
-    `id` INTEGER PRIMARY KEY,
-    `date_of_test` DATE,
-    `municipality_id` INTEGER,
-    `Student_ID` VARCHAR(255),
-    `carOwnershipcases` BOOLEAN
-  );
-
-  CREATE TABLE `CarOwnership_influence` (
-    `id` INTEGER PRIMARY KEY,
-    `municipality_id` INTEGER,
-    `date_of_test` DATE,
-    `count_cases_true` INTEGER,
-    `count_cases_false` INTEGER,
-    `subin_carOwnership` FLOAT
-  );
-
-  CREATE TABLE `WashingMachineOwnership` (
-    `id` INTEGER PRIMARY KEY,
-    `date_of_test` DATE,
-    `municipality_id` INTEGER,
-    `Student_ID` VARCHAR(255),
-    `WashingMachineOwnershipcases` BOOLEAN
-  );
-
-  CREATE TABLE `WashingMachineOwnership_influence` (
-    `id` INTEGER PRIMARY KEY,
-    `municipality_id` INTEGER,
-    `date_of_test` DATE,
-    `count_cases_true` INTEGER,
-    `count_cases_false` INTEGER,
-    `subin_washing_machine` FLOAT
-  );
-
-  CREATE TABLE `InternetAccess` (
-    `id` INTEGER PRIMARY KEY,
-    `date_of_test` DATE,
-    `municipality_id` INTEGER,
-    `Student_ID` VARCHAR(255),
-    `Internet_access` BOOLEAN
-  );
-
-  CREATE TABLE `InternetAccess_influence` (
-    `id` INTEGER PRIMARY KEY,
-    `municipality_id` INTEGER,
-    `date_of_test` DATE,
-    `count_cases_true` INTEGER,
-    `count_cases_false` INTEGER,
-    `subin_Internet_access` FLOAT
-  );
-
-  CREATE TABLE `FloorType` (
-    `id` INTEGER PRIMARY KEY,
-    `FloorType` VARCHAR(255)
-  );
-
-  CREATE TABLE `FloorType_Municipalities` (
-    `id` INTEGER PRIMARY KEY,
-    `date_of_test` DATE,
-    `municipality_id` INTEGER,
-    `Student_ID` VARCHAR(255),
-    `FloorType` INTEGER
-  );
-
-  CREATE TABLE `FloorType_subindicator` (
-    `id` INTEGER PRIMARY KEY,
-    `municipality_id` INTEGER,
-    `case` int,
-    `count_case` int,
-    `FloorType_subindicator` FLOAT
-  );
-
-  CREATE TABLE `RoomPerBedroom` (
-    `id` INTEGER PRIMARY KEY,
-    `Municipalities_id` INTEGER,
-     `year` YEAR,
-    `measurement` INTEGER,
-    `subin_room_per_bedroom` INTEGER
-  );
-
-  CREATE TABLE `WorkStatus` (
-    `id` INTEGER PRIMARY KEY,
-    `Municipalities_id` INTEGER,
-     `year` YEAR,
-    `measurement` BOOLEAN,
-    `subin_work_status` INTEGER
-  );
-
-  CREATE TABLE `WorkHours` (
-    `id` INTEGER PRIMARY KEY,
-    `Municipalities_id` INTEGER,
-     `year` YEAR,
-    `measurement` INTEGER,
-    `subin_work_hours` INTEGER
-  );
-
-  CREATE TABLE `structutural_influencers` (
-    `id` INTEGER PRIMARY KEY,
-    `subin_room_per_bedroom` FLOAT,
-    `subin_videgames_console` FLOAT,
-    `subin_work_status` FLOAT,
-    `subin_work_hours` FLOAT,
-    `subin_washing_machine` FLOAT,
-    `subin_floor_type` FLOAT,
-    `subin_Internet_access` FLOAT,
-    `subin_stuctural_influencers` FLOAT
-  );
-
-  CREATE TABLE `StructuralViolenceIndex` (
-    `id` INTEGER PRIMARY KEY,
-    `Municipalities_id` INTEGER,
-    `year` YEAR,
-    `subin_education_access` FLOAT,
-    `subin_health_access` FLOAT,
-    `subin_inequality` FLOAT,
-    `subin_poverty` FLOAT,
-    `subin_structural_influencers` FLOAT,
-    `structural_violence_index` FLOAT
-  );
-
-  CREATE TABLE `GenderInformation` (
-    `id` INTEGER PRIMARY KEY,
-    `gender_name` VARCHAR(255),
-    `Municipalities_id` FLOAT,
-    `population_by_gender` FLOAT,
-    `year` YEAR
-  );
-
-  CREATE TABLE `PartnerHomicideViolence` (
-    `id` INTEGER PRIMARY KEY,
-    `Municipalities_id` INTEGER,
-    `gender_id` INTEGER,
-    `year` YEAR,
-    `cases` INTEGER,
-    `homicide_rate_per_100k` FLOAT,
-    `subin_partner_homicide` FLOAT
-  );
-
-  CREATE TABLE `RomanticSuicideViolence` (
-    `id` INTEGER PRIMARY KEY,
-    `Municipalities_id` INTEGER,
-    `gender_id` INTEGER,
-    `year` YEAR,
-    `cases` INTEGER,
-    `suicide_rate_per_100k` FLOAT,
-    `subin_romantic_suicide` FLOAT
-  );
-
-  CREATE TABLE `GenderVulnerabilityHomicideViolence` (
-    `id` INTEGER PRIMARY KEY,
-    `Municipalities_id` INTEGER,
-    `vulnerability_factor_id` INTEGER,
-    `year` YEAR,
-    `cases` INTEGER,
-    `homicide_rate_per_100k` FLOAT,
-    `subin_vulnerability_homicide` FLOAT
-  );
-
-  CREATE TABLE `GenderVulnerabilitySuicideViolence` (
-    `id` INTEGER PRIMARY KEY,
-    `Municipalities_id` INTEGER,
-    `vulnerability_factor_id` INTEGER,
-    `year` YEAR,
-    `cases` INTEGER,
-    `suicide_rate_per_100k` FLOAT,
-    `subin_vulnerability_suicide` FLOAT
-  );
-
-  CREATE TABLE `GenderHomicideRate` (
-    `id` INTEGER PRIMARY KEY,
-    `Municipalities_id` INTEGER,
-    `gender_id` INTEGER,
-    `year` YEAR,
-    `cases` INTEGER,
-    `homicide_rate_per_100k` FLOAT,
-    `subin_gender_homicide` FLOAT
-  );
-
-  CREATE TABLE `DomesticViolenceRate` (
-    `id` INTEGER PRIMARY KEY,
-    `Municipalities_id` INTEGER,
-    `gender_id` INTEGER,
-    `year` YEAR,
-    `cases` INTEGER,
-    `domestic_violence_rate_per_100k` FLOAT,
-    `subin_domestic_violence` FLOAT
-  );
-
-  CREATE TABLE `IcfesResultsAnalysis` (
-    `id` INTEGER PRIMARY KEY,
-    `Municipalities_id` INTEGER,
-    `gender_id` INTEGER,
-    `year` YEAR,
-    `average_math_score` FLOAT,
-    `average_natural_sciences_score` FLOAT,
-    `average_social_and_citizenship_score` FLOAT,
-    `average_languages_score` FLOAT,
-    `average_foreign_language_score` FLOAT,
-    `average_global_score` FLOAT,
-    `subin_global_score` FLOAT
-  );
-
-  CREATE TABLE `GenderViolenceIndex` (
-    `id` INTEGER PRIMARY KEY,
-    `Municipalities_id` INTEGER,
-    `year` YEAR,
-    `subin_partner_homicide` FLOAT,
-    `subin_romantic_suicide` FLOAT,
-    `subin_vulnerability_homicide` FLOAT,
-    `subin_vulnerability_suicide` FLOAT,
-    `subin_gender_homicide` FLOAT,
-    `subin_domestic_violence` FLOAT,
-    `gender_violence_index` FLOAT
-  );
-
-  CREATE TABLE `PhysicalViolenceInformation` (
-    `id` INTEGER PRIMARY KEY,
-    `physical_violence_type` VARCHAR(255),
-    `Municipalities_id` INTEGER,
-    `cases` INTEGER,
-    `year` YEAR
-  );
-
-  CREATE TABLE `HomicideRate` (
-    `id` INTEGER PRIMARY KEY,
-    `Municipalities_id` INTEGER,
-    `year` YEAR,
-    `cases` INTEGER,
-    `homicide_rate_per_100k` INTEGER,
-    `subin_homicide` INTEGER
-  );
-
-  CREATE TABLE `SuicideRate` (
-    `id` INTEGER PRIMARY KEY,
-    `Municipalities_id` INTEGER,
-    `year` YEAR,
-    `cases` INTEGER,
-    `suicide_rate_per_100k` FLOAT,
-    `subin_suicide` INTEGER
-  );
-
-  CREATE TABLE `DomesticViolenceNonGenderBAsedRate` (
-    `id` INTEGER PRIMARY KEY,
-    `Municipalities_id` INTEGER,
-    `year` YEAR,
-    `cases` INTEGER,
-    `domestic_violence_rate_per_100k` INTEGER,
-    `subin_domestic_violence` INTEGER
-  );
-
-  CREATE TABLE `ViolenceAgainstChildrenAndYouth` (
-    `id` INTEGER PRIMARY KEY,
-    `Municipalities_id` INTEGER,
-    `year` YEAR,
-    `cases` INTEGER,
-    `violence_against_children_and_youth_rate_per_100k` INTEGER,
-    `subin_violence_against_children_and_youth` INTEGER
-  );
-
-  CREATE TABLE `ChildAbuse` (
-    `id` INTEGER PRIMARY KEY,
-    `Municipalities_id` INTEGER,
-    `year` YEAR,
-    `cases` INTEGER,
-    `child_abuse_rate_per_100k` INTEGER,
-    `subin_child_abuse` INTEGER
-  );
-
-  CREATE TABLE `PhysicalViolenceIndex` (
-    `id` INTEGER PRIMARY KEY,
-    `Municipalities_id` INTEGER,
-    `year` YEAR,
-    `subin_homicide` INTEGER,
-    `subin_suicide` INTEGER,
-    `subin_domestic_violence` INTEGER,
-    `subin_violence_against_children_and_youth` INTEGER,
-    `subin_child_abuse` INTEGER,
-    `physical_violence_index` INTEGER
-  );
-
-  CREATE TABLE `FinalViolenceIndex` (
-    `id` INTEGER PRIMARY KEY,
-    `Municipalities_id` INTEGER,
-    `year` year,
-    `subin_structural_violence` INTEGER,
-    `subin_cultural_violence` INTEGER,
-    `subin_gender_violence` INTEGER,
-    `subin_physical_violence` INTEGER,
-    `final_violence_index` INTEGER
-  );
-
-  CREATE TABLE `IcfesTestResults` (
-    `id` INTEGER PRIMARY KEY,
-    `Municipalities_id` INTEGER,
-    `year` year,
-    `final_violence_index` INTEGER,
-    `math_performance` INTEGER,
-    `natural_sciences_performance` INTEGER,
-    `social_and_citizenship_performance` INTEGER,
-    `languages_performance` INTEGER,
-    `foreign_language_performance` INTEGER,
-    `global_performance` INTEGER
-  );
-
-  ALTER TABLE `PopulationANDYearInformation` ADD FOREIGN KEY (`Municipalities_id`) REFERENCES `Municipalities` (`Municipalities_id`);
-
-  ALTER TABLE `Saber_reference` ADD FOREIGN KEY (`municipality_where_stu_reside`) REFERENCES `Municipalities` (`Municipalities_id`);
-
-  ALTER TABLE `HealthCenters` ADD FOREIGN KEY (`Municipalities_id`) REFERENCES `Municipalities` (`Municipalities_id`);
-
-  ALTER TABLE `EducationalCenters` ADD FOREIGN KEY (`Municipalities_id`) REFERENCES `Municipalities` (`Municipalities_id`);
-
-  ALTER TABLE `RacialAncestryHomicideViolence` ADD FOREIGN KEY (`municipality_id`) REFERENCES `Municipalities` (`id`);
-
-  ALTER TABLE `RacialAncestryHomicideViolence` ADD FOREIGN KEY (`Racial_group_id`) REFERENCES `Racial_Ancenstry` (`id`);
-
-  ALTER TABLE `RacialAncestryHomicideViolence` ADD FOREIGN KEY (`population`) REFERENCES `PopulationANDYearInformation` (`population`);
-
-  ALTER TABLE `RacialAncestryHomicideViolence` ADD FOREIGN KEY (`year`) REFERENCES `PopulationANDYearInformation` (`year`);
-
-  ALTER TABLE `RacialAncestrySuicideViolence` ADD FOREIGN KEY (`municipality_id`) REFERENCES `Municipalities` (`id`);
-
-  ALTER TABLE `RacialAncestrySuicideViolence` ADD FOREIGN KEY (`Racial_group_id`) REFERENCES `Racial_Ancenstry` (`id`);
-
-  ALTER TABLE `RacialAncestrySuicideViolence` ADD FOREIGN KEY (`population`) REFERENCES `PopulationANDYearInformation` (`population`);
-
-  ALTER TABLE `RacialAncestrySuicideViolence` ADD FOREIGN KEY (`year`) REFERENCES `PopulationANDYearInformation` (`year`);
-
-  ALTER TABLE `VulnerableGroupsHomicideViolence` ADD FOREIGN KEY (`municipality_id`) REFERENCES `Municipalities` (`id`);
-
-  ALTER TABLE `VulnerableGroupsHomicideViolence` ADD FOREIGN KEY (`vulnerable_group_id`) REFERENCES `VulnerableGroups` (`id`);
-
-  ALTER TABLE `VulnerableGroupsHomicideViolence` ADD FOREIGN KEY (`year`) REFERENCES `PopulationANDYearInformation` (`year`);
-
-  ALTER TABLE `VulnerableGroupsSuicideViolence` ADD FOREIGN KEY (`municipality_id`) REFERENCES `Municipalities` (`id`);
-
-  ALTER TABLE `VulnerableGroupsSuicideViolence` ADD FOREIGN KEY (`vulnerable_group_id`) REFERENCES `VulnerableGroups` (`id`);
-
-  ALTER TABLE `VulnerableGroupsSuicideViolence` ADD FOREIGN KEY (`year`) REFERENCES `PopulationANDYearInformation` (`year`);
-
-  ALTER TABLE `ethnic_Influencer` ADD FOREIGN KEY (`municipality_id`) REFERENCES `Municipalities` (`id`);
-
-  ALTER TABLE `ethnic_Influencer` ADD FOREIGN KEY (`date_of_test`) REFERENCES `Saber_reference` (`date_of_test`);
-
-  ALTER TABLE `ethnic_Influencer` ADD FOREIGN KEY (`students_tested`) REFERENCES `Saber_reference` (`students_tested`);
-
-  ALTER TABLE `books_for_family_influence` ADD FOREIGN KEY (`municipality_id`) REFERENCES `Saber_reference` (`municipality_where_stu_reside`);
-
-  ALTER TABLE `books_for_family_influence` ADD FOREIGN KEY (`books_for_family`) REFERENCES `books_for_family` (`id`);
-
-  ALTER TABLE `books_for_family_influence` ADD FOREIGN KEY (`date_of_test`) REFERENCES `Saber_reference` (`date_of_test`);
-
-  ALTER TABLE `books_for_family_influence` ADD FOREIGN KEY (`students_tested`) REFERENCES `Saber_reference` (`students_tested`);
-
-  ALTER TABLE `Stu_read_for_pleasure_influence` ADD FOREIGN KEY (`municipality_id`) REFERENCES `Saber_reference` (`municipality_where_stu_reside`);
-
-  ALTER TABLE `Stu_read_for_pleasure_influence` ADD FOREIGN KEY (`hours_of_reading`) REFERENCES `Stu_read_for_pleasure` (`id`);
-
-  ALTER TABLE `Stu_read_for_pleasure_influence` ADD FOREIGN KEY (`date_of_test`) REFERENCES `Saber_reference` (`date_of_test`);
-
-  ALTER TABLE `Stu_read_for_pleasure_influence` ADD FOREIGN KEY (`students_tested`) REFERENCES `Saber_reference` (`students_tested`);
-
-  ALTER TABLE `stu_internet_influence` ADD FOREIGN KEY (`municipality_id`) REFERENCES `Saber_reference` (`municipality_where_stu_reside`);
-
-  ALTER TABLE `stu_internet_influence` ADD FOREIGN KEY (`hours_of_dedication`) REFERENCES `Stu_internet_dedication` (`id`);
-
-  ALTER TABLE `stu_internet_influence` ADD FOREIGN KEY (`date_of_test`) REFERENCES `Saber_reference` (`date_of_test`);
-
-  ALTER TABLE `stu_internet_influence` ADD FOREIGN KEY (`students_tested`) REFERENCES `Saber_reference` (`students_tested`);
-
-  ALTER TABLE `CulturalInfluence` ADD FOREIGN KEY (`municipality_id`) REFERENCES `Municipalities` (`id`);
-
-  ALTER TABLE `CulturalInfluence` ADD FOREIGN KEY (`ethnic_Influencer_indicator`) REFERENCES `ethnic_Influencer` (`ethnic_Influencer_indicator`);
-
-  ALTER TABLE `CulturalInfluence` ADD FOREIGN KEY (`books_for_family_indicator`) REFERENCES `books_for_family_influence` (`books_for_family_indicator`);
-
-  ALTER TABLE `CulturalInfluence` ADD FOREIGN KEY (`Stu_internet_influence_indicator`) REFERENCES `stu_internet_influence` (`Stu_internet_influence_indicator`);
-
-  ALTER TABLE `CulturalInfluence` ADD FOREIGN KEY (`Stu_read_for_pleasure_indicator`) REFERENCES `Stu_read_for_pleasure_influence` (`Stu_read_for_pleasure_indicator`);
-
-  ALTER TABLE `CulturalViolenceIndex` ADD FOREIGN KEY (`Municipalities_id`) REFERENCES `Municipalities` (`Municipalities_id`);
-
-  ALTER TABLE `CulturalViolenceIndex` ADD FOREIGN KEY (`year`) REFERENCES `PopulationANDYearInformation` (`year`);
-
-  ALTER TABLE `CulturalViolenceIndex` ADD FOREIGN KEY (`subin_Ancestry_homicide`) REFERENCES `RacialAncestryHomicideViolence` (`subin_homicide`);
-
-  ALTER TABLE `CulturalViolenceIndex` ADD FOREIGN KEY (`subin_Ancestry_suicide`) REFERENCES `RacialAncestrySuicideViolence` (`subin_suicide`);
-
-  ALTER TABLE `CulturalViolenceIndex` ADD FOREIGN KEY (`subin_vulnerable_groups_homicide`) REFERENCES `VulnerableGroupsHomicideViolence` (`subin_vulnerable_groups_homicide`);
-
-  ALTER TABLE `CulturalViolenceIndex` ADD FOREIGN KEY (`subin_vulnerability_suicide`) REFERENCES `VulnerableGroupsSuicideViolence` (`subin_vulnerable_groups_suicide`);
-
-  ALTER TABLE `CulturalViolenceIndex` ADD FOREIGN KEY (`subin_cultural_influence`) REFERENCES `CulturalInfluence` (`subin_cultural_influence`);
-
-  ALTER TABLE `HealthAccess` ADD FOREIGN KEY (`municipality_id`) REFERENCES `Municipalities` (`Municipalities_id`);
-
-  ALTER TABLE `HealthAccess` ADD FOREIGN KEY (`year`) REFERENCES `PopulationANDYearInformation` (`year`);
-
-  ALTER TABLE `EducationAccess` ADD FOREIGN KEY (`municipality_id`) REFERENCES `Municipalities` (`Municipalities_id`);
-
-  ALTER TABLE `EducationAccess` ADD FOREIGN KEY (`year`) REFERENCES `PopulationANDYearInformation` (`year`);
-
-  ALTER TABLE `Inequality` ADD FOREIGN KEY (`municipality_id`) REFERENCES `Municipalities` (`Municipalities_id`);
-
-  ALTER TABLE `Poverty` ADD FOREIGN KEY (`municipality_id`) REFERENCES `Municipalities` (`Municipalities_id`);
-
-  ALTER TABLE `VidegamesconsoleOwnershipcases` ADD FOREIGN KEY (`date_of_test`) REFERENCES `Saber_reference` (`date_of_test`);
-
-  ALTER TABLE `VidegamesconsoleOwnershipcases` ADD FOREIGN KEY (`municipality_id`) REFERENCES `Municipalities` (`Municipalities_id`);
-
-  ALTER TABLE `VidegamesconsoleOwnershipcases` ADD FOREIGN KEY (`Student_ID`) REFERENCES `Saber_reference` (`Student_ID`);
-
-  ALTER TABLE `VidegamesconsoleOwnership_influence` ADD FOREIGN KEY (`municipality_id`) REFERENCES `Municipalities` (`Municipalities_id`);
-
-  ALTER TABLE `VidegamesconsoleOwnership_influence` ADD FOREIGN KEY (`date_of_test`) REFERENCES `Saber_reference` (`date_of_test`);
-
-  ALTER TABLE `CarOwnershipcases` ADD FOREIGN KEY (`date_of_test`) REFERENCES `Saber_reference` (`date_of_test`);
-
-  ALTER TABLE `CarOwnershipcases` ADD FOREIGN KEY (`municipality_id`) REFERENCES `Municipalities` (`Municipalities_id`);
-
-  ALTER TABLE `CarOwnershipcases` ADD FOREIGN KEY (`Student_ID`) REFERENCES `Saber_reference` (`Student_ID`);
-
-  ALTER TABLE `CarOwnership_influence` ADD FOREIGN KEY (`municipality_id`) REFERENCES `Municipalities` (`Municipalities_id`);
-
-  ALTER TABLE `CarOwnership_influence` ADD FOREIGN KEY (`date_of_test`) REFERENCES `Saber_reference` (`date_of_test`);
-
-  ALTER TABLE `WashingMachineOwnership` ADD FOREIGN KEY (`date_of_test`) REFERENCES `Saber_reference` (`date_of_test`);
-
-  ALTER TABLE `WashingMachineOwnership` ADD FOREIGN KEY (`municipality_id`) REFERENCES `Municipalities` (`Municipalities_id`);
-
-  ALTER TABLE `WashingMachineOwnership` ADD FOREIGN KEY (`Student_ID`) REFERENCES `Saber_reference` (`Student_ID`);
-
-  ALTER TABLE `WashingMachineOwnership_influence` ADD FOREIGN KEY (`municipality_id`) REFERENCES `Municipalities` (`Municipalities_id`);
-
-  ALTER TABLE `WashingMachineOwnership_influence` ADD FOREIGN KEY (`date_of_test`) REFERENCES `Saber_reference` (`date_of_test`);
-
-  ALTER TABLE `InternetAccess` ADD FOREIGN KEY (`date_of_test`) REFERENCES `Saber_reference` (`date_of_test`);
-
-  ALTER TABLE `InternetAccess` ADD FOREIGN KEY (`municipality_id`) REFERENCES `Municipalities` (`Municipalities_id`);
-
-  ALTER TABLE `InternetAccess` ADD FOREIGN KEY (`Student_ID`) REFERENCES `Saber_reference` (`Student_ID`);
-
-  ALTER TABLE `InternetAccess_influence` ADD FOREIGN KEY (`municipality_id`) REFERENCES `Municipalities` (`Municipalities_id`);
-
-  ALTER TABLE `InternetAccess_influence` ADD FOREIGN KEY (`date_of_test`) REFERENCES `Saber_reference` (`date_of_test`);
-
-  ALTER TABLE `FloorType_Municipalities` ADD FOREIGN KEY (`date_of_test`) REFERENCES `Saber_reference` (`date_of_test`);
-
-  ALTER TABLE `FloorType_Municipalities` ADD FOREIGN KEY (`municipality_id`) REFERENCES `Municipalities` (`Municipalities_id`);
-
-  ALTER TABLE `FloorType_Municipalities` ADD FOREIGN KEY (`Student_ID`) REFERENCES `Saber_reference` (`Student_ID`);
-
-  ALTER TABLE `FloorType_Municipalities` ADD FOREIGN KEY (`FloorType`) REFERENCES `FloorType` (`id`);
-
-  ALTER TABLE `FloorType_subindicator` ADD FOREIGN KEY (`municipality_id`) REFERENCES `Municipalities` (`Municipalities_id`);
-
-  ALTER TABLE `FloorType_subindicator` ADD FOREIGN KEY (`case`) REFERENCES `FloorType` (`id`);
-
-  ALTER TABLE `RoomPerBedroom` ADD FOREIGN KEY (`Municipalities_id`) REFERENCES `Municipalities` (`Municipalities_id`);
-
-  ALTER TABLE `WorkStatus` ADD FOREIGN KEY (`Municipalities_id`) REFERENCES `Municipalities` (`Municipalities_id`);
-
-  ALTER TABLE `WorkHours` ADD FOREIGN KEY (`Municipalities_id`) REFERENCES `Municipalities` (`Municipalities_id`);
-
-  ALTER TABLE `structutural_influencers` ADD FOREIGN KEY (`subin_room_per_bedroom`) REFERENCES `RoomPerBedroom` (`subin_room_per_bedroom`);
-
-  ALTER TABLE `structutural_influencers` ADD FOREIGN KEY (`subin_videgames_console`) REFERENCES `VidegamesconsoleOwnership_influence` (`subin_VidegamesconsoleOwnership`);
-
-  ALTER TABLE `structutural_influencers` ADD FOREIGN KEY (`subin_work_status`) REFERENCES `WorkStatus` (`subin_work_status`);
-
-  ALTER TABLE `structutural_influencers` ADD FOREIGN KEY (`subin_work_hours`) REFERENCES `WorkHours` (`subin_work_hours`);
-
-  ALTER TABLE `structutural_influencers` ADD FOREIGN KEY (`subin_washing_machine`) REFERENCES `WashingMachineOwnership_influence` (`subin_washing_machine`);
-
-  ALTER TABLE `structutural_influencers` ADD FOREIGN KEY (`subin_floor_type`) REFERENCES `FloorType_subindicator` (`FloorType_subindicator`);
-
-  ALTER TABLE `structutural_influencers` ADD FOREIGN KEY (`subin_Internet_access`) REFERENCES `InternetAccess_influence` (`subin_Internet_access`);
-
-  ALTER TABLE `StructuralViolenceIndex` ADD FOREIGN KEY (`Municipalities_id`) REFERENCES `Municipalities` (`Municipalities_id`);
-
-  ALTER TABLE `StructuralViolenceIndex` ADD FOREIGN KEY (`year`) REFERENCES `PopulationANDYearInformation` (`year`);
-
-  ALTER TABLE `StructuralViolenceIndex` ADD FOREIGN KEY (`subin_education_access`) REFERENCES `EducationAccess` (`subin_education`);
-
-  ALTER TABLE `StructuralViolenceIndex` ADD FOREIGN KEY (`subin_health_access`) REFERENCES `HealthAccess` (`subin_health`);
-
-  ALTER TABLE `StructuralViolenceIndex` ADD FOREIGN KEY (`subin_inequality`) REFERENCES `Inequality` (`gini_index`);
-
-  ALTER TABLE `StructuralViolenceIndex` ADD FOREIGN KEY (`subin_poverty`) REFERENCES `Poverty` (`subin_poverty`);
-
-  ALTER TABLE `StructuralViolenceIndex` ADD FOREIGN KEY (`subin_structural_influencers`) REFERENCES `structutural_influencers` (`subin_stuctural_influencers`);
-
-  ALTER TABLE `GenderInformation` ADD FOREIGN KEY (`Municipalities_id`) REFERENCES `Municipalities` (`Municipalities_id`);
-
-  ALTER TABLE `PartnerHomicideViolence` ADD FOREIGN KEY (`Municipalities_id`) REFERENCES `Municipalities` (`Municipalities_id`);
-
-  ALTER TABLE `PartnerHomicideViolence` ADD FOREIGN KEY (`gender_id`) REFERENCES `GenderInformation` (`id`);
-
-  ALTER TABLE `RomanticSuicideViolence` ADD FOREIGN KEY (`Municipalities_id`) REFERENCES `Municipalities` (`Municipalities_id`);
-
-  ALTER TABLE `RomanticSuicideViolence` ADD FOREIGN KEY (`gender_id`) REFERENCES `GenderInformation` (`id`);
-
-  ALTER TABLE `GenderVulnerabilityHomicideViolence` ADD FOREIGN KEY (`Municipalities_id`) REFERENCES `Municipalities` (`Municipalities_id`);
-
-  ALTER TABLE `GenderVulnerabilityHomicideViolence` ADD FOREIGN KEY (`vulnerability_factor_id`) REFERENCES `VulnerableGroups` (`id`);
-
-  ALTER TABLE `GenderVulnerabilitySuicideViolence` ADD FOREIGN KEY (`Municipalities_id`) REFERENCES `Municipalities` (`Municipalities_id`);
-
-  ALTER TABLE `GenderVulnerabilitySuicideViolence` ADD FOREIGN KEY (`vulnerability_factor_id`) REFERENCES `VulnerableGroups` (`id`);
-
-  ALTER TABLE `GenderHomicideRate` ADD FOREIGN KEY (`Municipalities_id`) REFERENCES `Municipalities` (`Municipalities_id`);
-
-  ALTER TABLE `GenderHomicideRate` ADD FOREIGN KEY (`gender_id`) REFERENCES `GenderInformation` (`id`);
-
-  ALTER TABLE `DomesticViolenceRate` ADD FOREIGN KEY (`Municipalities_id`) REFERENCES `Municipalities` (`Municipalities_id`);
-
-  ALTER TABLE `DomesticViolenceRate` ADD FOREIGN KEY (`gender_id`) REFERENCES `GenderInformation` (`id`);
-
-  ALTER TABLE `IcfesResultsAnalysis` ADD FOREIGN KEY (`Municipalities_id`) REFERENCES `Municipalities` (`Municipalities_id`);
-
-  ALTER TABLE `IcfesResultsAnalysis` ADD FOREIGN KEY (`gender_id`) REFERENCES `GenderInformation` (`id`);
-
-  ALTER TABLE `GenderViolenceIndex` ADD FOREIGN KEY (`Municipalities_id`) REFERENCES `Municipalities` (`Municipalities_id`);
-
-  ALTER TABLE `GenderViolenceIndex` ADD FOREIGN KEY (`subin_partner_homicide`) REFERENCES `PartnerHomicideViolence` (`subin_partner_homicide`);
-
-  ALTER TABLE `GenderViolenceIndex` ADD FOREIGN KEY (`subin_romantic_suicide`) REFERENCES `RomanticSuicideViolence` (`subin_romantic_suicide`);
-
-  ALTER TABLE `GenderViolenceIndex` ADD FOREIGN KEY (`subin_vulnerability_homicide`) REFERENCES `GenderVulnerabilityHomicideViolence` (`subin_vulnerability_homicide`);
-
-  ALTER TABLE `GenderViolenceIndex` ADD FOREIGN KEY (`subin_vulnerability_suicide`) REFERENCES `GenderVulnerabilitySuicideViolence` (`subin_vulnerability_suicide`);
-
-  ALTER TABLE `GenderViolenceIndex` ADD FOREIGN KEY (`subin_gender_homicide`) REFERENCES `GenderHomicideRate` (`subin_gender_homicide`);
-
-  ALTER TABLE `GenderViolenceIndex` ADD FOREIGN KEY (`subin_domestic_violence`) REFERENCES `DomesticViolenceRate` (`subin_domestic_violence`);
-
-  ALTER TABLE `PhysicalViolenceInformation` ADD FOREIGN KEY (`Municipalities_id`) REFERENCES `Municipalities` (`Municipalities_id`);
-
-  ALTER TABLE `HomicideRate` ADD FOREIGN KEY (`Municipalities_id`) REFERENCES `Municipalities` (`Municipalities_id`);
-
-  ALTER TABLE `SuicideRate` ADD FOREIGN KEY (`Municipalities_id`) REFERENCES `Municipalities` (`Municipalities_id`);
-
-  ALTER TABLE `DomesticViolenceNonGenderBAsedRate` ADD FOREIGN KEY (`Municipalities_id`) REFERENCES `Municipalities` (`Municipalities_id`);
-
-  ALTER TABLE `ViolenceAgainstChildrenAndYouth` ADD FOREIGN KEY (`Municipalities_id`) REFERENCES `Municipalities` (`Municipalities_id`);
-
-  ALTER TABLE `ChildAbuse` ADD FOREIGN KEY (`Municipalities_id`) REFERENCES `Municipalities` (`Municipalities_id`);
-
-  ALTER TABLE `PhysicalViolenceIndex` ADD FOREIGN KEY (`Municipalities_id`) REFERENCES `Municipalities` (`Municipalities_id`);
-
-  ALTER TABLE `PhysicalViolenceIndex` ADD FOREIGN KEY (`subin_homicide`) REFERENCES `HomicideRate` (`subin_homicide`);
-
-  ALTER TABLE `PhysicalViolenceIndex` ADD FOREIGN KEY (`subin_suicide`) REFERENCES `SuicideRate` (`subin_suicide`);
-
-  ALTER TABLE `PhysicalViolenceIndex` ADD FOREIGN KEY (`subin_domestic_violence`) REFERENCES `DomesticViolenceRate` (`subin_domestic_violence`);
-
-  ALTER TABLE `PhysicalViolenceIndex` ADD FOREIGN KEY (`subin_violence_against_children_and_youth`) REFERENCES `ViolenceAgainstChildrenAndYouth` (`subin_violence_against_children_and_youth`);
-
-  ALTER TABLE `PhysicalViolenceIndex` ADD FOREIGN KEY (`subin_child_abuse`) REFERENCES `ChildAbuse` (`subin_child_abuse`);
-
-  ALTER TABLE `FinalViolenceIndex` ADD FOREIGN KEY (`Municipalities_id`) REFERENCES `Municipalities` (`Municipalities_id`);
-
-  ALTER TABLE `FinalViolenceIndex` ADD FOREIGN KEY (`subin_structural_violence`) REFERENCES `StructuralViolenceIndex` (`structural_violence_index`);
-
-  ALTER TABLE `FinalViolenceIndex` ADD FOREIGN KEY (`subin_cultural_violence`) REFERENCES `CulturalViolenceIndex` (`cultural_violence_index`);
-
-  ALTER TABLE `FinalViolenceIndex` ADD FOREIGN KEY (`subin_gender_violence`) REFERENCES `GenderViolenceIndex` (`gender_violence_index`);
-
-  ALTER TABLE `FinalViolenceIndex` ADD FOREIGN KEY (`subin_physical_violence`) REFERENCES `PhysicalViolenceIndex` (`physical_violence_index`);
-
-  ALTER TABLE `IcfesTestResults` ADD FOREIGN KEY (`Municipalities_id`) REFERENCES `Municipalities` (`Municipalities_id`);
-
-  ALTER TABLE `IcfesTestResults` ADD FOREIGN KEY (`final_violence_index`) REFERENCES `FinalViolenceIndex` (`final_violence_index`);
-
-
-
+-- MySQL Script generated by MySQL Workbench
+-- Tue Jun 27 13:37:25 2023
+-- Model: New Model    Version: 1.0
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+-- -----------------------------------------------------
+-- Schema RelationsAndConclusions
+-- -----------------------------------------------------
+DROP SCHEMA IF EXISTS `RelationsAndConclusions` ;
+
+-- -----------------------------------------------------
+-- Schema RelationsAndConclusions
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `RelationsAndConclusions` ;
+-- -----------------------------------------------------
+-- Schema Cultural_violence
+-- -----------------------------------------------------
+DROP SCHEMA IF EXISTS `Cultural_violence` ;
+
+-- -----------------------------------------------------
+-- Schema Cultural_violence
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `Cultural_violence` ;
+-- -----------------------------------------------------
+-- Schema GENDER_VIOLENCE
+-- -----------------------------------------------------
+-- 	
+DROP SCHEMA IF EXISTS `GENDER_VIOLENCE` ;
+
+-- -----------------------------------------------------
+-- Schema GENDER_VIOLENCE
+--
+-- 	
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `GENDER_VIOLENCE` ;
+-- -----------------------------------------------------
+-- Schema Structural_Violence
+-- -----------------------------------------------------
+DROP SCHEMA IF EXISTS `Structural_Violence` ;
+
+-- -----------------------------------------------------
+-- Schema Structural_Violence
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `Structural_Violence` ;
+-- -----------------------------------------------------
+-- Schema Phisical_violence
+-- -----------------------------------------------------
+DROP SCHEMA IF EXISTS `Phisical_violence` ;
+
+-- -----------------------------------------------------
+-- Schema Phisical_violence
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `Phisical_violence` ;
+USE `RelationsAndConclusions` ;
+
+-- -----------------------------------------------------
+-- Table `RelationsAndConclusions`.`EducationalCenters`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `RelationsAndConclusions`.`EducationalCenters` ;
+
+CREATE TABLE IF NOT EXISTS `RelationsAndConclusions`.`EducationalCenters` (
+  `id` INT NULL DEFAULT NULL,
+  `educational_center_id` INT NULL DEFAULT NULL,
+  `educational_center_name` VARCHAR(255) NULL DEFAULT NULL,
+  `teaching_level` INT NULL DEFAULT NULL,
+  `Municipalities_id` INT NULL DEFAULT NULL,
+  `Municipalitie_Information_Municipalities_id` INT NOT NULL,
+  PRIMARY KEY (`id`, `Municipalitie_Information_Municipalities_id`),
+  UNIQUE INDEX (`educational_center_id` ASC) VISIBLE,
+  INDEX `fk_EducationalCenters_Municipalitie_Information1_idx` (`Municipalitie_Information_Municipalities_id` ASC) VISIBLE,
+  CONSTRAINT `fk_EducationalCenters_Municipalitie_Information1`
+    FOREIGN KEY (`Municipalitie_Information_Municipalities_id`)
+    REFERENCES `RelationsAndConclusions`.`Municipalitie_Information` (`Municipalities_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+
+-- -----------------------------------------------------
+-- Table `RelationsAndConclusions`.`IcfesTestResults`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `RelationsAndConclusions`.`IcfesTestResults` ;
+
+CREATE TABLE IF NOT EXISTS `RelationsAndConclusions`.`IcfesTestResults` (
+  `id` INT NULL DEFAULT NULL,
+  `year` YEAR NULL DEFAULT NULL,
+  `final_violence_index` INT NULL DEFAULT NULL,
+  `math_performance` INT NULL DEFAULT NULL,
+  `natural_sciences_performance` INT NULL DEFAULT NULL,
+  `social_and_citizenship_performance` INT NULL DEFAULT NULL,
+  `languages_performance` INT NULL DEFAULT NULL,
+  `foreign_language_performance` INT NULL DEFAULT NULL,
+  `global_performance` INT NULL DEFAULT NULL,
+  `Municipalitie_Information_Municipalities_id` INT NOT NULL,
+  PRIMARY KEY (`id`, `Municipalitie_Information_Municipalities_id`),
+  INDEX `fk_IcfesTestResults_Municipalitie_Information1_idx` (`Municipalitie_Information_Municipalities_id` ASC) VISIBLE,
+  CONSTRAINT `fk_IcfesTestResults_Municipalitie_Information1`
+    FOREIGN KEY (`Municipalitie_Information_Municipalities_id`)
+    REFERENCES `RelationsAndConclusions`.`Municipalitie_Information` (`Municipalities_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+
+-- -----------------------------------------------------
+-- Table `RelationsAndConclusions`.`Municipalitie_Information`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `RelationsAndConclusions`.`Municipalitie_Information` ;
+
+CREATE TABLE IF NOT EXISTS `RelationsAndConclusions`.`Municipalitie_Information` (
+  `Municipalities_id` INT NOT NULL,
+  `Municipalitie_name` VARCHAR(45) NOT NULL,
+  `Department_name` VARCHAR(45) NOT NULL,
+  `ID_Deparment` INT NOT NULL,
+  PRIMARY KEY (`Municipalities_id`),
+  UNIQUE INDEX `Municipalities_id_UNIQUE` (`Municipalities_id` ASC) VISIBLE);
+
+
+-- -----------------------------------------------------
+-- Table `RelationsAndConclusions`.`PopulationInformation`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `RelationsAndConclusions`.`PopulationInformation` ;
+
+CREATE TABLE IF NOT EXISTS `RelationsAndConclusions`.`PopulationInformation` (
+  `id` INT NULL DEFAULT NULL,
+  `YEARS_idYEARS` INT NOT NULL,
+  `Municipalitie_Information_Municipalities_id` INT NOT NULL,
+  `population` INT NULL DEFAULT NULL,
+  PRIMARY KEY (`id`, `YEARS_idYEARS`, `Municipalitie_Information_Municipalities_id`),
+  UNIQUE INDEX (`population` ASC) VISIBLE,
+  INDEX `fk_PopulationInformation_YEARS1_idx` (`YEARS_idYEARS` ASC) VISIBLE,
+  INDEX `fk_PopulationInformation_Municipalitie_Information1_idx` (`Municipalitie_Information_Municipalities_id` ASC) VISIBLE,
+  CONSTRAINT `fk_PopulationInformation_YEARS1`
+    FOREIGN KEY (`YEARS_idYEARS`)
+    REFERENCES `RelationsAndConclusions`.`YEARS` (`idYEARS`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_PopulationInformation_Municipalitie_Information1`
+    FOREIGN KEY (`Municipalitie_Information_Municipalities_id`)
+    REFERENCES `RelationsAndConclusions`.`Municipalitie_Information` (`Municipalities_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+
+-- -----------------------------------------------------
+-- Table `RelationsAndConclusions`.`Probes_references`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `RelationsAndConclusions`.`Probes_references` ;
+
+CREATE TABLE IF NOT EXISTS `RelationsAndConclusions`.`Probes_references` (
+  `idProbes_references` INT NOT NULL,
+  `Year` YEAR(4) NULL,
+  `Period` INT NULL,
+  `People_Who_takes_probes` INT NULL,
+  PRIMARY KEY (`idProbes_references`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `RelationsAndConclusions`.`STU_reference`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `RelationsAndConclusions`.`STU_reference` ;
+
+CREATE TABLE IF NOT EXISTS `RelationsAndConclusions`.`STU_reference` (
+  `Id_stu` INT NOT NULL,
+  `EducationalCenters_id` INT NOT NULL,
+  `Municipalitie_Information_Municipalities_id` INT NOT NULL,
+  `Probes_references_idProbes_references` INT NOT NULL,
+  PRIMARY KEY (`Id_stu`, `EducationalCenters_id`, `Municipalitie_Information_Municipalities_id`, `Probes_references_idProbes_references`),
+  INDEX `fk_STU_reference_EducationalCenters1_idx` (`EducationalCenters_id` ASC) VISIBLE,
+  INDEX `fk_STU_reference_Municipalitie_Information1_idx` (`Municipalitie_Information_Municipalities_id` ASC) VISIBLE,
+  INDEX `fk_STU_reference_Probes_references1_idx` (`Probes_references_idProbes_references` ASC) VISIBLE,
+  UNIQUE INDEX `Id_stu_UNIQUE` (`Id_stu` ASC) VISIBLE,
+  CONSTRAINT `fk_STU_reference_EducationalCenters1`
+    FOREIGN KEY (`EducationalCenters_id`)
+    REFERENCES `RelationsAndConclusions`.`EducationalCenters` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_STU_reference_Municipalitie_Information1`
+    FOREIGN KEY (`Municipalitie_Information_Municipalities_id`)
+    REFERENCES `RelationsAndConclusions`.`Municipalitie_Information` (`Municipalities_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_STU_reference_Probes_references1`
+    FOREIGN KEY (`Probes_references_idProbes_references`)
+    REFERENCES `RelationsAndConclusions`.`Probes_references` (`idProbes_references`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+
+-- -----------------------------------------------------
+-- Table `RelationsAndConclusions`.`YEARS`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `RelationsAndConclusions`.`YEARS` ;
+
+CREATE TABLE IF NOT EXISTS `RelationsAndConclusions`.`YEARS` (
+  `idYEARS` INT NOT NULL,
+  `YEARScol` YEAR(4) NOT NULL,
+  PRIMARY KEY (`idYEARS`),
+  UNIQUE INDEX `YEARScol_UNIQUE` (`YEARScol` ASC) VISIBLE)
+ENGINE = InnoDB;
+
+USE `Cultural_violence` ;
+
+-- -----------------------------------------------------
+-- Table `Cultural_violence`.`Books_for_Family_influence`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Cultural_violence`.`Books_for_Family_influence` ;
+
+CREATE TABLE IF NOT EXISTS `Cultural_violence`.`Books_for_Family_influence` (
+  `id` INT NOT NULL,
+  `YEARS_idYEARS` INT NOT NULL,
+  `Municipalitie_Information_Municipalities_id` INT NOT NULL,
+  `books_for_family` INT NULL,
+  `books_for_family_indicator` INT NULL DEFAULT NULL,
+  PRIMARY KEY (`id`, `YEARS_idYEARS`, `Municipalitie_Information_Municipalities_id`),
+  UNIQUE INDEX `id_Stu_UNIQUE` (`id` ASC) VISIBLE,
+  INDEX `fk_Books_for_Family_influence_Municipalitie_Information1_idx` (`Municipalitie_Information_Municipalities_id` ASC) VISIBLE,
+  INDEX `fk_Books_for_Family_influence_YEARS1_idx` (`YEARS_idYEARS` ASC) VISIBLE,
+  CONSTRAINT `fk_Books_for_Family_influence_Municipalitie_Information1`
+    FOREIGN KEY (`Municipalitie_Information_Municipalities_id`)
+    REFERENCES `RelationsAndConclusions`.`Municipalitie_Information` (`Municipalities_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Books_for_Family_influence_YEARS1`
+    FOREIGN KEY (`YEARS_idYEARS`)
+    REFERENCES `RelationsAndConclusions`.`YEARS` (`idYEARS`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+
+-- -----------------------------------------------------
+-- Table `Cultural_violence`.`Books_for_family`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Cultural_violence`.`Books_for_family` ;
+
+CREATE TABLE IF NOT EXISTS `Cultural_violence`.`Books_for_family` (
+  `idBooks_for_family` INT NOT NULL,
+  `Number_books_abv` VARCHAR(45) NULL,
+  PRIMARY KEY (`idBooks_for_family`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Cultural_violence`.`CulturalInfluence`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Cultural_violence`.`CulturalInfluence` ;
+
+CREATE TABLE IF NOT EXISTS `Cultural_violence`.`CulturalInfluence` (
+  `Id` INT NOT NULL AUTO_INCREMENT,
+  `Year` YEAR(4) NULL,
+  `municipality_id` INT NOT NULL,
+  `ethnic_Influencer_indicator` DECIMAL NOT NULL,
+  `books_for_family_indicator` DECIMAL NOT NULL,
+  `Stu_internet_influence_indicator` DECIMAL NOT NULL,
+  `Stu_read_for_pleasure_indicator` DECIMAL NOT NULL,
+  `Year` DECIMAL NOT NULL,
+  `Municipalitie_Information_Municipalities_id` INT NOT NULL,
+  `YEARS_idYEARS` INT NOT NULL,
+  PRIMARY KEY (`Id`, `Municipalitie_Information_Municipalities_id`, `YEARS_idYEARS`),
+  INDEX `Iindx_subin_cultural_influence` (`Year` ASC) VISIBLE,
+  INDEX `fk_CulturalInfluence_Municipalitie_Information1_idx` (`Municipalitie_Information_Municipalities_id` ASC) VISIBLE,
+  INDEX `fk_CulturalInfluence_YEARS1_idx` (`YEARS_idYEARS` ASC) VISIBLE,
+  CONSTRAINT `fk_CulturalInfluence_Municipalitie_Information1`
+    FOREIGN KEY (`Municipalitie_Information_Municipalities_id`)
+    REFERENCES `RelationsAndConclusions`.`Municipalitie_Information` (`Municipalities_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_CulturalInfluence_YEARS1`
+    FOREIGN KEY (`YEARS_idYEARS`)
+    REFERENCES `RelationsAndConclusions`.`YEARS` (`idYEARS`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+
+-- -----------------------------------------------------
+-- Table `Cultural_violence`.`CulturalViolenceIndex`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Cultural_violence`.`CulturalViolenceIndex` ;
+
+CREATE TABLE IF NOT EXISTS `Cultural_violence`.`CulturalViolenceIndex` (
+  `id` INT NULL DEFAULT NULL,
+  `Municipalities_id` INT NOT NULL,
+  `year` YEAR(4) NULL,
+  `subin_Ancestry_homicide` FLOAT NULL DEFAULT NULL,
+  `subin_Ancestry_suicide` FLOAT NULL DEFAULT NULL,
+  `subin_vulnerable_groups_homicide` FLOAT NULL DEFAULT NULL,
+  `subin_vulnerability_suicide` FLOAT NULL DEFAULT NULL,
+  `contex_violence_index` FLOAT NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `Iindx_cultural_violence_index` (`contex_violence_index` ASC) VISIBLE);
+
+
+-- -----------------------------------------------------
+-- Table `Cultural_violence`.`Educational-Level`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Cultural_violence`.`Educational-Level` ;
+
+CREATE TABLE IF NOT EXISTS `Cultural_violence`.`Educational-Level` (
+  `idEducational-Level` INT NOT NULL,
+  `Educational level` VARCHAR(45) NULL,
+  PRIMARY KEY (`idEducational-Level`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Cultural_violence`.`Father_Educational_influence`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Cultural_violence`.`Father_Educational_influence` ;
+
+CREATE TABLE IF NOT EXISTS `Cultural_violence`.`Father_Educational_influence` (
+  `id` INT NOT NULL,
+  `Id_mun` INT NULL DEFAULT NULL,
+  `Year` YEAR(4) NULL,
+  `Father_Educational_influence` DOUBLE NULL,
+  `Municipalitie_Information_Municipalities_id` INT NOT NULL,
+  `YEARS_idYEARS` INT NOT NULL,
+  PRIMARY KEY (`id`, `Municipalitie_Information_Municipalities_id`, `YEARS_idYEARS`),
+  INDEX `idx_Stu_read_for_pleasure_indicator` (`Id_mun` ASC) VISIBLE,
+  UNIQUE INDEX `id_Stu_UNIQUE` (`id` ASC) VISIBLE,
+  INDEX `fk_Father_Educational_influence_Municipalitie_Information1_idx` (`Municipalitie_Information_Municipalities_id` ASC) VISIBLE,
+  INDEX `fk_Father_Educational_influence_YEARS1_idx` (`YEARS_idYEARS` ASC) VISIBLE,
+  CONSTRAINT `fk_Father_Educational_influence_Municipalitie_Information1`
+    FOREIGN KEY (`Municipalitie_Information_Municipalities_id`)
+    REFERENCES `RelationsAndConclusions`.`Municipalitie_Information` (`Municipalities_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Father_Educational_influence_YEARS1`
+    FOREIGN KEY (`YEARS_idYEARS`)
+    REFERENCES `RelationsAndConclusions`.`YEARS` (`idYEARS`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+
+-- -----------------------------------------------------
+-- Table `Cultural_violence`.`Hours_of_ dedication`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Cultural_violence`.`Hours_of_ dedication` ;
+
+CREATE TABLE IF NOT EXISTS `Cultural_violence`.`Hours_of_ dedication` (
+  `IDHours Internet-Reading` INT NOT NULL,
+  `Number of hours` VARCHAR(45) NULL,
+  PRIMARY KEY (`IDHours Internet-Reading`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Cultural_violence`.`Hours_of_Reading_influence`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Cultural_violence`.`Hours_of_Reading_influence` ;
+
+CREATE TABLE IF NOT EXISTS `Cultural_violence`.`Hours_of_Reading_influence` (
+  `id` INT NOT NULL,
+  `Year` YEAR(4) NULL,
+  `Hours_of_reading_indicator` DOUBLE NULL DEFAULT NULL,
+  `Municipalitie_Information_Municipalities_id` INT NOT NULL,
+  `YEARS_idYEARS` INT NOT NULL,
+  PRIMARY KEY (`id`, `Municipalitie_Information_Municipalities_id`, `YEARS_idYEARS`),
+  UNIQUE INDEX `id_Stu_UNIQUE` (`id` ASC) VISIBLE,
+  INDEX `fk_Hours_of_Reading_influence_Municipalitie_Information1_idx` (`Municipalitie_Information_Municipalities_id` ASC) VISIBLE,
+  INDEX `fk_Hours_of_Reading_influence_YEARS1_idx` (`YEARS_idYEARS` ASC) VISIBLE,
+  CONSTRAINT `fk_Hours_of_Reading_influence_Municipalitie_Information1`
+    FOREIGN KEY (`Municipalitie_Information_Municipalities_id`)
+    REFERENCES `RelationsAndConclusions`.`Municipalitie_Information` (`Municipalities_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Hours_of_Reading_influence_YEARS1`
+    FOREIGN KEY (`YEARS_idYEARS`)
+    REFERENCES `RelationsAndConclusions`.`YEARS` (`idYEARS`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+
+-- -----------------------------------------------------
+-- Table `Cultural_violence`.`InternetAccess`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Cultural_violence`.`InternetAccess` ;
+
+CREATE TABLE IF NOT EXISTS `Cultural_violence`.`InternetAccess` (
+  `id` INT NULL DEFAULT NULL,
+  `municipality_id` INT NULL DEFAULT NULL,
+  `Internet_access` TINYINT NULL DEFAULT NULL,
+  PRIMARY KEY (`id`));
+
+
+-- -----------------------------------------------------
+-- Table `Cultural_violence`.`InternetAccess_influence`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Cultural_violence`.`InternetAccess_influence` ;
+
+CREATE TABLE IF NOT EXISTS `Cultural_violence`.`InternetAccess_influence` (
+  `id` INT NULL AUTO_INCREMENT,
+  `count_cases_true` INT NULL DEFAULT NULL,
+  `subin_Internet_access` FLOAT NULL DEFAULT NULL,
+  `Municipalitie_Information_Municipalities_id` INT NOT NULL,
+  PRIMARY KEY (`id`, `Municipalitie_Information_Municipalities_id`),
+  INDEX `fk_InternetAccess_influence_Municipalitie_Information1_idx` (`Municipalitie_Information_Municipalities_id` ASC) VISIBLE,
+  CONSTRAINT `fk_InternetAccess_influence_Municipalitie_Information1`
+    FOREIGN KEY (`Municipalitie_Information_Municipalities_id`)
+    REFERENCES `RelationsAndConclusions`.`Municipalitie_Information` (`Municipalities_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+
+-- -----------------------------------------------------
+-- Table `Cultural_violence`.`Interpersonal_Conflicts`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Cultural_violence`.`Interpersonal_Conflicts` ;
+
+CREATE TABLE IF NOT EXISTS `Cultural_violence`.`Interpersonal_Conflicts` (
+  `id` INT NOT NULL,
+  `occurrences` INT NULL DEFAULT NULL,
+  `Municipalitie_Information_Municipalities_id` INT NOT NULL,
+  `subin_Interpersonal_conflicts` FLOAT GENERATED ALWAYS AS () VIRTUAL,
+  `PopulationInformation_id` INT NOT NULL,
+  `Years_idYears` INT NOT NULL,
+  PRIMARY KEY (`id`, `Municipalitie_Information_Municipalities_id`, `PopulationInformation_id`, `Years_idYears`),
+  INDEX `Iindxsubin_vulnerable_groups_homicide` (`subin_Interpersonal_conflicts` ASC) VISIBLE,
+  INDEX `fk_Interpersonal_Conflicts_Municipalitie_Information1_idx` (`Municipalitie_Information_Municipalities_id` ASC) VISIBLE,
+  INDEX `fk_Interpersonal_Conflicts_PopulationInformation1_idx` (`PopulationInformation_id` ASC) VISIBLE,
+  CONSTRAINT `fk_Interpersonal_Conflicts_Municipalitie_Information1`
+    FOREIGN KEY (`Municipalitie_Information_Municipalities_id`)
+    REFERENCES `RelationsAndConclusions`.`Municipalitie_Information` (`Municipalities_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Interpersonal_Conflicts_PopulationInformation1`
+    FOREIGN KEY (`PopulationInformation_id`)
+    REFERENCES `RelationsAndConclusions`.`PopulationInformation` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+
+-- -----------------------------------------------------
+-- Table `Cultural_violence`.`Interpersonal_Homicide`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Cultural_violence`.`Interpersonal_Homicide` ;
+
+CREATE TABLE IF NOT EXISTS `Cultural_violence`.`Interpersonal_Homicide` (
+  `id` INT NULL DEFAULT NULL,
+  `Municipalitie_Information_Municipalities_id` INT NOT NULL,
+  `PopulationInformation_id` INT NOT NULL,
+  `YEARS_idYEARS` INT NOT NULL,
+  `occurrences` INT NULL DEFAULT NULL,
+  `subin_vulnerable_groups_homicide` FLOAT GENERATED ALWAYS AS (),
+  PRIMARY KEY (`id`, `Municipalitie_Information_Municipalities_id`, `PopulationInformation_id`, `YEARS_idYEARS`),
+  INDEX `Iindxsubin_vulnerable_groups_homicide` (`subin_vulnerable_groups_homicide` ASC) VISIBLE,
+  INDEX `fk_Interpersonal_Homicide_Municipalitie_Information1_idx` (`Municipalitie_Information_Municipalities_id` ASC) VISIBLE,
+  INDEX `fk_Interpersonal_Homicide_PopulationInformation1_idx` (`PopulationInformation_id` ASC) VISIBLE,
+  INDEX `fk_Interpersonal_Homicide_YEARS1_idx` (`YEARS_idYEARS` ASC) VISIBLE,
+  CONSTRAINT `fk_Interpersonal_Homicide_Municipalitie_Information1`
+    FOREIGN KEY (`Municipalitie_Information_Municipalities_id`)
+    REFERENCES `RelationsAndConclusions`.`Municipalitie_Information` (`Municipalities_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Interpersonal_Homicide_PopulationInformation1`
+    FOREIGN KEY (`PopulationInformation_id`)
+    REFERENCES `RelationsAndConclusions`.`PopulationInformation` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Interpersonal_Homicide_YEARS1`
+    FOREIGN KEY (`YEARS_idYEARS`)
+    REFERENCES `RelationsAndConclusions`.`YEARS` (`idYEARS`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+
+-- -----------------------------------------------------
+-- Table `Cultural_violence`.`Mother_Educational_influence`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Cultural_violence`.`Mother_Educational_influence` ;
+
+CREATE TABLE IF NOT EXISTS `Cultural_violence`.`Mother_Educational_influence` (
+  `id` INT NOT NULL,
+  `Mother_Educational_influence` DOUBLE NULL,
+  `Municipalitie_Information_Municipalities_id` INT NOT NULL,
+  PRIMARY KEY (`id`, `Municipalitie_Information_Municipalities_id`),
+  UNIQUE INDEX `id_Stu_UNIQUE` (`id` ASC) VISIBLE,
+  INDEX `fk_Mother_Educational_influence_Municipalitie_Information1_idx` (`Municipalitie_Information_Municipalities_id` ASC) VISIBLE,
+  CONSTRAINT `fk_Mother_Educational_influence_Municipalitie_Information1`
+    FOREIGN KEY (`Municipalitie_Information_Municipalities_id`)
+    REFERENCES `RelationsAndConclusions`.`Municipalitie_Information` (`Municipalities_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+
+-- -----------------------------------------------------
+-- Table `Cultural_violence`.`RACIAL_ANC`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Cultural_violence`.`RACIAL_ANC` ;
+
+CREATE TABLE IF NOT EXISTS `Cultural_violence`.`RACIAL_ANC` (
+  `idRACIAL_ANC` INT NOT NULL,
+  PRIMARY KEY (`idRACIAL_ANC`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Cultural_violence`.`RacialAncestryHomicideViolence`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Cultural_violence`.`RacialAncestryHomicideViolence` ;
+
+CREATE TABLE IF NOT EXISTS `Cultural_violence`.`RacialAncestryHomicideViolence` (
+  `id` INT NULL DEFAULT NULL,
+  `Municipalitie_Information_Municipalities_id` INT NOT NULL,
+  `PopulationInformation_id` INT NOT NULL,
+  `RACIAL_ANC_idRACIAL_ANC` INT NOT NULL,
+  `YEARS_idYEARS` INT NOT NULL,
+  `occurrences` INT NULL DEFAULT NULL,
+  `subin_homicide` FLOAT GENERATED ALWAYS AS (),
+  PRIMARY KEY (`id`, `Municipalitie_Information_Municipalities_id`, `PopulationInformation_id`, `RACIAL_ANC_idRACIAL_ANC`, `YEARS_idYEARS`),
+  INDEX `Iindx_subin_homicide` (`subin_homicide` ASC) VISIBLE,
+  INDEX `fk_RacialAncestryHomicideViolence_Municipalitie_Information_idx` (`Municipalitie_Information_Municipalities_id` ASC) VISIBLE,
+  INDEX `fk_RacialAncestryHomicideViolence_PopulationInformation1_idx` (`PopulationInformation_id` ASC) VISIBLE,
+  INDEX `fk_RacialAncestryHomicideViolence_RACIAL_ANC1_idx` (`RACIAL_ANC_idRACIAL_ANC` ASC) VISIBLE,
+  INDEX `fk_RacialAncestryHomicideViolence_YEARS1_idx` (`YEARS_idYEARS` ASC) VISIBLE,
+  CONSTRAINT `fk_RacialAncestryHomicideViolence_Municipalitie_Information1`
+    FOREIGN KEY (`Municipalitie_Information_Municipalities_id`)
+    REFERENCES `RelationsAndConclusions`.`Municipalitie_Information` (`Municipalities_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_RacialAncestryHomicideViolence_PopulationInformation1`
+    FOREIGN KEY (`PopulationInformation_id`)
+    REFERENCES `RelationsAndConclusions`.`PopulationInformation` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_RacialAncestryHomicideViolence_RACIAL_ANC1`
+    FOREIGN KEY (`RACIAL_ANC_idRACIAL_ANC`)
+    REFERENCES `Cultural_violence`.`RACIAL_ANC` (`idRACIAL_ANC`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_RacialAncestryHomicideViolence_YEARS1`
+    FOREIGN KEY (`YEARS_idYEARS`)
+    REFERENCES `RelationsAndConclusions`.`YEARS` (`idYEARS`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+
+-- -----------------------------------------------------
+-- Table `Cultural_violence`.`RacialAncestrySuicideViolence`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Cultural_violence`.`RacialAncestrySuicideViolence` ;
+
+CREATE TABLE IF NOT EXISTS `Cultural_violence`.`RacialAncestrySuicideViolence` (
+  `id` INT NULL DEFAULT NULL,
+  `Municipalitie_Information_Municipalities_id` INT NOT NULL,
+  `PopulationInformation_id` INT NOT NULL,
+  `occurrences` INT NULL DEFAULT NULL,
+  `subin_suicide` FLOAT GENERATED ALWAYS AS () VIRTUAL,
+  `RACIAL_ANC_idRACIAL_ANC` INT NOT NULL,
+  `YEARS_idYEARS` INT NOT NULL,
+  PRIMARY KEY (`id`, `Municipalitie_Information_Municipalities_id`, `PopulationInformation_id`, `RACIAL_ANC_idRACIAL_ANC`, `YEARS_idYEARS`),
+  INDEX `Iindx_subin_suicide` (`subin_suicide` ASC) VISIBLE,
+  INDEX `fk_RacialAncestrySuicideViolence_Municipalitie_Information1_idx` (`Municipalitie_Information_Municipalities_id` ASC) VISIBLE,
+  INDEX `fk_RacialAncestrySuicideViolence_PopulationInformation1_idx` (`PopulationInformation_id` ASC) VISIBLE,
+  INDEX `fk_RacialAncestrySuicideViolence_RACIAL_ANC1_idx` (`RACIAL_ANC_idRACIAL_ANC` ASC) VISIBLE,
+  INDEX `fk_RacialAncestrySuicideViolence_YEARS1_idx` (`YEARS_idYEARS` ASC) VISIBLE,
+  CONSTRAINT `fk_RacialAncestrySuicideViolence_Municipalitie_Information1`
+    FOREIGN KEY (`Municipalitie_Information_Municipalities_id`)
+    REFERENCES `RelationsAndConclusions`.`Municipalitie_Information` (`Municipalities_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_RacialAncestrySuicideViolence_PopulationInformation1`
+    FOREIGN KEY (`PopulationInformation_id`)
+    REFERENCES `RelationsAndConclusions`.`PopulationInformation` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_RacialAncestrySuicideViolence_RACIAL_ANC1`
+    FOREIGN KEY (`RACIAL_ANC_idRACIAL_ANC`)
+    REFERENCES `Cultural_violence`.`RACIAL_ANC` (`idRACIAL_ANC`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_RacialAncestrySuicideViolence_YEARS1`
+    FOREIGN KEY (`YEARS_idYEARS`)
+    REFERENCES `RelationsAndConclusions`.`YEARS` (`idYEARS`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+
+-- -----------------------------------------------------
+-- Table `Cultural_violence`.`SociopoliticHomicide`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Cultural_violence`.`SociopoliticHomicide` ;
+
+CREATE TABLE IF NOT EXISTS `Cultural_violence`.`SociopoliticHomicide` (
+  `id` INT NULL DEFAULT NULL,
+  `Municipalitie_Information_Municipalities_id` INT NOT NULL,
+  `PopulationInformation_id` INT NOT NULL,
+  `YEARS_idYEARS` INT NOT NULL,
+  PRIMARY KEY (`id`, `Municipalitie_Information_Municipalities_id`, `PopulationInformation_id`, `YEARS_idYEARS`),
+  INDEX `fk_SociopoliticHomicide_Municipalitie_Information1_idx` (`Municipalitie_Information_Municipalities_id` ASC) VISIBLE,
+  INDEX `fk_SociopoliticHomicide_PopulationInformation1_idx` (`PopulationInformation_id` ASC) VISIBLE,
+  INDEX `fk_SociopoliticHomicide_YEARS1_idx` (`YEARS_idYEARS` ASC) VISIBLE,
+  CONSTRAINT `fk_SociopoliticHomicide_Municipalitie_Information1`
+    FOREIGN KEY (`Municipalitie_Information_Municipalities_id`)
+    REFERENCES `RelationsAndConclusions`.`Municipalitie_Information` (`Municipalities_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_SociopoliticHomicide_PopulationInformation1`
+    FOREIGN KEY (`PopulationInformation_id`)
+    REFERENCES `RelationsAndConclusions`.`PopulationInformation` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_SociopoliticHomicide_YEARS1`
+    FOREIGN KEY (`YEARS_idYEARS`)
+    REFERENCES `RelationsAndConclusions`.`YEARS` (`idYEARS`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+
+-- -----------------------------------------------------
+-- Table `Cultural_violence`.`Stu_Father_educational_Level`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Cultural_violence`.`Stu_Father_educational_Level` ;
+
+CREATE TABLE IF NOT EXISTS `Cultural_violence`.`Stu_Father_educational_Level` (
+  `Id` INT NOT NULL,
+  `EducationalCenters_id` INT NOT NULL,
+  `Educational-Level_idEducational-Level` INT NOT NULL,
+  `Probes_references_idProbes_references` INT NOT NULL,
+  `STU_reference_Id_stu` INT NOT NULL,
+  PRIMARY KEY (`EducationalCenters_id`, `Id`, `Educational-Level_idEducational-Level`, `Probes_references_idProbes_references`, `STU_reference_Id_stu`),
+  INDEX `fk_Stu_Father_educational_Level_EducationalCenters1_idx` (`EducationalCenters_id` ASC) VISIBLE,
+  UNIQUE INDEX `Id_UNIQUE` (`Id` ASC) VISIBLE,
+  INDEX `fk_Stu_Father_educational_Level_Educational-Level1_idx` (`Educational-Level_idEducational-Level` ASC) VISIBLE,
+  INDEX `fk_Stu_Father_educational_Level_Probes_references1_idx` (`Probes_references_idProbes_references` ASC) VISIBLE,
+  INDEX `fk_Stu_Father_educational_Level_STU_reference1_idx` (`STU_reference_Id_stu` ASC) VISIBLE,
+  CONSTRAINT `fk_Stu_Father_educational_Level_EducationalCenters1`
+    FOREIGN KEY (`EducationalCenters_id`)
+    REFERENCES `RelationsAndConclusions`.`EducationalCenters` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Stu_Father_educational_Level_Educational-Level1`
+    FOREIGN KEY (`Educational-Level_idEducational-Level`)
+    REFERENCES `Cultural_violence`.`Educational-Level` (`idEducational-Level`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Stu_Father_educational_Level_Probes_references1`
+    FOREIGN KEY (`Probes_references_idProbes_references`)
+    REFERENCES `RelationsAndConclusions`.`Probes_references` (`idProbes_references`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Stu_Father_educational_Level_STU_reference1`
+    FOREIGN KEY (`STU_reference_Id_stu`)
+    REFERENCES `RelationsAndConclusions`.`STU_reference` (`Id_stu`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+
+-- -----------------------------------------------------
+-- Table `Cultural_violence`.`Stu_books_for_Family`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Cultural_violence`.`Stu_books_for_Family` ;
+
+CREATE TABLE IF NOT EXISTS `Cultural_violence`.`Stu_books_for_Family` (
+  `ID` INT NOT NULL,
+  `Id_stu` INT NOT NULL,
+  `EducationalCenters_id` VARCHAR(45) NOT NULL,
+  `Books_for_family_idBooks_for_family` INT NOT NULL,
+  `Probes_references_idProbes_references` INT NOT NULL,
+  `YEARS_idYEARS` INT NOT NULL,
+  PRIMARY KEY (`Id_stu`, `EducationalCenters_id`, `ID`, `Books_for_family_idBooks_for_family`, `Probes_references_idProbes_references`, `YEARS_idYEARS`),
+  INDEX `fk_Stu_books_for_Family_Saber_reference1_idx` (`Id_stu` ASC) VISIBLE,
+  INDEX `fk_Stu_books_for_Family_EducationalCenters1_idx` (`EducationalCenters_id` ASC) VISIBLE,
+  INDEX `fk_Stu_books_for_Family_Books_for_family1_idx` (`Books_for_family_idBooks_for_family` ASC) VISIBLE,
+  INDEX `fk_Stu_books_for_Family_Probes_references1_idx` (`Probes_references_idProbes_references` ASC) VISIBLE,
+  INDEX `fk_Stu_books_for_Family_YEARS1_idx` (`YEARS_idYEARS` ASC) VISIBLE,
+  CONSTRAINT `fk_Stu_books_for_Family_Saber_reference1`
+    FOREIGN KEY (`Id_stu`)
+    REFERENCES `RelationsAndConclusions`.`STU_reference` (`Id_stu`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Stu_books_for_Family_EducationalCenters1`
+    FOREIGN KEY (`EducationalCenters_id`)
+    REFERENCES `RelationsAndConclusions`.`EducationalCenters` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Stu_books_for_Family_Books_for_family1`
+    FOREIGN KEY (`Books_for_family_idBooks_for_family`)
+    REFERENCES `Cultural_violence`.`Books_for_family` (`idBooks_for_family`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Stu_books_for_Family_Probes_references1`
+    FOREIGN KEY (`Probes_references_idProbes_references`)
+    REFERENCES `RelationsAndConclusions`.`Probes_references` (`idProbes_references`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Stu_books_for_Family_YEARS1`
+    FOREIGN KEY (`YEARS_idYEARS`)
+    REFERENCES `RelationsAndConclusions`.`YEARS` (`idYEARS`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+
+-- -----------------------------------------------------
+-- Table `Cultural_violence`.`Stu_hours_Internet_influence`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Cultural_violence`.`Stu_hours_Internet_influence` ;
+
+CREATE TABLE IF NOT EXISTS `Cultural_violence`.`Stu_hours_Internet_influence` (
+  `ID` INT NOT NULL,
+  `STU_reference_Id_stu` INT NOT NULL,
+  `Saber_reference_Id_stu` INT NOT NULL,
+  `EducationalCenters_id` INT NOT NULL,
+  `table1_IDHours Internet-Reading` INT NOT NULL,
+  `Probes_references_idProbes_references` INT NOT NULL,
+  `STU_reference_EducationalCenters_id` INT NOT NULL,
+  `STU_reference_Municipalitie_Information_Municipalities_id` INT NOT NULL,
+  `STU_reference_Probes_references_idProbes_references` INT NOT NULL,
+  `YEARS_idYEARS` INT NOT NULL,
+  PRIMARY KEY (`ID`, `STU_reference_Id_stu`, `Saber_reference_Id_stu`, `EducationalCenters_id`, `table1_IDHours Internet-Reading`, `Probes_references_idProbes_references`, `STU_reference_EducationalCenters_id`, `STU_reference_Municipalitie_Information_Municipalities_id`, `STU_reference_Probes_references_idProbes_references`, `YEARS_idYEARS`),
+  INDEX `fk_Stu_hours_Internet_influence_table11_idx` (`table1_IDHours Internet-Reading` ASC) VISIBLE,
+  INDEX `fk_Stu_hours_Internet_influence_EducationalCenters1_idx` (`EducationalCenters_id` ASC) VISIBLE,
+  UNIQUE INDEX `ID_UNIQUE` (`ID` ASC) VISIBLE,
+  INDEX `fk_Stu_hours_Internet_influence_Saber_reference2_idx` (`Saber_reference_Id_stu` ASC) VISIBLE,
+  INDEX `fk_Stu_hours_Internet_influence_Probes_references1_idx` (`Probes_references_idProbes_references` ASC) VISIBLE,
+  INDEX `fk_Stu_hours_Internet_influence_STU_reference1_idx` (`STU_reference_Id_stu` ASC, `STU_reference_EducationalCenters_id` ASC, `STU_reference_Municipalitie_Information_Municipalities_id` ASC, `STU_reference_Probes_references_idProbes_references` ASC) VISIBLE,
+  INDEX `fk_Stu_hours_Internet_influence_YEARS1_idx` (`YEARS_idYEARS` ASC) VISIBLE,
+  CONSTRAINT `fk_Stu_hours_Internet_influence_Saber_reference1`
+    FOREIGN KEY ()
+    REFERENCES `RelationsAndConclusions`.`STU_reference` ()
+    ON DELETE NO ACTION
+    ON UPDATE RESTRICT,
+  CONSTRAINT `fk_Stu_hours_Internet_influence_table11`
+    FOREIGN KEY (`table1_IDHours Internet-Reading`)
+    REFERENCES `Cultural_violence`.`Hours_of_ dedication` (`IDHours Internet-Reading`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Stu_hours_Internet_influence_EducationalCenters1`
+    FOREIGN KEY (`EducationalCenters_id`)
+    REFERENCES `RelationsAndConclusions`.`EducationalCenters` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Stu_hours_Internet_influence_Saber_reference2`
+    FOREIGN KEY (`Saber_reference_Id_stu`)
+    REFERENCES `RelationsAndConclusions`.`STU_reference` (`Id_stu`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Stu_hours_Internet_influence_Probes_references1`
+    FOREIGN KEY (`Probes_references_idProbes_references`)
+    REFERENCES `RelationsAndConclusions`.`Probes_references` (`idProbes_references`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Stu_hours_Internet_influence_STU_reference1`
+    FOREIGN KEY (`STU_reference_Id_stu` , `STU_reference_EducationalCenters_id` , `STU_reference_Municipalitie_Information_Municipalities_id` , `STU_reference_Probes_references_idProbes_references`)
+    REFERENCES `RelationsAndConclusions`.`STU_reference` (`Id_stu` , `EducationalCenters_id` , `Municipalitie_Information_Municipalities_id` , `Probes_references_idProbes_references`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Stu_hours_Internet_influence_YEARS1`
+    FOREIGN KEY (`YEARS_idYEARS`)
+    REFERENCES `RelationsAndConclusions`.`YEARS` (`idYEARS`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+
+-- -----------------------------------------------------
+-- Table `Cultural_violence`.`Stu_hours_reading_influence`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Cultural_violence`.`Stu_hours_reading_influence` ;
+
+CREATE TABLE IF NOT EXISTS `Cultural_violence`.`Stu_hours_reading_influence` (
+  `Id` INT NOT NULL AUTO_INCREMENT,
+  `Saber_reference_Id_stu` INT NOT NULL,
+  `Hours of dedication_IDHours Internet-Reading` INT NOT NULL,
+  `EducationalCenters_id` INT NOT NULL,
+  `Probes_references_idProbes_references` INT NOT NULL,
+  `STU_reference_Id_stu` INT NOT NULL,
+  `STU_reference_EducationalCenters_id` INT NOT NULL,
+  `STU_reference_Municipalitie_Information_Municipalities_id` INT NOT NULL,
+  `STU_reference_Probes_references_idProbes_references` INT NOT NULL,
+  PRIMARY KEY (`Id`, `Saber_reference_Id_stu`, `Hours of dedication_IDHours Internet-Reading`, `EducationalCenters_id`, `Probes_references_idProbes_references`, `STU_reference_Id_stu`, `STU_reference_EducationalCenters_id`, `STU_reference_Municipalitie_Information_Municipalities_id`, `STU_reference_Probes_references_idProbes_references`),
+  UNIQUE INDEX `Id_UNIQUE` (`Id` ASC) VISIBLE,
+  INDEX `fk_Stu_hours_reading_influence_Saber_reference1_idx` (`Saber_reference_Id_stu` ASC) VISIBLE,
+  INDEX `fk_Stu_hours_reading_influence_Hours of dedication1_idx` (`Hours of dedication_IDHours Internet-Reading` ASC) VISIBLE,
+  INDEX `fk_Stu_hours_reading_influence_EducationalCenters1_idx` (`EducationalCenters_id` ASC) VISIBLE,
+  INDEX `fk_Stu_hours_reading_influence_Probes_references1_idx` (`Probes_references_idProbes_references` ASC) VISIBLE,
+  INDEX `fk_Stu_hours_reading_influence_STU_reference1_idx` (`STU_reference_Id_stu` ASC, `STU_reference_EducationalCenters_id` ASC, `STU_reference_Municipalitie_Information_Municipalities_id` ASC, `STU_reference_Probes_references_idProbes_references` ASC) VISIBLE,
+  CONSTRAINT `fk_Stu_hours_reading_influence_Saber_reference1`
+    FOREIGN KEY (`Saber_reference_Id_stu`)
+    REFERENCES `RelationsAndConclusions`.`STU_reference` (`Id_stu`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Stu_hours_reading_influence_Hours of dedication1`
+    FOREIGN KEY (`Hours of dedication_IDHours Internet-Reading`)
+    REFERENCES `Cultural_violence`.`Hours_of_ dedication` (`IDHours Internet-Reading`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Stu_hours_reading_influence_EducationalCenters1`
+    FOREIGN KEY (`EducationalCenters_id`)
+    REFERENCES `RelationsAndConclusions`.`EducationalCenters` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Stu_hours_reading_influence_Probes_references1`
+    FOREIGN KEY (`Probes_references_idProbes_references`)
+    REFERENCES `RelationsAndConclusions`.`Probes_references` (`idProbes_references`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Stu_hours_reading_influence_STU_reference1`
+    FOREIGN KEY (`STU_reference_Id_stu` , `STU_reference_EducationalCenters_id` , `STU_reference_Municipalitie_Information_Municipalities_id` , `STU_reference_Probes_references_idProbes_references`)
+    REFERENCES `RelationsAndConclusions`.`STU_reference` (`Id_stu` , `EducationalCenters_id` , `Municipalitie_Information_Municipalities_id` , `Probes_references_idProbes_references`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+
+-- -----------------------------------------------------
+-- Table `Cultural_violence`.`Stu_mother_educational_level`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Cultural_violence`.`Stu_mother_educational_level` ;
+
+CREATE TABLE IF NOT EXISTS `Cultural_violence`.`Stu_mother_educational_level` (
+  `ID` INT NOT NULL,
+  `id_Stu` INT NOT NULL,
+  `EducationalCenters_id` INT NOT NULL,
+  `Educational-Level_idEducational-Level` INT NOT NULL,
+  `Probes_references_idProbes_references` INT NOT NULL,
+  PRIMARY KEY (`id_Stu`, `EducationalCenters_id`, `Educational-Level_idEducational-Level`, `ID`, `Probes_references_idProbes_references`),
+  INDEX `fk_Stu_mother_educational_level_EducationalCenters1_idx` (`EducationalCenters_id` ASC) VISIBLE,
+  INDEX `fk_Stu_mother_educational_level_Educational-Level1_idx` (`Educational-Level_idEducational-Level` ASC) VISIBLE,
+  UNIQUE INDEX `ID_UNIQUE` (`ID` ASC) VISIBLE,
+  INDEX `fk_Stu_mother_educational_level_Probes_references1_idx` (`Probes_references_idProbes_references` ASC) VISIBLE,
+  CONSTRAINT `fk_Stu_mother_educational_level_Saber_reference1`
+    FOREIGN KEY (`id_Stu`)
+    REFERENCES `RelationsAndConclusions`.`STU_reference` (`Id_stu`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Stu_mother_educational_level_EducationalCenters1`
+    FOREIGN KEY (`EducationalCenters_id`)
+    REFERENCES `RelationsAndConclusions`.`EducationalCenters` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Stu_mother_educational_level_Educational-Level1`
+    FOREIGN KEY (`Educational-Level_idEducational-Level`)
+    REFERENCES `Cultural_violence`.`Educational-Level` (`idEducational-Level`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Stu_mother_educational_level_Probes_references1`
+    FOREIGN KEY (`Probes_references_idProbes_references`)
+    REFERENCES `RelationsAndConclusions`.`Probes_references` (`idProbes_references`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+
+-- -----------------------------------------------------
+-- Table `Cultural_violence`.`VULNERABLE_GROUPS`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Cultural_violence`.`VULNERABLE_GROUPS` ;
+
+CREATE TABLE IF NOT EXISTS `Cultural_violence`.`VULNERABLE_GROUPS` (
+  `idVULNERABLE_GROUPS` INT NOT NULL,
+  `VULNERABLE_GROUPScol` VARCHAR(45) NULL,
+  PRIMARY KEY (`idVULNERABLE_GROUPS`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Cultural_violence`.`VulnerableGroupsHomicideViolence`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Cultural_violence`.`VulnerableGroupsHomicideViolence` ;
+
+CREATE TABLE IF NOT EXISTS `Cultural_violence`.`VulnerableGroupsHomicideViolence` (
+  `id` INT NULL DEFAULT NULL,
+  `Municipalitie_Information_Municipalities_id` INT NOT NULL,
+  `PopulationInformation_id` INT NOT NULL,
+  `PopulationInformation_Municipalitie_Information_Municipalities_id` INT NOT NULL,
+  `PopulationInformation_id1` INT NOT NULL,
+  `VULNERABLE_GROUPS_idVULNERABLE_GROUPS` INT NOT NULL,
+  `YEARS_idYEARS` INT NOT NULL,
+  `Ind_VulnerableGroupsHomicideViolence` DOUBLE NULL,
+  PRIMARY KEY (`id`, `Municipalitie_Information_Municipalities_id`, `PopulationInformation_id`, `PopulationInformation_Municipalitie_Information_Municipalities_id`, `PopulationInformation_id1`, `VULNERABLE_GROUPS_idVULNERABLE_GROUPS`, `YEARS_idYEARS`),
+  INDEX `fk_VulnerableGroupsHomicideViolence_Municipalitie_Informati_idx` (`Municipalitie_Information_Municipalities_id` ASC) VISIBLE,
+  INDEX `fk_VulnerableGroupsHomicideViolence_PopulationInformation1_idx` (`PopulationInformation_id` ASC, `PopulationInformation_Municipalitie_Information_Municipalities_id` ASC) VISIBLE,
+  INDEX `fk_VulnerableGroupsHomicideViolence_PopulationInformation2_idx` (`PopulationInformation_id1` ASC) VISIBLE,
+  INDEX `fk_VulnerableGroupsHomicideViolence_VULNERABLE_GROUPS1_idx` (`VULNERABLE_GROUPS_idVULNERABLE_GROUPS` ASC) VISIBLE,
+  INDEX `fk_VulnerableGroupsHomicideViolence_YEARS1_idx` (`YEARS_idYEARS` ASC) VISIBLE,
+  CONSTRAINT `fk_VulnerableGroupsHomicideViolence_Municipalitie_Information1`
+    FOREIGN KEY (`Municipalitie_Information_Municipalities_id`)
+    REFERENCES `RelationsAndConclusions`.`Municipalitie_Information` (`Municipalities_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_VulnerableGroupsHomicideViolence_PopulationInformation1`
+    FOREIGN KEY (`PopulationInformation_id` , `PopulationInformation_Municipalitie_Information_Municipalities_id`)
+    REFERENCES `RelationsAndConclusions`.`PopulationInformation` (`id` , `Municipalitie_Information_Municipalities_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_VulnerableGroupsHomicideViolence_PopulationInformation2`
+    FOREIGN KEY (`PopulationInformation_id1`)
+    REFERENCES `RelationsAndConclusions`.`PopulationInformation` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_VulnerableGroupsHomicideViolence_VULNERABLE_GROUPS1`
+    FOREIGN KEY (`VULNERABLE_GROUPS_idVULNERABLE_GROUPS`)
+    REFERENCES `Cultural_violence`.`VULNERABLE_GROUPS` (`idVULNERABLE_GROUPS`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_VulnerableGroupsHomicideViolence_YEARS1`
+    FOREIGN KEY (`YEARS_idYEARS`)
+    REFERENCES `RelationsAndConclusions`.`YEARS` (`idYEARS`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+
+-- -----------------------------------------------------
+-- Table `Cultural_violence`.`VulnerableGroupsSuicideViolence`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Cultural_violence`.`VulnerableGroupsSuicideViolence` ;
+
+CREATE TABLE IF NOT EXISTS `Cultural_violence`.`VulnerableGroupsSuicideViolence` (
+  `id` INT NULL DEFAULT NULL,
+  `occurrences` INT NULL DEFAULT NULL,
+  `Municipalitie_Information_Municipalities_id` INT NOT NULL,
+  `VULNERABLE_GROUPS_idVULNERABLE_GROUPS` INT NOT NULL,
+  `PopulationInformation_id` INT NOT NULL,
+  `YEARS_idYEARS` INT NOT NULL,
+  `subin_vulnerable_groups_suicide` FLOAT NULL DEFAULT NULL,
+  PRIMARY KEY (`id`, `Municipalitie_Information_Municipalities_id`, `VULNERABLE_GROUPS_idVULNERABLE_GROUPS`, `PopulationInformation_id`, `YEARS_idYEARS`),
+  INDEX `Iindxsubin_vulnerable_groups_suicide` (`subin_vulnerable_groups_suicide` ASC) VISIBLE,
+  INDEX `fk_VulnerableGroupsSuicideViolence_Municipalitie_Informatio_idx` (`Municipalitie_Information_Municipalities_id` ASC) VISIBLE,
+  INDEX `fk_VulnerableGroupsSuicideViolence_VULNERABLE_GROUPS1_idx` (`VULNERABLE_GROUPS_idVULNERABLE_GROUPS` ASC) VISIBLE,
+  INDEX `fk_VulnerableGroupsSuicideViolence_PopulationInformation1_idx` (`PopulationInformation_id` ASC) VISIBLE,
+  INDEX `fk_VulnerableGroupsSuicideViolence_YEARS1_idx` (`YEARS_idYEARS` ASC) VISIBLE,
+  CONSTRAINT `fk_VulnerableGroupsSuicideViolence_Municipalitie_Information1`
+    FOREIGN KEY (`Municipalitie_Information_Municipalities_id`)
+    REFERENCES `RelationsAndConclusions`.`Municipalitie_Information` (`Municipalities_id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_VulnerableGroupsSuicideViolence_VULNERABLE_GROUPS1`
+    FOREIGN KEY (`VULNERABLE_GROUPS_idVULNERABLE_GROUPS`)
+    REFERENCES `Cultural_violence`.`VULNERABLE_GROUPS` (`idVULNERABLE_GROUPS`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_VulnerableGroupsSuicideViolence_PopulationInformation1`
+    FOREIGN KEY (`PopulationInformation_id`)
+    REFERENCES `RelationsAndConclusions`.`PopulationInformation` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_VulnerableGroupsSuicideViolence_YEARS1`
+    FOREIGN KEY (`YEARS_idYEARS`)
+    REFERENCES `RelationsAndConclusions`.`YEARS` (`idYEARS`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+
+-- -----------------------------------------------------
+-- Table `Cultural_violence`.`stu_haveEthnia_influence`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Cultural_violence`.`stu_haveEthnia_influence` ;
+
+CREATE TABLE IF NOT EXISTS `Cultural_violence`.`stu_haveEthnia_influence` (
+  `ID` INT NOT NULL,
+  `Saber_reference_Id_stu` INT NOT NULL,
+  `EducationalCenters_id` INT NOT NULL,
+  `have_Ethia` TINYINT NULL,
+  `Probes_references_idProbes_references` INT NOT NULL,
+  `STU_reference_Id_stu` INT NOT NULL,
+  `STU_reference_EducationalCenters_id` INT NOT NULL,
+  `STU_reference_Municipalitie_Information_Municipalities_id` INT NOT NULL,
+  `STU_reference_Probes_references_idProbes_references` INT NOT NULL,
+  `YEARS_idYEARS` INT NOT NULL,
+  PRIMARY KEY (`ID`, `Saber_reference_Id_stu`, `EducationalCenters_id`, `Probes_references_idProbes_references`, `STU_reference_Id_stu`, `STU_reference_EducationalCenters_id`, `STU_reference_Municipalitie_Information_Municipalities_id`, `STU_reference_Probes_references_idProbes_references`, `YEARS_idYEARS`),
+  INDEX `fk_stu_haveEthnia_influence_EducationalCenters1_idx` (`EducationalCenters_id` ASC) VISIBLE,
+  UNIQUE INDEX `ID_UNIQUE` (`ID` ASC) VISIBLE,
+  INDEX `fk_stu_haveEthnia_influence_Saber_reference1_idx` (`Saber_reference_Id_stu` ASC) VISIBLE,
+  INDEX `fk_stu_haveEthnia_influence_Probes_references1_idx` (`Probes_references_idProbes_references` ASC) VISIBLE,
+  INDEX `fk_stu_haveEthnia_influence_STU_reference1_idx` (`STU_reference_Id_stu` ASC, `STU_reference_EducationalCenters_id` ASC, `STU_reference_Municipalitie_Information_Municipalities_id` ASC, `STU_reference_Probes_references_idProbes_references` ASC) VISIBLE,
+  INDEX `fk_stu_haveEthnia_influence_YEARS1_idx` (`YEARS_idYEARS` ASC) VISIBLE,
+  CONSTRAINT `fk_stu_haveEthnia_influence_Saber_reference1`
+    FOREIGN KEY (`Saber_reference_Id_stu`)
+    REFERENCES `RelationsAndConclusions`.`STU_reference` (`Id_stu`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_stu_haveEthnia_influence_EducationalCenters1`
+    FOREIGN KEY (`EducationalCenters_id`)
+    REFERENCES `RelationsAndConclusions`.`EducationalCenters` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_stu_haveEthnia_influence_Probes_references1`
+    FOREIGN KEY (`Probes_references_idProbes_references`)
+    REFERENCES `RelationsAndConclusions`.`Probes_references` (`idProbes_references`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_stu_haveEthnia_influence_STU_reference1`
+    FOREIGN KEY (`STU_reference_Id_stu` , `STU_reference_EducationalCenters_id` , `STU_reference_Municipalitie_Information_Municipalities_id` , `STU_reference_Probes_references_idProbes_references`)
+    REFERENCES `RelationsAndConclusions`.`STU_reference` (`Id_stu` , `EducationalCenters_id` , `Municipalitie_Information_Municipalities_id` , `Probes_references_idProbes_references`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_stu_haveEthnia_influence_YEARS1`
+    FOREIGN KEY (`YEARS_idYEARS`)
+    REFERENCES `RelationsAndConclusions`.`YEARS` (`idYEARS`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+
+-- -----------------------------------------------------
+-- Table `Cultural_violence`.`stu_haveInternet_influence`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Cultural_violence`.`stu_haveInternet_influence` ;
+
+CREATE TABLE IF NOT EXISTS `Cultural_violence`.`stu_haveInternet_influence` (
+  `ID` INT NOT NULL,
+  `EducationalCenters_id` INT NOT NULL,
+  `have_Internet` TINYINT NULL,
+  `Probes_references_idProbes_references1` INT NOT NULL,
+  `STU_reference_Id_stu` INT NOT NULL,
+  `STU_reference_EducationalCenters_id` INT NOT NULL,
+  `STU_reference_Municipalitie_Information_Municipalities_id` INT NOT NULL,
+  `STU_reference_Probes_references_idProbes_references` INT NOT NULL,
+  `YEARS_idYEARS` INT NOT NULL,
+  PRIMARY KEY (`ID`, `EducationalCenters_id`, `Probes_references_idProbes_references1`, `STU_reference_Id_stu`, `STU_reference_EducationalCenters_id`, `STU_reference_Municipalitie_Information_Municipalities_id`, `STU_reference_Probes_references_idProbes_references`, `YEARS_idYEARS`),
+  INDEX `fk_stu_haveInternet_influence_EducationalCenters1_idx` (`EducationalCenters_id` ASC) VISIBLE,
+  INDEX `fk_stu_haveInternet_influence_Probes_references1_idx` (`Probes_references_idProbes_references1` ASC) VISIBLE,
+  INDEX `fk_stu_haveInternet_influence_STU_reference1_idx` (`STU_reference_Id_stu` ASC, `STU_reference_EducationalCenters_id` ASC, `STU_reference_Municipalitie_Information_Municipalities_id` ASC, `STU_reference_Probes_references_idProbes_references` ASC) VISIBLE,
+  INDEX `fk_stu_haveInternet_influence_YEARS1_idx` (`YEARS_idYEARS` ASC) VISIBLE,
+  CONSTRAINT `fk_stu_haveInternet_influence_EducationalCenters1`
+    FOREIGN KEY (`EducationalCenters_id`)
+    REFERENCES `RelationsAndConclusions`.`EducationalCenters` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_stu_haveInternet_influence_Probes_references1`
+    FOREIGN KEY (`Probes_references_idProbes_references1`)
+    REFERENCES `RelationsAndConclusions`.`Probes_references` (`idProbes_references`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_stu_haveInternet_influence_STU_reference1`
+    FOREIGN KEY (`STU_reference_Id_stu` , `STU_reference_EducationalCenters_id` , `STU_reference_Municipalitie_Information_Municipalities_id` , `STU_reference_Probes_references_idProbes_references`)
+    REFERENCES `RelationsAndConclusions`.`STU_reference` (`Id_stu` , `EducationalCenters_id` , `Municipalitie_Information_Municipalities_id` , `Probes_references_idProbes_references`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_stu_haveInternet_influence_YEARS1`
+    FOREIGN KEY (`YEARS_idYEARS`)
+    REFERENCES `RelationsAndConclusions`.`YEARS` (`idYEARS`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+USE `GENDER_VIOLENCE` ;
+
+-- -----------------------------------------------------
+-- Table `GENDER_VIOLENCE`.`DomesticViolenceNonGenderBAsedRate`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `GENDER_VIOLENCE`.`DomesticViolenceNonGenderBAsedRate` ;
+
+CREATE TABLE IF NOT EXISTS `GENDER_VIOLENCE`.`DomesticViolenceNonGenderBAsedRate` (
+  `id` INT NULL DEFAULT NULL,
+  `Municipalities_id` INT NULL DEFAULT NULL,
+  `year` YEAR NULL DEFAULT NULL,
+  `cases` INT NULL DEFAULT NULL,
+  `domestic_violence_rate_per_100k` INT NULL DEFAULT NULL,
+  `subin_domestic_violence` INT NULL DEFAULT NULL,
+  PRIMARY KEY (`id`));
+
+
+-- -----------------------------------------------------
+-- Table `GENDER_VIOLENCE`.`DomesticViolenceRate`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `GENDER_VIOLENCE`.`DomesticViolenceRate` ;
+
+CREATE TABLE IF NOT EXISTS `GENDER_VIOLENCE`.`DomesticViolenceRate` (
+  `id` INT NULL DEFAULT NULL,
+  `Municipalities_id` INT NULL DEFAULT NULL,
+  `gender_id` INT NULL DEFAULT NULL,
+  `year` YEAR NULL DEFAULT NULL,
+  `cases` INT NULL DEFAULT NULL,
+  `domestic_violence_rate_per_100k` FLOAT NULL DEFAULT NULL,
+  `subin_domestic_violence` FLOAT NULL DEFAULT NULL,
+  PRIMARY KEY (`id`));
+
+
+-- -----------------------------------------------------
+-- Table `GENDER_VIOLENCE`.`GenderHomicideRate`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `GENDER_VIOLENCE`.`GenderHomicideRate` ;
+
+CREATE TABLE IF NOT EXISTS `GENDER_VIOLENCE`.`GenderHomicideRate` (
+  `id` INT NULL DEFAULT NULL,
+  `Municipalities_id` INT NULL DEFAULT NULL,
+  `gender_id` INT NULL DEFAULT NULL,
+  `year` YEAR NULL DEFAULT NULL,
+  `cases` INT NULL DEFAULT NULL,
+  `homicide_rate_per_100k` FLOAT NULL DEFAULT NULL,
+  `subin_gender_homicide` FLOAT NULL DEFAULT NULL,
+  PRIMARY KEY (`id`));
+
+
+-- -----------------------------------------------------
+-- Table `GENDER_VIOLENCE`.`GenderInformation`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `GENDER_VIOLENCE`.`GenderInformation` ;
+
+CREATE TABLE IF NOT EXISTS `GENDER_VIOLENCE`.`GenderInformation` (
+  `id` INT NULL DEFAULT NULL,
+  `gender_name` VARCHAR(255) NULL DEFAULT NULL,
+  `Municipalities_id` FLOAT NULL DEFAULT NULL,
+  `population_by_gender` FLOAT NULL DEFAULT NULL,
+  `year` YEAR NULL DEFAULT NULL,
+  PRIMARY KEY (`id`));
+
+
+-- -----------------------------------------------------
+-- Table `GENDER_VIOLENCE`.`GenderViolenceIndex`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `GENDER_VIOLENCE`.`GenderViolenceIndex` ;
+
+CREATE TABLE IF NOT EXISTS `GENDER_VIOLENCE`.`GenderViolenceIndex` (
+  `id` INT NULL DEFAULT NULL,
+  `Municipalities_id` INT NULL DEFAULT NULL,
+  `year` YEAR NULL DEFAULT NULL,
+  `subin_partner_homicide` FLOAT NULL DEFAULT NULL,
+  `subin_romantic_suicide` FLOAT NULL DEFAULT NULL,
+  `subin_vulnerability_homicide` FLOAT NULL DEFAULT NULL,
+  `subin_vulnerability_suicide` FLOAT NULL DEFAULT NULL,
+  `subin_gender_homicide` FLOAT NULL DEFAULT NULL,
+  `subin_domestic_violence` FLOAT NULL DEFAULT NULL,
+  `gender_violence_index` FLOAT NULL DEFAULT NULL,
+  PRIMARY KEY (`id`));
+
+
+-- -----------------------------------------------------
+-- Table `GENDER_VIOLENCE`.`GenderVulnerabilityHomicideViolence`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `GENDER_VIOLENCE`.`GenderVulnerabilityHomicideViolence` ;
+
+CREATE TABLE IF NOT EXISTS `GENDER_VIOLENCE`.`GenderVulnerabilityHomicideViolence` (
+  `id` INT NULL DEFAULT NULL,
+  `Municipalities_id` INT NULL DEFAULT NULL,
+  `vulnerability_factor_id` INT NULL DEFAULT NULL,
+  `year` YEAR NULL DEFAULT NULL,
+  `cases` INT NULL DEFAULT NULL,
+  `homicide_rate_per_100k` FLOAT NULL DEFAULT NULL,
+  `subin_vulnerability_homicide` FLOAT NULL DEFAULT NULL,
+  PRIMARY KEY (`id`));
+
+
+-- -----------------------------------------------------
+-- Table `GENDER_VIOLENCE`.`GenderVulnerabilitySuicideViolence`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `GENDER_VIOLENCE`.`GenderVulnerabilitySuicideViolence` ;
+
+CREATE TABLE IF NOT EXISTS `GENDER_VIOLENCE`.`GenderVulnerabilitySuicideViolence` (
+  `id` INT NULL DEFAULT NULL,
+  `Municipalities_id` INT NULL DEFAULT NULL,
+  `vulnerability_factor_id` INT NULL DEFAULT NULL,
+  `year` YEAR NULL DEFAULT NULL,
+  `cases` INT NULL DEFAULT NULL,
+  `suicide_rate_per_100k` FLOAT NULL DEFAULT NULL,
+  `subin_vulnerability_suicide` FLOAT NULL DEFAULT NULL,
+  PRIMARY KEY (`id`));
+
+
+-- -----------------------------------------------------
+-- Table `GENDER_VIOLENCE`.`IcfesResultsAnalysis`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `GENDER_VIOLENCE`.`IcfesResultsAnalysis` ;
+
+CREATE TABLE IF NOT EXISTS `GENDER_VIOLENCE`.`IcfesResultsAnalysis` (
+  `id` INT NULL DEFAULT NULL,
+  `Municipalities_id` INT NULL DEFAULT NULL,
+  `gender_id` INT NULL DEFAULT NULL,
+  `year` YEAR NULL DEFAULT NULL,
+  `average_math_score` FLOAT NULL DEFAULT NULL,
+  `average_natural_sciences_score` FLOAT NULL DEFAULT NULL,
+  `average_social_and_citizenship_score` FLOAT NULL DEFAULT NULL,
+  `average_languages_score` FLOAT NULL DEFAULT NULL,
+  `average_foreign_language_score` FLOAT NULL DEFAULT NULL,
+  `average_global_score` FLOAT NULL DEFAULT NULL,
+  `subin_global_score` FLOAT NULL DEFAULT NULL,
+  PRIMARY KEY (`id`));
+
+
+-- -----------------------------------------------------
+-- Table `GENDER_VIOLENCE`.`PartnerHomicideViolence`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `GENDER_VIOLENCE`.`PartnerHomicideViolence` ;
+
+CREATE TABLE IF NOT EXISTS `GENDER_VIOLENCE`.`PartnerHomicideViolence` (
+  `id` INT NULL DEFAULT NULL,
+  `Municipalities_id` INT NULL DEFAULT NULL,
+  `gender_id` INT NULL DEFAULT NULL,
+  `year` YEAR NULL DEFAULT NULL,
+  `cases` INT NULL DEFAULT NULL,
+  `homicide_rate_per_100k` FLOAT NULL DEFAULT NULL,
+  `subin_partner_homicide` FLOAT NULL DEFAULT NULL,
+  PRIMARY KEY (`id`));
+
+
+-- -----------------------------------------------------
+-- Table `GENDER_VIOLENCE`.`RomanticSuicideViolence`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `GENDER_VIOLENCE`.`RomanticSuicideViolence` ;
+
+CREATE TABLE IF NOT EXISTS `GENDER_VIOLENCE`.`RomanticSuicideViolence` (
+  `id` INT NULL DEFAULT NULL,
+  `Municipalities_id` INT NULL DEFAULT NULL,
+  `gender_id` INT NULL DEFAULT NULL,
+  `year` YEAR NULL DEFAULT NULL,
+  `cases` INT NULL DEFAULT NULL,
+  `suicide_rate_per_100k` FLOAT NULL DEFAULT NULL,
+  `subin_romantic_suicide` FLOAT NULL DEFAULT NULL,
+  PRIMARY KEY (`id`));
+
+USE `Structural_Violence` ;
+
+-- -----------------------------------------------------
+-- Table `Structural_Violence`.`CarOwnership_influence`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Structural_Violence`.`CarOwnership_influence` ;
+
+CREATE TABLE IF NOT EXISTS `Structural_Violence`.`CarOwnership_influence` (
+  `id` INT NULL DEFAULT NULL,
+  `municipality_id` INT NULL DEFAULT NULL,
+  `date_of_test` DATE NULL DEFAULT NULL,
+  `count_cases_true` INT NULL DEFAULT NULL,
+  `count_cases_false` INT NULL DEFAULT NULL,
+  `subin_carOwnership` FLOAT NULL DEFAULT NULL,
+  PRIMARY KEY (`id`));
+
+
+-- -----------------------------------------------------
+-- Table `Structural_Violence`.`CarOwnershipcases`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Structural_Violence`.`CarOwnershipcases` ;
+
+CREATE TABLE IF NOT EXISTS `Structural_Violence`.`CarOwnershipcases` (
+  `id` INT NULL DEFAULT NULL,
+  `date_of_test` DATE NULL DEFAULT NULL,
+  `municipality_id` INT NULL DEFAULT NULL,
+  `carOwnershipcases` TINYINT NULL DEFAULT NULL,
+  PRIMARY KEY (`id`));
+
+
+-- -----------------------------------------------------
+-- Table `Structural_Violence`.`EducationAccess`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Structural_Violence`.`EducationAccess` ;
+
+CREATE TABLE IF NOT EXISTS `Structural_Violence`.`EducationAccess` (
+  `id` INT NULL DEFAULT NULL,
+  `municipality_id` INT NULL DEFAULT NULL,
+  `year` YEAR NULL DEFAULT NULL,
+  `basic_education_centers_per_100k` FLOAT NULL DEFAULT NULL,
+  `middle_education_centers_per_100k` FLOAT NULL DEFAULT NULL,
+  `technical_professional_centers_per_100k` FLOAT NULL DEFAULT NULL,
+  `university_centers_per_100k` FLOAT NULL DEFAULT NULL,
+  `subin_education` FLOAT NULL DEFAULT NULL,
+  PRIMARY KEY (`id`));
+
+
+-- -----------------------------------------------------
+-- Table `Structural_Violence`.`FloorType`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Structural_Violence`.`FloorType` ;
+
+CREATE TABLE IF NOT EXISTS `Structural_Violence`.`FloorType` (
+  `id` INT NULL DEFAULT NULL,
+  `FloorType` VARCHAR(255) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`));
+
+
+-- -----------------------------------------------------
+-- Table `Structural_Violence`.`FloorType_Municipalities`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Structural_Violence`.`FloorType_Municipalities` ;
+
+CREATE TABLE IF NOT EXISTS `Structural_Violence`.`FloorType_Municipalities` (
+  `id` INT NULL DEFAULT NULL,
+  `date_of_test` DATE NULL DEFAULT NULL,
+  `municipality_id` INT NULL DEFAULT NULL,
+  `FloorType` INT NULL DEFAULT NULL,
+  PRIMARY KEY (`id`));
+
+
+-- -----------------------------------------------------
+-- Table `Structural_Violence`.`FloorType_subindicator`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Structural_Violence`.`FloorType_subindicator` ;
+
+CREATE TABLE IF NOT EXISTS `Structural_Violence`.`FloorType_subindicator` (
+  `id` INT NULL DEFAULT NULL,
+  `municipality_id` INT NULL DEFAULT NULL,
+  `case` INT NULL DEFAULT NULL,
+  `count_case` INT NULL DEFAULT NULL,
+  `FloorType_subindicator` FLOAT NULL DEFAULT NULL,
+  PRIMARY KEY (`id`));
+
+
+-- -----------------------------------------------------
+-- Table `Structural_Violence`.`HealthAccess`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Structural_Violence`.`HealthAccess` ;
+
+CREATE TABLE IF NOT EXISTS `Structural_Violence`.`HealthAccess` (
+  `id` INT NULL DEFAULT NULL,
+  `municipality_id` INT NULL DEFAULT NULL,
+  `year` YEAR NULL DEFAULT NULL,
+  `first_level_centers_per_100k` FLOAT NULL DEFAULT NULL,
+  `second_level_centers_per_100k` FLOAT NULL DEFAULT NULL,
+  `third_level_centers_per_100k` FLOAT NULL DEFAULT NULL,
+  `subin_health` FLOAT NULL DEFAULT NULL,
+  PRIMARY KEY (`id`));
+
+
+-- -----------------------------------------------------
+-- Table `Structural_Violence`.`HealthCenters`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Structural_Violence`.`HealthCenters` ;
+
+CREATE TABLE IF NOT EXISTS `Structural_Violence`.`HealthCenters` (
+  `id` INT NULL DEFAULT NULL,
+  `health_center_id` INT NULL DEFAULT NULL,
+  `health_center_name` VARCHAR(255) NULL DEFAULT NULL,
+  `care_level` VARCHAR(255) NULL DEFAULT NULL,
+  `Municipalities_id` INT NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX (`health_center_id` ASC) VISIBLE);
+
+
+-- -----------------------------------------------------
+-- Table `Structural_Violence`.`Health_level`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Structural_Violence`.`Health_level` ;
+
+CREATE TABLE IF NOT EXISTS `Structural_Violence`.`Health_level` (
+  `Id` INT NULL DEFAULT NULL,
+  `Healt_level_level` VARCHAR(255) NULL DEFAULT NULL,
+  PRIMARY KEY (`Id`));
+
+
+-- -----------------------------------------------------
+-- Table `Structural_Violence`.`Inequality`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Structural_Violence`.`Inequality` ;
+
+CREATE TABLE IF NOT EXISTS `Structural_Violence`.`Inequality` (
+  `municipality_id` INT NULL DEFAULT NULL,
+  `gini_index` FLOAT NULL DEFAULT NULL);
+
+
+-- -----------------------------------------------------
+-- Table `Structural_Violence`.`Poverty`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Structural_Violence`.`Poverty` ;
+
+CREATE TABLE IF NOT EXISTS `Structural_Violence`.`Poverty` (
+  `municipality_id` INT NULL DEFAULT NULL,
+  `multidimensional_poverty_index` FLOAT NULL DEFAULT NULL,
+  `monetary_poverty_index` FLOAT NULL DEFAULT NULL,
+  `extreme_monetary_poverty_index` FLOAT NULL DEFAULT NULL,
+  `unsatisfied_basic_needs_index` FLOAT NULL DEFAULT NULL,
+  `subin_poverty` FLOAT NULL DEFAULT NULL);
+
+
+-- -----------------------------------------------------
+-- Table `Structural_Violence`.`RoomPerBedroom`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Structural_Violence`.`RoomPerBedroom` ;
+
+CREATE TABLE IF NOT EXISTS `Structural_Violence`.`RoomPerBedroom` (
+  `id` INT NULL DEFAULT NULL,
+  `Municipalities_id` INT NULL DEFAULT NULL,
+  `year` YEAR NULL DEFAULT NULL,
+  `measurement` INT NULL DEFAULT NULL,
+  `subin_room_per_bedroom` INT NULL DEFAULT NULL,
+  PRIMARY KEY (`id`));
+
+
+-- -----------------------------------------------------
+-- Table `Structural_Violence`.`StructuralViolenceIndex`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Structural_Violence`.`StructuralViolenceIndex` ;
+
+CREATE TABLE IF NOT EXISTS `Structural_Violence`.`StructuralViolenceIndex` (
+  `id` INT NULL DEFAULT NULL,
+  `Municipalities_id` INT NULL DEFAULT NULL,
+  `year` YEAR NULL DEFAULT NULL,
+  `subin_education_access` FLOAT NULL DEFAULT NULL,
+  `subin_health_access` FLOAT NULL DEFAULT NULL,
+  `subin_inequality` FLOAT NULL DEFAULT NULL,
+  `subin_poverty` FLOAT NULL DEFAULT NULL,
+  `subin_structural_influencers` FLOAT NULL DEFAULT NULL,
+  `structural_violence_index` FLOAT NULL DEFAULT NULL,
+  PRIMARY KEY (`id`));
+
+
+-- -----------------------------------------------------
+-- Table `Structural_Violence`.`VidegamesconsoleOwnership_influence`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Structural_Violence`.`VidegamesconsoleOwnership_influence` ;
+
+CREATE TABLE IF NOT EXISTS `Structural_Violence`.`VidegamesconsoleOwnership_influence` (
+  `id` INT NULL DEFAULT NULL,
+  `municipality_id` INT NULL DEFAULT NULL,
+  `date_of_test` DATE NULL DEFAULT NULL,
+  `count_cases_true` INT NULL DEFAULT NULL,
+  `count_cases_false` INT NULL DEFAULT NULL,
+  `subin_VidegamesconsoleOwnership` FLOAT NULL DEFAULT NULL,
+  PRIMARY KEY (`id`));
+
+
+-- -----------------------------------------------------
+-- Table `Structural_Violence`.`VidegamesconsoleOwnershipcases`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Structural_Violence`.`VidegamesconsoleOwnershipcases` ;
+
+CREATE TABLE IF NOT EXISTS `Structural_Violence`.`VidegamesconsoleOwnershipcases` (
+  `id` INT NULL DEFAULT NULL,
+  `date_of_test` DATE NULL DEFAULT NULL,
+  `municipality_id` INT NULL DEFAULT NULL,
+  `VidegamesconsoleOwnershipcases` TINYINT NULL DEFAULT NULL,
+  PRIMARY KEY (`id`));
+
+
+-- -----------------------------------------------------
+-- Table `Structural_Violence`.`WashingMachineOwnership`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Structural_Violence`.`WashingMachineOwnership` ;
+
+CREATE TABLE IF NOT EXISTS `Structural_Violence`.`WashingMachineOwnership` (
+  `id` INT NULL DEFAULT NULL,
+  `date_of_test` DATE NULL DEFAULT NULL,
+  `municipality_id` INT NULL DEFAULT NULL,
+  `WashingMachineOwnershipcases` TINYINT NULL DEFAULT NULL,
+  PRIMARY KEY (`id`));
+
+
+-- -----------------------------------------------------
+-- Table `Structural_Violence`.`WashingMachineOwnership_influence`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Structural_Violence`.`WashingMachineOwnership_influence` ;
+
+CREATE TABLE IF NOT EXISTS `Structural_Violence`.`WashingMachineOwnership_influence` (
+  `id` INT NULL DEFAULT NULL,
+  `municipality_id` INT NULL DEFAULT NULL,
+  `date_of_test` DATE NULL DEFAULT NULL,
+  `count_cases_true` INT NULL DEFAULT NULL,
+  `count_cases_false` INT NULL DEFAULT NULL,
+  `subin_washing_machine` FLOAT NULL DEFAULT NULL,
+  PRIMARY KEY (`id`));
+
+
+-- -----------------------------------------------------
+-- Table `Structural_Violence`.`WorkHours`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Structural_Violence`.`WorkHours` ;
+
+CREATE TABLE IF NOT EXISTS `Structural_Violence`.`WorkHours` (
+  `id` INT NULL DEFAULT NULL,
+  `Municipalities_id` INT NULL DEFAULT NULL,
+  `year` YEAR NULL DEFAULT NULL,
+  `measurement` INT NULL DEFAULT NULL,
+  `subin_work_hours` INT NULL DEFAULT NULL,
+  PRIMARY KEY (`id`));
+
+
+-- -----------------------------------------------------
+-- Table `Structural_Violence`.`WorkStatus`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Structural_Violence`.`WorkStatus` ;
+
+CREATE TABLE IF NOT EXISTS `Structural_Violence`.`WorkStatus` (
+  `id` INT NULL DEFAULT NULL,
+  `Municipalities_id` INT NULL DEFAULT NULL,
+  `year` YEAR NULL DEFAULT NULL,
+  `measurement` TINYINT NULL DEFAULT NULL,
+  `subin_work_status` INT NULL DEFAULT NULL,
+  PRIMARY KEY (`id`));
+
+
+-- -----------------------------------------------------
+-- Table `Structural_Violence`.`structutural_influencers`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Structural_Violence`.`structutural_influencers` ;
+
+CREATE TABLE IF NOT EXISTS `Structural_Violence`.`structutural_influencers` (
+  `id` INT NULL DEFAULT NULL,
+  `subin_room_per_bedroom` FLOAT NULL DEFAULT NULL,
+  `subin_videgames_console` FLOAT NULL DEFAULT NULL,
+  `subin_work_status` FLOAT NULL DEFAULT NULL,
+  `subin_work_hours` FLOAT NULL DEFAULT NULL,
+  `subin_washing_machine` FLOAT NULL DEFAULT NULL,
+  `subin_floor_type` FLOAT NULL DEFAULT NULL,
+  `subin_Internet_access` FLOAT NULL DEFAULT NULL,
+  `subin_stuctural_influencers` FLOAT NULL DEFAULT NULL,
+  PRIMARY KEY (`id`));
+
+USE `Phisical_violence` ;
+
+-- -----------------------------------------------------
+-- Table `Phisical_violence`.`FinalViolenceIndex`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Phisical_violence`.`FinalViolenceIndex` ;
+
+CREATE TABLE IF NOT EXISTS `Phisical_violence`.`FinalViolenceIndex` (
+  `id` INT NULL DEFAULT NULL,
+  `Municipalities_id` INT NULL DEFAULT NULL,
+  `year` YEAR NULL DEFAULT NULL,
+  `subin_structural_violence` INT NULL DEFAULT NULL,
+  `subin_cultural_violence` INT NULL DEFAULT NULL,
+  `subin_gender_violence` INT NULL DEFAULT NULL,
+  `subin_physical_violence` INT NULL DEFAULT NULL,
+  `final_violence_index` INT NULL DEFAULT NULL,
+  PRIMARY KEY (`id`));
+
+
+-- -----------------------------------------------------
+-- Table `Phisical_violence`.`HomicideRate`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Phisical_violence`.`HomicideRate` ;
+
+CREATE TABLE IF NOT EXISTS `Phisical_violence`.`HomicideRate` (
+  `id` INT NULL DEFAULT NULL,
+  `Municipalities_id` INT NULL DEFAULT NULL,
+  `year` YEAR NULL DEFAULT NULL,
+  `cases` INT NULL DEFAULT NULL,
+  `homicide_rate_per_100k` INT NULL DEFAULT NULL,
+  `subin_homicide` INT NULL DEFAULT NULL,
+  PRIMARY KEY (`id`));
+
+
+-- -----------------------------------------------------
+-- Table `Phisical_violence`.`PhysicalViolenceIndex`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Phisical_violence`.`PhysicalViolenceIndex` ;
+
+CREATE TABLE IF NOT EXISTS `Phisical_violence`.`PhysicalViolenceIndex` (
+  `id` INT NULL DEFAULT NULL,
+  `Municipalities_id` INT NULL DEFAULT NULL,
+  `year` YEAR NULL DEFAULT NULL,
+  `subin_homicide` INT NULL DEFAULT NULL,
+  `subin_suicide` INT NULL DEFAULT NULL,
+  `subin_domestic_violence` INT NULL DEFAULT NULL,
+  `subin_violence_against_children_and_youth` INT NULL DEFAULT NULL,
+  `subin_child_abuse` INT NULL DEFAULT NULL,
+  `physical_violence_index` INT NULL DEFAULT NULL,
+  PRIMARY KEY (`id`));
+
+
+-- -----------------------------------------------------
+-- Table `Phisical_violence`.`PhysicalViolenceInformation`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Phisical_violence`.`PhysicalViolenceInformation` ;
+
+CREATE TABLE IF NOT EXISTS `Phisical_violence`.`PhysicalViolenceInformation` (
+  `id` INT NULL DEFAULT NULL,
+  `physical_violence_type` VARCHAR(255) NULL DEFAULT NULL,
+  `Municipalities_id` INT NULL DEFAULT NULL,
+  `cases` INT NULL DEFAULT NULL,
+  `year` YEAR NULL DEFAULT NULL,
+  PRIMARY KEY (`id`));
+
+
+-- -----------------------------------------------------
+-- Table `Phisical_violence`.`SuicideRate`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Phisical_violence`.`SuicideRate` ;
+
+CREATE TABLE IF NOT EXISTS `Phisical_violence`.`SuicideRate` (
+  `id` INT NULL DEFAULT NULL,
+  `Municipalities_id` INT NULL DEFAULT NULL,
+  `year` YEAR NULL DEFAULT NULL,
+  `cases` INT NULL DEFAULT NULL,
+  `suicide_rate_per_100k` FLOAT NULL DEFAULT NULL,
+  `subin_suicide` INT NULL DEFAULT NULL,
+  PRIMARY KEY (`id`));
+
+
+-- -----------------------------------------------------
+-- Table `Phisical_violence`.`ViolenceAgainstChildrenAndYouth`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `Phisical_violence`.`ViolenceAgainstChildrenAndYouth` ;
+
+CREATE TABLE IF NOT EXISTS `Phisical_violence`.`ViolenceAgainstChildrenAndYouth` (
+  `id` INT NULL DEFAULT NULL,
+  `Municipalities_id` INT NULL DEFAULT NULL,
+  `year` YEAR NULL DEFAULT NULL,
+  `cases` INT NULL DEFAULT NULL,
+  `violence_against_children_and_youth_rate_per_100k` INT NULL DEFAULT NULL,
+  `subin_violence_against_children_and_youth` INT NULL DEFAULT NULL,
+  PRIMARY KEY (`id`));
+
+USE `Cultural_violence` ;
+
+-- -----------------------------------------------------
+-- procedure Count_ethnic_influencer
+-- -----------------------------------------------------
+
+USE `Cultural_violence`;
+DROP procedure IF EXISTS `Cultural_violence`.`Count_ethnic_influencer`;
+
+DELIMITER $$
+USE `Cultural_violence`$$
+CREATE PROCEDURE `Count_ethnic_influencer` ()
+BEGIN
+CREATE EVENT update_ethnic_influencer
+ON SCHEDULE EVERY 1 DAY
+STARTS CURRENT_DATE
+DO
+    UPDATE 
+        Cultural_violence.ethnic_Influencer
+    SET 
+        count_have_ethnia = (
+            SELECT 
+                COUNT(Cultural_violence.stu_haveEthnia_influence.haveethnia)
+            FROM 
+                Cultural_violence.stu_haveEthnia_influence
+            INNER JOIN 
+                RelationsAndConclusions.STU_reference 
+            ON 
+                Cultural_violence.stu_haveEthnia_influence.STU_reference_Id_stu = RelationsAndConclusions.STU_reference.Id_stu
+            INNER JOIN 
+                RelationsAndConclusions.Probes_references 
+            ON 
+                RelationsAndConclusions.STU_reference.Probes_references_IdProbes_references = RelationsAndConclusions.Probes_references.idProbes_references
+            WHERE 
+                RelationsAndConclusions.Probes_references.Year = Cultural_violence.ethnic_Influencer.Year
+                AND RelationsAndConclusions.STU_reference.Municipalitie_information_Municipalities_id = Cultural_violence.ethnic_Influencer.Municipalitie_Information_Municipalities_id
+                AND Cultural_violence.stu_haveEthnia_influence.haveethnia = TRUE
+        );
+
+
+END$$
+
+DELIMITER ;
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
