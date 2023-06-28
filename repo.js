@@ -1,4 +1,0 @@
-{
-    "name": "proyecto-Violencia-educación"
-  }
-  
