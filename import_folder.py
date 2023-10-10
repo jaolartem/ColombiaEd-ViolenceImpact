@@ -1,19 +1,8 @@
 import os
-import subprocess
 from pathlib import Path
-
-def install_required_libraries():
-    try:
-        import gdown
-    except ImportError:
-        print("Installing required libraries...")
-        subprocess.run(["pip", "install", "gdown"])
-        print("Libraries installed successfully.")
+import requests
 
 def download_folder():
-    # Ensure required libraries are installed
-    install_required_libraries()
-
     # Define the local folder name
     local_folder_name = "3. Resultados Saber11"
 
@@ -26,14 +15,21 @@ def download_folder():
     else:
         print(f"Downloading the folder '{local_folder_name}'...")
 
-        # Define the Google Drive link for the folder
-        google_drive_link = "https://drive.google.com/drive/folders/1Vg6-7lv8iyJCux8B0m3c5DNvOrlW1byC?usp=sharing"
+        # Replace with your Microsoft SharePoint link
+        sharepoint_link = "https://unaledu-my.sharepoint.com/:f:/g/personal/jaolartem_unal_edu_co/ElghYmfT6nJOiqUhWD7oCZsBIOIA8aU0yzglfwLMyLP-KQ?e=i0nIIv"
 
-        # Download the folder using gdown
-        import gdown
-        gdown.download(google_drive_link, output=str(local_folder_path.parent))
+        # Download the folder using requests
+        response = requests.get(sharepoint_link)
 
-        print(f"Folder '{local_folder_name}' downloaded successfully.")
+        # Check if the request was successful
+        if response.status_code == 200:
+            # Save the content to a local file
+            with open(local_folder_path, "wb") as f:
+                f.write(response.content)
+            print(f"Folder '{local_folder_name}' downloaded successfully.")
+        else:
+            print(f"Failed to download. Status code: {response.status_code}")
+            print(response.text)
 
 if __name__ == "__main__":
     download_folder()
