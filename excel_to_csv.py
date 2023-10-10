@@ -25,6 +25,7 @@ def excel_to_csv(excel):
             print(f"Successfully exported {csv_file}")
         except Exception as e:
             print(f"Failed to export {csv_file}: {e}")
+    return df_dict
 
 
 def main():
