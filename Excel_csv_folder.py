@@ -1,28 +1,30 @@
-import pandas as pd
-import glob
 import os
-# Import the excel_to_csv function from the file where you defined it
-import excel_to_csv 
+import glob
+from excel_to_csv import excel_to_csv
 
-# Define a function that takes a folder name as an argument and converts all Excel files in that folder to CSV files
-def convert_excel_to_csv(folder_name):
-    # Create the full path of the folder
-    folder_path = os.path.join(os.getcwd(), folder_name)
+def folder_to_csv(folder_path):
+    """
+    Convert all Excel files within a specified folder (and its subdirectories) 
+    to CSV format. The CSV files are saved in a backup folder structure 
+    under "CSV's_backout" which mirrors the original directory structure.
 
-    # Get the list of the names of the Excel files in the folder
-    excel_list = glob.glob(os.path.join(folder_path, "*.xlsx"))
-
-    # Iterate over the list and apply the conversion function
-    for file in excel_list:
-        # Read the Excel file and return a dictionary of data frames
-        df_dict = excel_to_csv(file)
-
-# Define a main function that calls the convert_excel_to_csv function with the desired folder name
-def main():
-    # Call the convert_excel_to_csv function with the desired folder name
-    convert_excel_to_csv("data")
-
-# Check if the module is being run as the main program or being imported by another module
-if __name__ == "__main__":
-    # Execute the main function only when the module is run as the main program
-    main()
+    Args:
+    - folder_path (str): The path to the folder containing Excel files to convert.
+    """
+    backup_directory = os.path.join(os.path.dirname(folder_path), "CSV's_backout")
+    
+    # Ensure the backup directory exists
+    if not os.path.exists(backup_directory):
+        os.makedirs(backup_directory)
+    
+    # Iterate over all Excel files in the specified folder and its subdirectories
+    for excel_path in glob.glob(os.path.join(folder_path, '**', '*.xlsx' or '*.xls'), recursive=True):
+        try:
+            # Determine the relative sub-directory for the current Excel file
+            relative_subdir = os.path.relpath(os.path.dirname(excel_path), start=folder_path)
+            
+            # Convert each Excel file to CSV files (one per sheet)
+            excel_to_csv(excel_path, os.path.join(backup_directory, relative_subdir))
+        except Exception as e:
+            print(f"Error processing file {excel_path}. Error: {e}")
+    return backup_directory
