@@ -1,12 +1,25 @@
 import glob
 import os
-# Import the excel_to_csv function from the file where you defined it
+import shutil
 from excel_to_csv import excel_to_csv 
 
+def move_csv_to_subfolder(folder_path):
+    """Move all .csv files in the specified directory to a subfolder named 'CSV'."""
+    csv_files = glob.glob(os.path.join(folder_path, "*.csv"))
+    
+    # Create 'CSV' subdirectory if it doesn't exist
+    csv_subfolder = os.path.join(folder_path, 'CSV')
+    if not os.path.exists(csv_subfolder):
+        os.makedirs(csv_subfolder)
+        
+    # Move all .csv files to the 'CSV' subdirectory
+    for csv_file in csv_files:
+        shutil.move(csv_file, csv_subfolder)
+    print(f"Moved all CSV files to {csv_subfolder}")
 
-# Define a function that takes a folder name as an argument and converts all Excel files in that folder to CSV files
 def convert_excel_to_csv(folder_name):
-    all_dfs = []
+    all_dfs = {}
+    
     # Create the full path of the folder
     folder_path = os.path.join(os.getcwd(), folder_name)
 
@@ -15,19 +28,17 @@ def convert_excel_to_csv(folder_name):
 
     # Iterate over the list and apply the conversion function
     for file in excel_list:
-        # Read the Excel file and return a dictionary of data frames
         df_dict = excel_to_csv(file)
-        all_dfs.append(df_dict)
+        all_dfs.update(df_dict)
+        
+    # Move all .csv files to 'CSV' subfolder
+    move_csv_to_subfolder(folder_path)
+    
     return all_dfs
 
-  
-
-# Define a main function that calls the convert_excel_to_csv function with the desired folder name
 def main():
     # Call the convert_excel_to_csv function with the desired folder name
     convert_excel_to_csv("data")
 
-# Check if the module is being run as the main program or being imported by another module
 if __name__ == "__main__":
-    # Execute the main function only when the module is run as the main program
     main()

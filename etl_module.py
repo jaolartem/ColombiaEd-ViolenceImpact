@@ -16,14 +16,14 @@ class FileConverter(Converters):
 
     def convert_excel(self, path):
         if os.path.isdir(path):
-            dfs_list = convert_excel_to_csv(path)
+            dfs_dict = convert_excel_to_csv(path)
             for excel_path in glob.glob(os.path.join(path, "*.xlsx")):
                 self.converted_files.append(excel_path)
-            return dfs_list
+            return dfs_dict
         else:
-            dfs_list = {os.path.basename(path): excel_to_csv(path)}
+            dfs_dict = {os.path.basename(path): excel_to_csv(path)}
             self.converted_files.append(path)
-            return dfs_list
+            return dfs_dict
        
 
 class DataFrameTransformation:
@@ -40,12 +40,18 @@ class ETLProcessor:
         self.path = path
         self.file_converter = FileConverter()
         self.df_transformer = DataFrameTransformation()
+        self.dfs_dicc = {}  
 
     def process(self):
-        dfs_list = self.file_converter.convert_excel(self.path)
-        for df_name, df in dfs_list.items():
+        self.dfs_dicc = self.file_converter.convert_excel(self.path)
+        for df_name, df in self.dfs_dicc.items():
             if df_name == "MUNICIPIO DEL HECHO":
-                self.df_transformer.transform_and_save(df_name, df)
+                transformed_df = self.df_transformer.transform_and_save(df_name, df)
+                self.dfs_dicc[df_name] = transformed_df  
+        return self.dfs_dicc
+
+  
+
 
     def get_converted_files(self):
         return self.file_converter.converted_files
