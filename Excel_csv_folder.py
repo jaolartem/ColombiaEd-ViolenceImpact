@@ -1,11 +1,12 @@
-import pandas as pd
 import glob
 import os
 # Import the excel_to_csv function from the file where you defined it
-import excel_to_csv 
+from excel_to_csv import excel_to_csv 
+
 
 # Define a function that takes a folder name as an argument and converts all Excel files in that folder to CSV files
 def convert_excel_to_csv(folder_name):
+    all_dfs = []
     # Create the full path of the folder
     folder_path = os.path.join(os.getcwd(), folder_name)
 
@@ -16,6 +17,10 @@ def convert_excel_to_csv(folder_name):
     for file in excel_list:
         # Read the Excel file and return a dictionary of data frames
         df_dict = excel_to_csv(file)
+        all_dfs.append(df_dict)
+    return all_dfs
+
+  
 
 # Define a main function that calls the convert_excel_to_csv function with the desired folder name
 def main():
