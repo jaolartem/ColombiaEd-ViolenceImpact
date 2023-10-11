@@ -8,25 +8,21 @@ def excel_to_csv(excel):
     Parameters:
         excel: a string with the Excel file name
     Return:
-        None
+         - dict: A dictionary where keys are sheet names and values are corresponding dataframes.
     """
     # Read the Excel file as a dictionary of data frames
-    df_dict = pd.read_excel(excel, sheet_name=None)
-    
-    # Loop through the dictionary and export each data frame to a CSV file
-    for sheet_name, df in df_dict.items():
-        # Use the os module to create the CSV file name with the correct path separator
-        csv_file = os.path.join(sheet_name + ".csv")
-        
-        # Use a try-except block to handle any errors
-        try:
-            # Export the data frame to CSV
-            df.to_csv(csv_file, index=False, header=True)
-            print(f"Successfully exported {csv_file}")
-        except Exception as e:
-            print(f"Failed to export {csv_file}: {e}")
-    return df_dict
-
+    def excel_to_csv(excel):
+        df_dict = pd.read_excel(excel, sheet_name=None)
+        dfs_list = []
+        for sheet_name, df in df_dict.items():
+            csv_file = os.path.join(sheet_name + ".csv")
+            try:
+                df.to_csv(csv_file, index=False, header=True)
+                print(f"Successfully exported {csv_file}")
+            except Exception as e:
+                print(f"Failed to export {csv_file}: {e}")
+            dfs_list.append((sheet_name, df))
+        return dfs_list
 
 def main():
     # Call the convert_excel_to_csv function with the desired folder name
