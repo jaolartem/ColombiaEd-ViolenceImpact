@@ -2,14 +2,15 @@ import os
 import glob
 from excel_to_csv import excel_to_csv
 from Excel_csv_folder import folder_to_csv
-from pivot_and_save_df import pivot_and_save_df
+from csv_to_df_module import csv_to_df_dict
+
 
 # Define the global dictionary
 ALL_DFS = {}
 
 class Extract:
     """
-    Class responsible for data extraction from Excel files.
+    Class responsible for data extraction.
     """
     def __init__(self):
         self.converted_files = []
@@ -20,24 +21,24 @@ class Extract:
         
         Args:
         - path (str): Path to the Excel file or directory containing multiple Excel files.
-        
-        Updates:
-        - ALL_DFS: Global dictionary containing sheet names as keys and corresponding DataFrames as values.
-        
         """
         global ALL_DFS
         
-        # Check if the given path is a directory or single file
-        if os.path.isdir(path):
-            dfs_dict = folder_to_csv(path)  # This function should handle the directory, not the excel_to_csv function
-            for excel_path in glob.glob(os.path.join(path, "*.xlsx")):
-                self.converted_files.append(excel_path)
+        try:
+            # Check if the given path is a directory or single file
+            if os.path.isdir(path):
+                backup_directory = folder_to_csv(path)
+            else:
+                # If it's a single file
+                backup_directory = excel_to_csv(path)
+            
+            dfs_dict = csv_to_df_dict(backup_directory)
             ALL_DFS.update(dfs_dict)
-        else:
-            # If it's a single file
-            dfs_dict = {os.path.basename(path): excel_to_csv(path)}
-            self.converted_files.append(path)
-            ALL_DFS.update(dfs_dict)
+
+        except Exception as e:
+            print(f"Error in extraction process. Error: {e}")
+
+
 class Transformation:
     """
     Class responsible for data transformation.
