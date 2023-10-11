@@ -25,9 +25,9 @@ def pivot_and_save_df(sheet_name, dataframe):
             csv_file = sheet_name + "_" + title + ".csv"
             try:
                 sub_dataframe.to_csv(csv_file, index=True, header=True)
+                transformed_dfs[csv_file] = sub_dataframe
                 print(f"Successfully saved pivoted DataFrame as {csv_file}")
-                transformed_dfs[title] = sub_dataframe
             except Exception as e:
                 print(f"Failed to save {csv_file}: {e}")
-                
+
     return transformed_dfs

@@ -4,64 +4,61 @@ from excel_to_csv import excel_to_csv
 from Excel_csv_folder import convert_excel_to_csv
 from pivot_and_save_df import pivot_and_save_df
 
+# Define the global dictionary
+ALL_DFS = {}
 
-class Converters:
+class Extract:
+    """
+    Class responsible for data extraction.
+    """
     def __init__(self):
-        pass
-
-class FileConverter(Converters):
-    def __init__(self):
-        super().__init__()
         self.converted_files = []
 
-    def convert_excel(self, path):
+    def extract_from_excel(self, path):
+        """
+        Extracts data from Excel and converts it to DataFrames stored in ALL_DFS.
+        
+        Args:
+        - path (str): Path to the Excel file or directory containing multiple Excel files.
+        
+        """
+        global ALL_DFS
+        
+        # Check if the given path is a directory or single file
         if os.path.isdir(path):
             dfs_dict = convert_excel_to_csv(path)
             for excel_path in glob.glob(os.path.join(path, "*.xlsx")):
                 self.converted_files.append(excel_path)
-            return dfs_dict
+            ALL_DFS.update(dfs_dict)
         else:
+            # If it's a single file
             dfs_dict = {os.path.basename(path): excel_to_csv(path)}
             self.converted_files.append(path)
-            return dfs_dict
-       
+            ALL_DFS.update(dfs_dict)
 
-class DataFrameTransformation:
-    def __init__(self):
-        self.transformed_dfs = []
+class Transformation:
+    """Class responsible for data transformation."""
 
-    def transform_and_save(self, df_name, df):
-        df_pivoted = pivot_and_save_df(df_name, df)
-        self.transformed_dfs.append(df_name)
-        return df_pivoted
-
-class ETLProcessor:
-    def __init__(self, path):
-        self.path = path
-        self.file_converter = FileConverter()
-        self.df_transformer = DataFrameTransformation()
-        self.dfs_dicc = {}  
+    def transform_and_save(self, sheet_name, dataframe):
+        """
+        Transforms and saves the DataFrame based on certain conditions.
+        Returns the transformed DataFrame.
+        """
+        if sheet_name == "MUNICIPIO DEL HECHO":
+            transformed_df = pivot_and_save_df(sheet_name, dataframe)
+            return transformed_df
+        return dataframe  # If the condition is not met, simply return the original DataFrame
 
     def process(self):
-        self.dfs_dicc = self.file_converter.convert_excel(self.path)
-        for df_name, df in self.dfs_dicc.items():
-            if df_name == "MUNICIPIO DEL HECHO":
-                transformed_df = self.df_transformer.transform_and_save(df_name, df)
-                self.dfs_dicc[df_name] = transformed_df  
-        return self.dfs_dicc
-
-  
-
-
-    def get_converted_files(self):
-        return self.file_converter.converted_files
-
-    def get_transformed_dfs(self):
-        return self.df_transformer.transformed_dfs
+        """Processes all DataFrames in global_dfs_dict based on transformation conditions."""
+        global global_dfs_dict
+        
+        # Iterate over the global dictionary and transform the data frames in place
+        for df_name, df in list(global_dfs_dict.items()):
+            global_dfs_dict[df_name] = self.transform_and_save(df_name, df)
 
 if __name__ == "__main__":
-    path = input("Enter the path (file or folder) containing Excel files: ")
-    processor = ETLProcessor(path)
-    processor.process()
-    print(f"Converted Files: {processor.get_converted_files()}")
-    print(f"Transformed DataFrames: {processor.get_transformed_dfs()}")
+    folder_name = '/path/to/your/folder'
+    processor = Transformation()
+    dfs_dict = processor.process(folder_name)
+    print(dfs_dict)
