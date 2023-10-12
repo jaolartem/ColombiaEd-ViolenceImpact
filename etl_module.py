@@ -1,9 +1,7 @@
 import os
 import glob
-from excel_to_csv import excel_to_csv
-from Excel_csv_folder import folder_to_csv
-from csv_to_df_module import csv_to_df_dict
-
+from excel_to_csv import load_excel_to_dict
+from csv_to_df import load_csv_to_dict
 
 # Define the global dictionary
 ALL_DFS = {}
@@ -25,19 +23,27 @@ class Extract:
         global ALL_DFS
         
         try:
-            # Check if the given path is a directory or single file
-            if os.path.isdir(path):
-                backup_directory = folder_to_csv(path)
-            else:
-                # If it's a single file
-                backup_directory = excel_to_csv(path)
             
-            dfs_dict = csv_to_df_dict(backup_directory)
+            dfs_dict = load_excel_to_dict(path)
             ALL_DFS.update(dfs_dict)
 
         except Exception as e:
             print(f"Error in extraction process. Error: {e}")
-
+            
+    def from_csv(self, csv_path): 
+        """
+        Extracts data from CSVs and loads them into DataFrames stored in ALL_DFS.
+        
+        Args:
+        - csv_path (str): Path to the CSV file or directory containing multiple CSV files.
+        """
+        global ALL_DFS
+        try:
+            loaded_data = load_csv_to_dict(csv_path)
+            ALL_DFS.update(loaded_data)
+        except Exception as e:
+            print(f"Error in extraction process. Error: {e}")
+        
 
 class Transformation:
     """
@@ -80,6 +86,7 @@ if __name__ == "__main__":
     folder_name = '/path/to/your/folder'
     extractor = Extract()
     extractor.from_excel(folder_name)
+    extractor.from_csv(folder_name)
     transformer = Transformation()
     dfs_dict = transformer.Violence_pivot()
     print(dfs_dict)
