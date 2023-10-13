@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 import logging
-import hashlib
+import uuid
 
 logging.basicConfig(filename='etl_errors.log', level=logging.ERROR,
                     format='%(asctime)s - %(levelname)s - %(message)s')
@@ -36,7 +36,8 @@ def load_excel_to_dict(path, backup_folder="backup_csv"):
         for full_path in excel_files:
             df_dict = pd.read_excel(full_path, sheet_name=None)
             for sheet_name, df in df_dict.items():
-                unique_id = hashlib.md5(sheet_name.encode()).hexdigest()[:3]
+                file_name = os.path.basename(full_path)
+                unique_id = f"{os.path.basename(file_name)}_{sheet_name}_{str(uuid.uuid4())[:4]}"
                 dfs[unique_id] = df
 
                 # Backup the loaded excel

@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 import logging
-import hashlib
+import uuid
 
 logging.basicConfig(filename='etl_errors.log', level=logging.ERROR,
                     format='%(asctime)s - %(levelname)s - %(message)s')
@@ -29,7 +29,7 @@ def load_csv_to_dict(csv_folder, backup_folder="backup_csv"):
     try:
         for file_name in os.listdir(csv_folder):
             if file_name.endswith('.csv'):
-                unique_id = hashlib.md5(file_name.encode()).hexdigest()[:3]
+                unique_id = f"{os.path.basename(file_name)}_{str(uuid.uuid4())[:4]}"
                 full_path = os.path.join(csv_folder, file_name)
                 df = pd.read_csv(full_path)
                 dfs[unique_id] = df
