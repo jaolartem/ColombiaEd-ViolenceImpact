@@ -28,7 +28,10 @@ def load_excel_to_dict(path, backup_folder="backup_csv"):
     
     # Get list of Excel files
     if os.path.isdir(path):
-        excel_files = [os.path.join(path, f) for f in os.listdir(path) if f.endswith(('.xlsx', '.xls'))]
+       excel_files = [os.path.join(dirpath, f) 
+               for dirpath, dirnames, filenames in os.walk(path) 
+               for f in filenames if f.endswith(('.xlsx', '.xls'))]
+
     else:
         excel_files = [path] if path.endswith(('.xlsx', '.xls')) else []
 
