@@ -1,0 +1,6 @@
+2023-10-13 11:09:27,634 - ERROR - Error processing CSV files in /path/to/csv/folder. Error: [Errno 2] No such file or directory: '/path/to/csv/folder'
+2023-10-13 11:19:32,994 - ERROR - Error processing CSV files in /path/to/csv/folder. Error: [Errno 2] No such file or directory: '/path/to/csv/folder'
+2023-10-13 11:37:13,632 - ERROR - Error processing Excel files in /home/jaolartem/Familia/Datos/proyecto/Colombia 2020. Error: name 'file_name' is not defined
+2023-10-13 11:37:13,644 - ERROR - Error processing CSV files in /path/to/csv/folder. Error: [Errno 2] No such file or directory: '/path/to/csv/folder'
+2023-10-13 11:51:19,974 - ERROR - Error processing CSV files in /path/to/csv/folder. Error: [Errno 2] No such file or directory: '/path/to/csv/folder'
+2023-10-13 12:32:29,394 - ERROR - Error processing CSV files in /path/to/csv/folder. Error: [Errno 2] No such file or directory: '/path/to/csv/folder'
