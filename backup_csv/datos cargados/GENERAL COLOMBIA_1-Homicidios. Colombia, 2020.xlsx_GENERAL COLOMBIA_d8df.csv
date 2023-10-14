@@ -1,0 +1,346 @@
+HOMICIDIOS EN COLOMBIA AÑO 2020,VIOLENTA - HOMICIDIO,VIOLENTA - HOMICIDIO.1,VIOLENTA - HOMICIDIO.2,VIOLENTA - HOMICIDIO.3,VIOLENTA - HOMICIDIO.4,VIOLENTA - HOMICIDIO.5,VIOLENTA - HOMICIDIO.6,VIOLENTA - HOMICIDIO.7,VIOLENTA - HOMICIDIO.8,VIOLENTA - HOMICIDIO.9
+SEXO,Hombre,Hombre,HOMBRE,Mujer,Mujer,MUJER,Indeterminado,Indeterminado,INDETERMINADO,TOTAL
+VARIABLE / MAYOR DE EDAD (> 18 AÑOS) O MENOR DE EDAD (< 18 AÑOS),Menores de Edad (<18 años),Mayores de Edad (>18 años),TOTAL,Menores de Edad (<18 años),Mayores de Edad (>18 años),TOTAL,Menores de Edad (<18 años),Mayores de Edad (>18 años),TOTAL,
+VARIABLE: GRUPO DE EDAD,,,,,,,,,,
+(00 a 04),23,0,23,21,0,21,0,0,0,44
+(05 a 09),7,0,7,11,0,11,0,0,0,18
+(10 a 14),59,0,59,18,0,18,0,0,0,77
+(15 a 17),393,0,393,43,0,43,1,0,1,437
+(18 a 19),0,616,616,0,47,47,0,0,0,663
+(20 a 24),0,2147,2147,0,151,151,0,0,0,2298
+(25 a 29),0,1994,1994,0,143,143,0,1,1,2138
+(30 a 34),0,1581,1581,0,99,99,0,0,0,1680
+(35 a 39),0,1098,1098,0,99,99,0,0,0,1197
+(40 a 44),0,750,750,0,71,71,0,0,0,821
+(45 a 49),0,517,517,0,67,67,0,0,0,584
+(50 a 54),0,437,437,0,40,40,0,0,0,477
+(55 a 59),0,335,335,0,27,27,0,0,0,362
+(60 a 64),0,234,234,0,21,21,0,0,0,255
+(65 a 69),0,123,123,0,9,9,0,0,0,132
+(70 a 74),0,62,62,0,13,13,0,0,0,75
+(75 a 79),0,29,29,0,8,8,0,0,0,37
+(80 y más),0,21,21,0,10,10,0,0,0,31
+TOTAL,482,9944,10426,93,805,898,1,1,2,11326
+VARIABLE: GRUPO EDAD JUDICIAL,,,,,,,,,,
+(00 a 04),23,0,23,21,0,21,0,0,0,44
+(05 a 09),7,0,7,11,0,11,0,0,0,18
+(10 a 13),23,0,23,7,0,7,0,0,0,30
+(14 a 17),429,0,429,54,0,54,1,0,1,484
+(18 a 19),0,616,616,0,47,47,0,0,0,663
+(20 a 24),0,2147,2147,0,151,151,0,0,0,2298
+(25 a 28),0,1627,1627,0,116,116,0,1,1,1744
+(29 a 34),0,1948,1948,0,126,126,0,0,0,2074
+(35 a 39),0,1098,1098,0,99,99,0,0,0,1197
+(40 a 44),0,750,750,0,71,71,0,0,0,821
+(45 a 49),0,517,517,0,67,67,0,0,0,584
+(50 a 54),0,437,437,0,40,40,0,0,0,477
+(55 a 59),0,335,335,0,27,27,0,0,0,362
+(60 a 64),0,234,234,0,21,21,0,0,0,255
+(65 a 69),0,123,123,0,9,9,0,0,0,132
+(70 a 74),0,62,62,0,13,13,0,0,0,75
+(75 a 79),0,29,29,0,8,8,0,0,0,37
+(80 y más),0,21,21,0,10,10,0,0,0,31
+TOTAL,482,9944,10426,93,805,898,1,1,2,11326
+VARIABLE: CICLO VITAL,,,,,,,,,,
+(00 a 05) Primera Infancia,24,0,24,25,0,25,0,0,0,49
+(06 a 11) Infancia,15,0,15,8,0,8,0,0,0,23
+(12 a 17) Adolescencia,443,0,443,60,0,60,1,0,1,504
+(18 a 28) Juventud,0,4390,4390,0,314,314,0,1,1,4705
+(29 a 59) Adultez,0,5085,5085,0,430,430,0,0,0,5515
+(Más de 60) Adulto Mayor,0,469,469,0,61,61,0,0,0,530
+TOTAL,482,9944,10426,93,805,898,1,1,2,11326
+VARIABLE: ESCOLARIDAD,,,,,,,,,,
+Educación inicial y educación preescolar,54,1158,1212,12,60,72,0,0,0,1284
+Educación básica primaria,262,3494,3756,37,233,270,0,0,0,4026
+Educación básica secundaria o secundaria baja,59,684,743,9,53,62,0,0,0,805
+Educación media o secundaria alta,29,2531,2560,3,251,254,0,0,0,2814
+Educación técnica profesional y tecnológica,0,204,204,0,42,42,0,0,0,246
+Universitario,0,5,5,0,1,1,0,0,0,6
+"Especialización, maestría o equivalente",0,3,3,0,0,0,0,0,0,3
+Sin escolaridad,24,252,276,17,24,41,0,0,0,317
+Sin información,54,1613,1667,15,141,156,1,1,2,1825
+TOTAL,482,9944,10426,93,805,898,1,1,2,11326
+VARIABLE: ESTADO CIVIL,,,,,,,,,,
+Soltero(a),379,4210,4589,40,317,357,0,0,0,4946
+Unión libre,25,3459,3484,12,269,281,0,0,0,3765
+Casado(a),0,598,598,0,45,45,0,0,0,643
+"Separado(a), divorciado(a)",0,202,202,0,51,51,0,0,0,253
+Viudo(a),0,36,36,0,22,22,0,0,0,58
+No aplica,30,0,30,32,0,32,0,0,0,62
+Sin información,48,1439,1487,9,101,110,1,1,2,1599
+TOTAL,482,9944,10426,93,805,898,1,1,2,11326
+VARIABLE: FACTOR DE VULNERABILIDAD,,,,,,,,,,
+Campesinos (as) y/o trabajadores (as) del campo,8,353,361,2,14,16,0,0,0,377
+Comunidad LGBT,1,54,55,0,6,6,0,0,0,61
+Concejales,0,2,2,0,1,1,0,0,0,3
+Discapacitados,0,0,0,0,1,1,0,0,0,1
+Ex convictos (as),0,36,36,0,0,0,0,0,0,36
+Funcionarios judiciales,0,27,27,0,0,0,0,0,0,27
+Grupos étnicos,42,451,493,10,36,46,0,0,0,539
+Herido y/o enfermo bajo protección sanitaria o médica,0,2,2,0,0,0,0,0,0,2
+Lider,0,38,38,0,5,5,0,0,0,43
+Maestro/Educador,0,4,4,0,2,2,0,0,0,6
+Miembros de Organizaciones No Gubernamentales (ONG) ,0,3,3,0,0,0,0,0,0,3
+Pandillas,0,2,2,0,0,0,0,0,0,2
+Persona adicta a una droga natural o sintética,25,585,610,5,19,24,0,0,0,634
+Persona en condición de desplazamiento,7,93,100,1,15,16,0,0,0,116
+Persona habitante de la calle,2,128,130,0,3,3,0,0,0,133
+Personas bajo custodia,0,60,60,0,0,0,0,0,0,60
+Personas desmovilizadas o reinsertadas,1,37,38,0,0,0,0,0,0,38
+Personas en situación de prostitución,0,2,2,0,12,12,0,0,0,14
+Personas que ejercen actividades de periodismo,0,1,1,0,0,0,0,0,0,1
+Personas que ejercen actividades políticas,0,11,11,0,1,1,0,0,0,12
+Personas que ejercen actividades relacionadas con la salud en zonas de conflicto,0,3,3,0,4,4,0,0,0,7
+Presunto colaborador de grupo ilegal,5,40,45,0,4,4,0,0,0,49
+Recicladores,0,22,22,0,0,0,0,0,0,22
+Religiosos,0,3,3,0,1,1,0,0,0,4
+Otro,11,193,204,4,23,27,0,0,0,231
+Ninguno,304,5950,6254,58,530,588,0,0,0,6842
+Sin información ,76,1844,1920,13,128,141,1,1,2,2063
+TOTAL,482,9944,10426,93,805,898,1,1,2,11326
+VARIABLE: ANCESTRO RACIAL,,,,,,,,,,
+Amarilla,0,2,2,0,1,1,0,0,0,3
+Blanco,12,264,276,8,20,28,0,1,1,305
+Indigena,18,144,162,8,13,21,0,0,0,183
+Mestizo,332,7618,7950,57,635,692,0,0,0,8642
+Mulato,14,187,201,4,16,20,0,0,0,221
+Negro,66,853,919,6,60,66,0,0,0,985
+Sin Información,40,876,916,10,60,70,1,0,1,987
+TOTAL,482,9944,10426,93,805,898,1,1,2,11326
+VARIABLE: PRESUNTO AGRESOR,,,,,,,,,,
+Agresor desconocido,120,3203,3323,24,199,223,1,0,1,3547
+Agresor desconocido,120,3203,3323,24,199,223,1,0,1,3547
+Amigo (a),4,90,94,2,8,10,0,0,0,104
+Amigo (a),4,90,94,2,8,10,0,0,0,104
+Conocido,20,322,342,2,22,24,0,0,0,366
+Arrendador,0,3,3,0,0,0,0,0,0,3
+Arrendatario,0,3,3,0,1,1,0,0,0,4
+Cliente,0,2,2,0,3,3,0,0,0,5
+Compañero (a) de trabajo ,0,21,21,0,0,0,0,0,0,21
+Conocido sin ningun trato,17,244,261,0,14,14,0,0,0,275
+Empleado (a),0,3,3,0,0,0,0,0,0,3
+Proveedor,0,2,2,0,0,0,0,0,0,2
+Vecino,3,44,47,2,4,6,0,0,0,53
+Delincuencia común,9,230,239,0,13,13,0,0,0,252
+Delincuencia común,9,230,239,0,13,13,0,0,0,252
+Familiar,14,86,100,7,16,23,0,0,0,123
+Abuelo (a),0,1,1,0,0,0,0,0,0,1
+Cuñado (a),1,10,11,0,0,0,0,0,0,11
+Hermano (a),2,16,18,0,5,5,0,0,0,23
+Hijo (a),0,7,7,0,3,3,0,0,0,10
+Madrastra                                                                                           ,1,0,1,0,0,0,0,0,0,1
+Madre,2,0,2,2,0,2,0,0,0,4
+Padrastro,3,1,4,0,1,1,0,0,0,5
+Padre,3,0,3,4,1,5,0,0,0,8
+Primo (a),1,8,9,1,0,1,0,0,0,10
+Suegro (a),0,5,5,0,0,0,0,0,0,5
+Tío (a),0,2,2,0,0,0,0,0,0,2
+Otros familiares civiles o consanguíneos,1,36,37,0,6,6,0,0,0,43
+Miembro de grupos alzados al margen de la ley,2,122,124,1,11,12,0,0,0,136
+ELN,0,46,46,1,2,3,0,0,0,49
+FARC,2,23,25,0,3,3,0,0,0,28
+Fuerzas irregulares,0,32,32,0,4,4,0,0,0,36
+Otras guerrillas,0,21,21,0,2,2,0,0,0,23
+Miembro de un grupo de la delincuencia organizada,7,79,86,0,2,2,0,0,0,88
+Narcotraficantes,1,5,6,0,0,0,0,0,0,6
+Pandillas,6,61,67,0,2,2,0,0,0,69
+Paramilitares,0,13,13,0,0,0,0,0,0,13
+"Miembros de las fuerzas armadas, de policía, policía judicial y servicios de inteligencia",12,184,196,4,8,12,0,0,0,208
+Fuerzas militares,8,99,107,1,3,4,0,0,0,111
+Policía,4,79,83,3,2,5,0,0,0,88
+Servicios de inteligencia,0,6,6,0,3,3,0,0,0,9
+Miembros de seguridad privada,2,7,9,0,0,0,0,0,0,9
+Miembros de seguridad privada,2,7,9,0,0,0,0,0,0,9
+Pareja o ex pareja,0,34,34,9,114,123,0,0,0,157
+Amante ,0,1,1,0,0,0,0,0,0,1
+Compañero (a)  permanente,0,15,15,6,58,64,0,0,0,79
+Esposo (a),0,11,11,0,16,16,0,0,0,27
+Ex - Amante,0,0,0,0,1,1,0,0,0,1
+Ex - compañero (a) permanente,0,3,3,0,20,20,0,0,0,23
+Ex - esposo (a),0,1,1,0,4,4,0,0,0,5
+Ex - Novio (a),0,1,1,0,7,7,0,0,0,8
+Novio (a),0,2,2,3,8,11,0,0,0,13
+Personal de custodia,0,3,3,0,0,0,0,0,0,3
+Personal de custodia,0,3,3,0,0,0,0,0,0,3
+Otro,0,1,1,0,0,0,0,0,0,1
+Barra(s) futbolera(s),0,1,1,0,0,0,0,0,0,1
+Sin información,292,5583,5875,44,412,456,0,1,1,6332
+Sin información,292,5583,5875,44,412,456,0,1,1,6332
+TOTAL,482,9944,10426,93,805,898,1,1,2,11326
+VARIABLE: CIRCUNSTANCIA DEL HECHO,,,,,,,,,,
+Feminicidio,0,0,0,10,80,90,0,0,0,90
+Feminicidio,0,0,0,10,80,90,0,0,0,90
+Violencia Económica,8,297,305,1,31,32,0,0,0,337
+Atraco callejero o intento de,5,197,202,0,14,14,0,0,0,216
+Hurto,3,100,103,1,17,18,0,0,0,121
+Violencia interpersonal,86,1780,1866,8,68,76,0,0,0,1942
+Ajuste de cuentas,46,955,1001,6,41,47,0,0,0,1048
+Intervención Legal,2,30,32,0,0,0,0,0,0,32
+Riña,38,795,833,2,27,29,0,0,0,862
+Violencia Intrafamiliar,14,120,134,9,69,78,0,0,0,212
+"Violencia a niños, niñas y adolescentes",14,0,14,7,0,7,0,0,0,21
+Violencia al adulto mayor,0,10,10,0,2,2,0,0,0,12
+Violencia de pareja,0,34,34,2,57,59,0,0,0,93
+Violencia entre otros familiares,0,76,76,0,10,10,0,0,0,86
+Violencia sexual,0,1,1,2,1,3,0,0,0,4
+Violencia sexual,0,1,1,2,1,3,0,0,0,4
+Violencia Sociopolítica,12,305,317,4,20,24,0,0,0,341
+Acción grupos alzados al margen de la ley,3,127,130,0,12,12,0,0,0,142
+Acción militar,2,87,89,2,4,6,0,0,0,95
+Agresión contra grupos marginales o descalificados,2,12,14,0,2,2,0,0,0,16
+Artefacto explosivo,0,6,6,1,1,2,0,0,0,8
+Enfrentamiento armado,5,67,72,1,1,2,0,0,0,74
+Retención ilegal ,0,5,5,0,0,0,0,0,0,5
+Violencia Sociopolitica,0,1,1,0,0,0,0,0,0,1
+Otra,8,339,347,2,26,28,0,0,0,375
+Otra,8,339,347,2,26,28,0,0,0,375
+Sin información,354,7102,7456,57,510,567,1,1,2,8025
+Sin información,354,7102,7456,57,510,567,1,1,2,8025
+TOTAL,482,9944,10426,93,805,898,1,1,2,11326
+VARIABLE: ACTIVIDAD DURANTE EL HECHO,,,,,,,,,,
+Actividades de desplazamiento de un lugar a otro,4,115,119,0,4,4,0,0,0,123
+Actividades de trabajo doméstico no pagado para el uso del propio hogar,14,226,240,9,64,73,0,0,0,313
+Actividades ilícitas o delictivas,8,186,194,1,5,6,0,0,0,200
+Actividades relacionadas con el cuidado no pagado de miembros del hogar,0,1,1,0,0,0,0,0,0,1
+Actividades relacionadas con el estudio y el aprendizaje,5,227,232,1,15,16,0,0,0,248
+Actividades relacionadas con el trabajo remunerado,3,76,79,1,2,3,0,0,0,82
+"Actividades relacionadas con la asistencia a eventos culturales, de entretenimiento y/o deportivos",55,1146,1201,9,85,94,0,0,0,1295
+Actividades relacionadas con los deportes y el ejercicio físico,9,73,82,1,12,13,0,0,0,95
+"Actividades relacionadas con manifestaciones públicas (Marchas, protestas, etc)",2,19,21,0,3,3,0,0,0,24
+Actividades vitales o relacionadas con el cuidado personal,9,290,299,8,41,49,0,0,0,348
+Durante una retención ilegal (secuestro),0,16,16,0,3,3,0,0,0,19
+Durante una retención legal (preso detenido),0,24,24,0,0,0,0,0,0,24
+"Misión humanitaria, médica y/o sanitaria",1,13,14,1,2,3,0,0,0,17
+Otra,371,7381,7752,62,562,624,1,1,2,8378
+Sin información,1,151,152,0,7,7,0,0,0,159
+TOTAL,482,9944,10426,93,805,898,1,1,2,11326
+VARIABLE: MECANISMO CAUSAL,,,,,,,,,,
+Agentes y mecanismo explosivo,1,53,54,1,2,3,0,0,0,57
+Contundente,26,207,233,13,43,56,0,0,0,289
+Cortante,3,42,45,0,12,12,0,0,0,57
+Cortocontundente,8,238,246,3,20,23,0,0,0,269
+Cortopunzante,63,1529,1592,12,176,188,0,0,0,1780
+Generadores de asfixia,11,142,153,10,59,69,0,1,1,223
+Proyectil de arma de fuego,367,7695,8062,51,483,534,1,0,1,8597
+Punzante,1,14,15,0,2,2,0,0,0,17
+Térmico,0,12,12,0,3,3,0,0,0,15
+Tóxico,1,7,8,1,5,6,0,0,0,14
+Otros,1,0,1,1,0,1,0,0,0,2
+Por determinar,0,5,5,1,0,1,0,0,0,6
+TOTAL,482,9944,10426,93,805,898,1,1,2,11326
+VARIABLE: DIAGNÓSTICO TOPOGRÁFICO DE LA LESIÓN,,,,,,,,,,
+Área genital / Paragenital                                                                          ,0,2,2,0,0,0,0,0,0,2
+Politraumatismo,154,3818,3972,30,292,322,1,1,2,4296
+Trauma área Pélvica,2,25,27,0,1,1,0,0,0,28
+Trauma craneano,148,2480,2628,27,188,215,0,0,0,2843
+Trauma de abdomen,17,361,378,4,27,31,0,0,0,409
+Trauma de cuello,26,465,491,8,94,102,0,0,0,593
+Trauma de miembros,3,102,105,1,6,7,0,0,0,112
+Trauma de Tórax,96,2142,2238,12,151,163,0,0,0,2401
+Trauma facial,6,65,71,3,13,16,0,0,0,87
+Sin lesiones,5,11,16,2,7,9,0,0,0,25
+Por determinar,25,473,498,6,26,32,0,0,0,530
+TOTAL,482,9944,10426,93,805,898,1,1,2,11326
+VARIABLE: PAÍS DE NACIMIENTO DE LA VÍCTIMA,,,,,,,,,,
+Brasil,0,1,1,0,1,1,0,0,0,2
+Colombia,454,9250,9704,79,723,802,0,0,0,10506
+Costa Rica,0,1,1,0,0,0,0,0,0,1
+Ecuador,1,3,4,0,0,0,0,0,0,4
+España,0,1,1,1,0,1,0,0,0,2
+Estados Unidos,0,3,3,0,1,1,0,0,0,4
+Honduras,0,0,0,0,1,1,0,0,0,1
+Italia,0,1,1,0,0,0,0,0,0,1
+Myanmar,0,1,1,0,0,0,0,0,0,1
+Nicaragua,0,1,1,0,0,0,0,0,0,1
+Panamá,0,1,1,0,0,0,0,0,0,1
+Perú,0,4,4,0,0,0,0,0,0,4
+Puerto Rico,0,1,1,0,0,0,0,0,0,1
+Reino Unido,0,0,0,0,1,1,0,0,0,1
+República Dominicana,0,1,1,0,0,0,0,0,0,1
+Serbia,0,1,1,0,0,0,0,0,0,1
+Venezuela,23,541,564,8,69,77,0,0,0,641
+Sin Información,4,133,137,5,9,14,1,1,2,153
+TOTAL,482,9944,10426,93,805,898,1,1,2,11326
+VARIABLE: ESCENARIO DEL HECHO,,,,,,,,,,
+Ambulancia - Transporte Sanitario,0,1,1,0,1,1,0,0,0,2
+Áreas Deportivas y/o Recreativas,3,25,28,0,0,0,0,0,0,28
+"Calle (Autopista, Avenida, Dentro de La Ciudad)",22,466,488,1,25,26,0,0,0,514
+Carretera (Fuera de La Ciudad),4,224,228,2,5,7,0,0,0,235
+"Centro de Atención Médica (Hospital, Clínica, Consultorio, Etc)",8,91,99,1,12,13,0,0,0,112
+Centros de Reclusión,0,43,43,0,0,0,0,0,0,43
+Centros Educativos,0,6,6,0,0,0,0,0,0,6
+"Espacios Acuáticos al Aire Libre (Mar, Río, Arroyo, Humedal, Lago, Etc)",6,152,158,5,11,16,0,0,0,174
+"Espacios Terrestres al Aire Libre (Bosque, Potrero, Montaña, Playa, Etc)",43,756,799,11,49,60,1,0,1,860
+"Establecimiento Comercial (Tienda, Centro Comercial, Almacén, Plaza de Mercado)",2,72,74,1,6,7,0,0,0,81
+"Establecimiento Industrial (Fábrica, Planta) y/o Obras en Construcción",0,8,8,0,0,0,0,0,0,8
+"Establecimientos de Expendio de Comidas (Restaurantes, Asaderos, Salsamentarias, Etc)",0,25,25,0,1,1,0,0,0,26
+"Establecimientos Financieros y Relacionados (Bancos, Fiduciarias, Etc) ",0,1,1,0,0,0,0,0,0,1
+Estaciones de Servicio (Bombas de Gasolina),0,5,5,0,0,0,0,0,0,5
+Guarniciones Militares y/o de Policía,0,19,19,0,0,0,0,0,0,19
+Lugar Público sin Otra Indicación,3,50,53,0,1,1,0,0,0,54
+"Lugares de Actividades Culturales (Cines, Teatros, Museos, Bibliotecas, Etc)",0,2,2,0,0,0,0,0,0,2
+"Lugares de Cuidado de Personas (Hospicios, Orfelinatos, Hogares Geriatricos, Etc)",0,0,0,0,1,1,0,0,0,1
+Lugares de Esparcimiento con Expendio de Alcohol,4,142,146,0,21,21,0,0,0,167
+Lugares de Explotación de Minas Y Canteras,0,2,2,0,0,0,0,0,0,2
+"Lugares de Hospedaje (Hoteles, Campamentos y Otros Tipos de Hospedaje No Permanente, Moteles, Etc)",1,21,22,0,10,10,0,0,0,32
+Oficinas y/o Edificios de Oficinas,0,0,0,0,1,1,0,0,0,1
+"Parqueaderos, Estacionamientos",0,22,22,0,2,2,0,0,0,24
+"Sitio de Culto (Capilla, Iglesia, Templo, Etc)",0,1,1,1,0,1,0,0,0,2
+Taller,0,20,20,0,0,0,0,0,0,20
+Terminales de Pasajeros,0,1,1,0,0,0,0,0,0,1
+Terreno Baldío,0,10,10,0,1,1,0,0,0,11
+Vehículo Servicio Particular,0,81,81,0,9,9,0,0,0,90
+Vehículo Servicio Público,1,24,25,0,2,2,0,0,0,27
+Vía Pública,258,5114,5372,28,286,314,0,1,1,5687
+Vivienda,59,1213,1272,34,274,308,0,0,0,1580
+Zonas de Actividades Agropecuarias,15,343,358,1,27,28,0,0,0,386
+Otros,18,371,389,4,26,30,0,0,0,419
+Sin Información,35,633,668,4,34,38,0,0,0,706
+TOTAL,482,9944,10426,93,805,898,1,1,2,11326
+VARIABLE: ZONA DEL HECHO,,,,,,,,,,
+Cabecera municipal,339,6469,6808,58,535,593,0,1,1,7402
+"Centro poblado (corregimiento, inspección de policía y caserío) ",25,585,610,8,53,61,0,0,0,671
+Parte rural (vereda y campo),102,2740,2842,26,204,230,1,0,1,3073
+Sin información,16,150,166,1,13,14,0,0,0,180
+TOTAL,482,9944,10426,93,805,898,1,1,2,11326
+VARIABLE: MES DEL HECHO,,,,,,,,,,
+enero,36,838,874,7,71,78,0,0,0,952
+febrero,39,780,819,10,71,81,0,0,0,900
+marzo,33,694,727,10,60,70,0,0,0,797
+abril,32,558,590,5,40,45,0,0,0,635
+mayo,34,773,807,12,47,59,0,0,0,866
+junio,35,841,876,4,73,77,1,0,1,954
+julio,35,835,870,5,63,68,0,0,0,938
+agosto,50,936,986,6,75,81,0,0,0,1067
+septiembre,44,919,963,11,87,98,0,0,0,1061
+octubre,54,908,962,6,71,77,0,0,0,1039
+noviembre,46,870,916,8,74,82,0,1,1,999
+diciembre,44,992,1036,9,73,82,0,0,0,1118
+TOTAL,482,9944,10426,93,805,898,1,1,2,11326
+VARIABLE: DÍA DEL HECHO,,,,,,,,,,
+lunes,62,1313,1375,16,118,134,0,0,0,1509
+martes,65,1202,1267,17,109,126,0,0,0,1393
+miércoles,64,1278,1342,14,100,114,1,0,1,1457
+jueves,61,1298,1359,11,106,117,0,0,0,1476
+viernes,59,1330,1389,10,101,111,0,0,0,1500
+sábado,62,1574,1636,14,110,124,0,1,1,1761
+domingo,109,1949,2058,11,161,172,0,0,0,2230
+TOTAL,482,9944,10426,93,805,898,1,1,2,11326
+VARIABLE: RANGO DE HORA DEL HECHO (X 3 HORAS),,,,,,,,,,
+00:00 a 02:59,23,379,402,5,37,42,0,1,1,445
+03:00 a 05:59,9,246,255,1,19,20,0,0,0,275
+06:00 a 08:59,8,291,299,1,18,19,0,0,0,318
+09:00 a 11:59,18,364,382,5,27,32,0,0,0,414
+12:00 a 14:59,24,395,419,3,34,37,0,0,0,456
+15:00 a 17:59,21,554,575,7,36,43,0,0,0,618
+18:00 a 20:59,45,887,932,7,76,83,0,0,0,1015
+21:00 a 23:59,36,755,791,7,55,62,0,0,0,853
+Sin información,298,6073,6371,57,503,560,1,0,1,6932
+TOTAL,482,9944,10426,93,805,898,1,1,2,11326
+"De acuerdo con la misión de la entidad, el Instituto Nacional de Medicina Legal y Ciencias Forenses - INMLCF, está impedido de hacer juicios de valor, por eso la información estadística que se provee es a modo de presunción; la calificación de los delitos le corresponde a la Fiscalía General de la Nación y a los jueces de la República.",,,,,,,,,,
+"Homicidio: La definición de homicidio aplicada por el Instituto Nacional de Medicina Legal y Ciencias Forenses - INMLCF, desde el punto de vista médico legal es “El que matare a otro”; de forma intencional o no intencional. En este punto es importante anotar que, cuando se clasifica un caso como homicidio no se tipifica el delito, tampoco se hacen juicios de responsabilidad, toda vez que estas actividades son competencia de la Fiscalía General de la Nación y los Jueces de la República. La clasificación, de carácter forense, se genera en el contexto de la información aportada por la autoridad y los hallazgos durante el procedimiento de necropsia.",,,,,,,,,,
+"Feminicidio: Se define como el homicidio de la mujer por el hecho de ser mujer y que pueda ocurrir dentro de la familia,  unidad doméstica o en cualquier otra relación interpersonal,  en la comunidad o por parte de cualquier persona. Se aclara que no es competencia de la entidad tipificar el delito,  esto corresponde exclusivamente a la Fiscalía General de la Nación; sin embargo,  la variable se cataloga a manera de presunción de acuerdo a los criterios de los peritos que atienden los casos en el INMLCF",,,,,,,,,,
+"No aplica ""Estado conyugal"": Corresponde a los menores de 10 años los cuales por su corta edad no es posible categorizarlos dentro de esta variable",,,,,,,,,,
+FUENTE: Instituto Nacional de Medicina Legal y Ciencias Forenses - INMLCF,,,,,,,,,,
+Grupo: Centro de Referencia Nacional sobre Violencia - GCRNV,,,,,,,,,,
+2020: Base: Sistema de Información Red de Desaparecidos y Cadáveres - SIRDEC ,,,,,,,,,,

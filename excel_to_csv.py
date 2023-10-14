@@ -1,4 +1,5 @@
 import os
+import glob
 import pandas as pd
 import logging
 import uuid
@@ -28,9 +29,8 @@ def load_excel_to_dict(path, backup_folder="backup_csv"):
     
     # Get list of Excel files
     if os.path.isdir(path):
-       excel_files = [os.path.join(dirpath, f) 
-               for dirpath, dirnames, filenames in os.walk(path) 
-               for f in filenames if f.endswith(('.xlsx', '.xls'))]
+      excel_files = [f for ext in ['*.xlsx', '*.xls'] for f in glob.glob(os.path.join(path, '**', ext), recursive=True)]
+
 
     else:
         excel_files = [path] if path.endswith(('.xlsx', '.xls')) else []
