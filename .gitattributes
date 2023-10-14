@@ -75,3 +75,7 @@ Data/3.[[:space:]]Resultados[[:space:]]Saber11/SB11_20222.TXT filter=lfs diff=lf
 .git/lfs/objects/ef/68/ef686af4c0b1fa319aded65c76dc6a96143ba115d6d43b2223314ba66b5b4a99 filter=lfs diff=lfs merge=lfs -text
 .git/lfs/objects/f0/31/f0313030bd8bcf6b178d8a8b6af0c34b5a4a1f3354a05a6dc371c54d25047262 filter=lfs diff=lfs merge=lfs -text
 .git/lfs/objects/f2/ad/f2ad69384a5e23770d1d06dc0a17b5ad0b6a400f279c1533b7057a197acb7a46 filter=lfs diff=lfs merge=lfs -text
+.git/lfs/objects/89/d8/89d8fa0c19ebde11bf6a92ca197d8c2494ade092398ade6896ba6fa0ee745a0f filter=lfs diff=lfs merge=lfs -text
+.git/lfs/objects/c8/23/c8233823afee7ed688e2d12430ab8bc646bccbdad02d05cbd92bdd8f9822d89e filter=lfs diff=lfs merge=lfs -text
+.git/lfs/tmp/2182307198 filter=lfs diff=lfs merge=lfs -text
+.git/lfs/tmp/4289003181 filter=lfs diff=lfs merge=lfs -text
