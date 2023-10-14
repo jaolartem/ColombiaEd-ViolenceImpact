@@ -1,84 +1,32 @@
-
-"""
-etl_module: Contains the main ETL functionalities for processing different file types.
-
-This module is responsible for orchestrating the extraction, transformation, and loading
-of data from various sources, including Excel, CSV, and TXT files. The processed data is
-then stored in appropriate data structures for further analysis.
-"""
 import os
 import glob
-import logging
-from excel_to_csv import load_excel_to_dict
+from file_detector import process_directory
 from csv_to_df import load_csv_to_dict
-from txt_to_df import load_txt_to_dict
 
-# Setup logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-# Define the global dictionary
 ALL_DFS = {}
 
-class Extract:
+class Extraction:
     """
     Class responsible for data extraction.
     """
 
     def __init__(self):
         """
-        Initialize the ETL class with default settings.
+        Initialize the Extraction class.
         """
-        self.converted_files = []
+        self.dataframes = {}
 
-    def from_excel(self, path):
+    def extract_from_directory(self, directory_path):
         """
-        Extracts data from Excel and converts it to DataFrames stored in ALL_DFS.
+        Extracts data from a directory, processing all supported file formats.
         
         Args:
-        - path (str): Path to the Excel file or directory containing multiple Excel files.
-        """
-        global ALL_DFS
+        - directory_path (str): Path to the directory.
         
-        try:
-            dfs_dict = load_excel_to_dict(path)
-            ALL_DFS.update(dfs_dict)
-        except FileNotFoundError:
-            logger.error(f"File not found: {path}")
-        except Exception as e:
-            logger.error(f"Error in extraction process from Excel. Error: {e}")
-
-    def from_csv(self, csv_path):
+        Updates:
+        - self.dataframes: Dictionary containing extracted DataFrames.
         """
-        Extracts data from CSVs and loads them into DataFrames stored in ALL_DFS.
-        
-        Args:
-        - csv_path (str): Path to the CSV file or directory containing multiple CSV files.
-        """
-        global ALL_DFS
-        try:
-            loaded_data = load_csv_to_dict(csv_path)
-            ALL_DFS.update(loaded_data)
-        except FileNotFoundError:
-            logger.error(f"File not found: {csv_path}")
-        except Exception as e:
-            logger.error(f"Error in extraction process from CSV. Error: {e}")
-
-    def from_txt(self, txt_path):
-        """
-        Extracts data from TXT files and loads them into DataFrames stored in ALL_DFS.
-        
-        Args:
-        - txt_path (str): Path to the TXT file or directory containing multiple TXT files.
-        """
-        global ALL_DFS        
-        try:
-            extracted_dfs = load_txt_to_dict(txt_path)
-            ALL_DFS.update(extracted_dfs)
-        except FileNotFoundError:
-            logger.error(f"File not found: {txt_path}")
-        except Exception as e:
-            logger.error(f"Error in extraction process from TXT. Error: {e}")
+        self.dataframes = process_directory(directory_path)
 
 class Transformation:
     """
@@ -119,9 +67,8 @@ class Transformation:
 
 if __name__ == "__main__":
     folder_name = '/path/to/your/folder'
-    extractor = Extract()
-    extractor.from_excel(folder_name)
-    extractor.from_csv(folder_name)
+    extractor = Extraction()
+    extractor.extract_from_directory(folder_name)
     transformer = Transformation()
     dfs_dict = transformer.Violence_pivot()
     print(dfs_dict)
