@@ -7,7 +7,6 @@ import uuid
 logging.basicConfig(filename='etl_errors.log', level=logging.ERROR,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
-
 def load_excel_to_dict(path, backup_folder="backup_csv"):
     """
     Load all Excel files from the given folder or a single file into a dictionary of DataFrames.
@@ -29,14 +28,12 @@ def load_excel_to_dict(path, backup_folder="backup_csv"):
     
     # Get list of Excel files
     if os.path.isdir(path):
-      excel_files = [f for ext in ['*.xlsx', '*.xls'] for f in glob.glob(os.path.join(path, '**', ext), recursive=True)]
-
-
+        excel_files = [f for ext in ['*.xlsx', '*.xls'] for f in glob.glob(os.path.join(path, '**', ext), recursive=True)]
     else:
         excel_files = [path] if path.endswith(('.xlsx', '.xls')) else []
 
-    try:
-        for full_path in excel_files:
+    for full_path in excel_files:
+        try:
             df_dict = pd.read_excel(full_path, sheet_name=None)
             for sheet_name, df in df_dict.items():
                 file_name = os.path.basename(full_path)
@@ -56,18 +53,16 @@ def load_excel_to_dict(path, backup_folder="backup_csv"):
                     'Unique_Identifier': unique_id
                 })
 
-        # Update the backup_info.csv
-        backup_info_path = os.path.join(backup_folder, "backup_info.csv")
-        if os.path.exists(backup_info_path):
-            backup_info_df = pd.read_csv(backup_info_path)
-            backup_info_df = backup_info_df.append(pd.DataFrame(backup_data), ignore_index=True)
-        else:
-            backup_info_df = pd.DataFrame(backup_data)
-        backup_info_df.to_csv(backup_info_path, index=False)
+            # Update the backup_info.csv
+            backup_info_path = os.path.join(backup_folder, "backup_info.csv")
+            if os.path.exists(backup_info_path):
+                backup_info_df = pd.read_csv(backup_info_path)
+                backup_info_df = backup_info_df.append(pd.DataFrame(backup_data)).drop_duplicates().reset_index(drop=True)
+            else:
+                backup_info_df = pd.DataFrame(backup_data)
+            backup_info_df.to_csv(backup_info_path, index=False)
         
-    except Exception as e:
-        logging.error(f"Error processing Excel files in {path}. Error: {e}")
+        except Exception as e:
+            logging.error(f"Error processing Excel files in {full_path}. Error: {e}")
     
     return dfs
-
-
