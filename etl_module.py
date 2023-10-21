@@ -1,7 +1,7 @@
 import os
 import glob
 from file_detector import process_directory
-from csv_to_df import load_csv_to_dict
+
 
 ALL_DFS = {}
 
@@ -17,6 +17,8 @@ class Extraction:
         self.dataframes = {}
 
     def extract_from_directory(self, directory_path):
+        
+        global ALL_DFS
         """
         Extracts data from a directory, processing all supported file formats.
         
@@ -26,7 +28,9 @@ class Extraction:
         Updates:
         - self.dataframes: Dictionary containing extracted DataFrames.
         """
-        self.dataframes = process_directory(directory_path)
+        self.dataframes = process_directory(directory_path)        
+        print("DataFrames after processing directory:", self.dataframes.keys())  # Debugging print statement
+        ALL_DFS.update(self.dataframes) 
 
 class Transformation:
     """

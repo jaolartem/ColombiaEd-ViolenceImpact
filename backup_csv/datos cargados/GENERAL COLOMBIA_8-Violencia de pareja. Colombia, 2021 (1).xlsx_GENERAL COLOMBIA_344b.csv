@@ -1,0 +1,281 @@
+COMPORTAMIENTO DE LAS LESIONES NO FATALES POR VIOLENCIA DE PAREJA EN COLOMBIA AÑO 2021,VIOLENCIA DE PAREJA,VIOLENCIA DE PAREJA.1,VIOLENCIA DE PAREJA.2,VIOLENCIA DE PAREJA.3,VIOLENCIA DE PAREJA.4,VIOLENCIA DE PAREJA.5,VIOLENCIA DE PAREJA.6
+SEXO,Hombre,Hombre,HOMBRE,Mujer,Mujer,MUJER,TOTAL
+VARIABLE / MAYOR DE EDAD (> 18 AÑOS) O MENOR DE EDAD (< 18 AÑOS),Menores de Edad (<18 años),Mayores de Edad (>18 años),TOTAL,Menores de Edad (<18 años),Mayores de Edad (>18 años),TOTAL,
+VARIABLE: GRUPO DE EDAD,,,,,,,
+(10 a 14),0,0,0,41,0,41,41
+(15 a 17),16,0,16,610,0,610,626
+(18 a 19),0,59,59,0,1176,1176,1235
+(20 a 24),0,502,502,0,5801,5801,6303
+(25 a 29),0,864,864,0,6657,6657,7521
+(30 a 34),0,908,908,0,5630,5630,6538
+(35 a 39),0,693,693,0,4231,4231,4924
+(40 a 44),0,555,555,0,2781,2781,3336
+(45 a 49),0,347,347,0,1595,1595,1942
+(50 a 54),0,245,245,0,1000,1000,1245
+(55 a 59),0,159,159,0,482,482,641
+(60 a 64),0,86,86,0,241,241,327
+(65 a 69),0,47,47,0,107,107,154
+(70 a 74),0,25,25,0,50,50,75
+(75 a 79),0,10,10,0,26,26,36
+(80 y más),0,13,13,0,8,8,21
+TOTAL,16,4513,4529,651,29785,30436,34965
+VARIABLE: GRUPO EDAD JUDICIAL,,,,,,,
+(10 a 13),0,0,0,4,0,4,4
+(14 a 17),16,0,16,647,0,647,663
+(18 a 19),0,59,59,0,1176,1176,1235
+(20 a 24),0,502,502,0,5801,5801,6303
+(25 a 28),0,680,680,0,5410,5410,6090
+(29 a 34),0,1092,1092,0,6877,6877,7969
+(35 a 39),0,693,693,0,4231,4231,4924
+(40 a 44),0,555,555,0,2781,2781,3336
+(45 a 49),0,347,347,0,1595,1595,1942
+(50 a 54),0,245,245,0,1000,1000,1245
+(55 a 59),0,159,159,0,482,482,641
+(60 a 64),0,86,86,0,241,241,327
+(65 a 69),0,47,47,0,107,107,154
+(70 a 74),0,25,25,0,50,50,75
+(75 a 79),0,10,10,0,26,26,36
+(80 y más),0,13,13,0,8,8,21
+TOTAL,16,4513,4529,651,29785,30436,34965
+VARIABLE: CICLO VITAL,,,,,,,
+(12 a 17) Adolescencia,16,0,16,651,0,651,667
+(18 a 28) Juventud,0,1241,1241,0,12387,12387,13628
+(29 a 59) Adultez,0,3091,3091,0,16966,16966,20057
+(Más de 60) Adulto Mayor,0,181,181,0,432,432,613
+TOTAL,16,4513,4529,651,29785,30436,34965
+VARIABLE: ESCOLARIDAD,,,,,,,
+Educación inicial y educación preescolar,0,234,234,30,1209,1239,1473
+Educación básica primaria,9,762,771,318,4995,5313,6084
+Educación básica secundaria o secundaria baja,2,280,282,164,2163,2327,2609
+Educación media o secundaria alta,4,2180,2184,122,14173,14295,16479
+Educación técnica profesional y tecnológica,1,853,854,3,6494,6497,7351
+Universitario,0,39,39,0,173,173,212
+"Especialización, Maestría o equivalente",0,21,21,0,56,56,77
+Doctorado o equivalente,0,4,4,0,6,6,10
+Sin escolaridad,0,50,50,4,196,200,250
+Sin información,0,90,90,10,320,330,420
+TOTAL,16,4513,4529,651,29785,30436,34965
+VARIABLE: ESTADO CIVIL,,,,,,,
+Soltero (a),13,1546,1559,394,11217,11611,13170
+Unión libre,3,1954,1957,232,12487,12719,14676
+Casado (a),0,599,599,0,3211,3211,3810
+"Separado (a), Divorciado (a)",0,354,354,20,2703,2723,3077
+Viudo (a),0,11,11,0,50,50,61
+Sin información,0,49,49,5,117,122,171
+TOTAL,16,4513,4529,651,29785,30436,34965
+VARIABLE: FACTOR DE VULNERABILIDAD,,,,,,,
+Campesinos (as) y/o trabajadores (as) del campo,0,25,25,8,208,216,241
+Comunidad LGBT,1,93,94,6,172,178,272
+Conductores de vehículos de servicio público,0,3,3,0,9,9,12
+Grupos étnicos,0,115,115,23,1092,1115,1230
+Mujer cabeza de hogar o de familia ,0,0,0,11,1040,1051,1051
+Persona adicta a una droga natural o sintética,0,243,243,28,1682,1710,1953
+Persona en condición de desplazamiento ,0,14,14,7,143,150,164
+Persona en situación de calle,0,0,0,0,2,2,2
+Persona en situación de prostitución,0,0,0,0,16,16,16
+Persona recluida en establecimiento de rehabilitación y pabellones psiquiátricos,0,1,1,0,0,0,1
+Personas bajo custodia,0,6,6,0,6,6,12
+Personas desmovilizadas o reinsertadas,0,0,0,0,2,2,2
+Tribus urbanas,0,1,1,0,0,0,1
+Ninguno ,15,4012,4027,568,25406,25974,30001
+Sin información,0,0,0,0,7,7,7
+TOTAL,16,4513,4529,651,29785,30436,34965
+VARIABLE: TIPO DE DISCAPACIDAD,,,,,,,
+Auditiva,0,4,4,0,17,17,21
+Física,0,4,4,0,18,18,22
+Mental,0,0,0,0,11,11,11
+Siquica,0,0,0,0,5,5,5
+Visual,0,2,2,0,6,6,8
+Discapacidad múltiple,0,2,2,0,8,8,10
+Ninguna,16,4501,4517,651,29720,30371,34888
+TOTAL,16,4513,4529,651,29785,30436,34965
+VARIABLE: PERTENENCIA ÉTNICA,,,,,,,
+Indígena,0,30,30,7,333,340,370
+Negro/Afrodescendiente,0,85,85,17,884,901,986
+Palenquero,0,1,1,0,6,6,7
+Raizal,0,9,9,0,47,47,56
+Rom (Gitano),0,1,1,0,1,1,2
+Sin Pertenencia Étnica,12,3904,3916,563,26161,26724,30640
+Sin Información,4,483,487,64,2353,2417,2904
+TOTAL,16,4513,4529,651,29785,30436,34965
+VARIABLE: PRESUNTO AGRESOR,,,,,,,
+Pareja o ex pareja,16,4513,4529,651,29785,30436,34965
+Amante,0,19,19,0,49,49,68
+Compañero (a)  permanente,6,1977,1983,294,12625,12919,14902
+Esposo (a),1,461,462,8,2928,2936,3398
+Ex - Amante,0,14,14,1,53,54,68
+Ex - compañero (a) permanente,1,1532,1533,178,10930,11108,12641
+Ex - esposo (a),0,141,141,1,836,837,978
+Ex - Novio (a),4,203,207,89,1262,1351,1558
+Novio (a),4,163,167,79,1076,1155,1322
+Sin información,0,3,3,1,26,27,30
+TOTAL,16,4513,4529,651,29785,30436,34965
+VARIABLE: SEXO DEL PRESUNTO AGRESOR,,,,,,,
+Hombre,4,313,317,634,29382,30016,30333
+Mujer,12,4198,4210,16,379,395,4605
+Sin información,0,2,2,1,24,25,27
+TOTAL,16,4513,4529,651,29785,30436,34965
+VARIABLE: ACTIVIDAD DURANTE EL HECHO,,,,,,,
+Actividades de desplazamiento de un lugar a otro,9,1473,1482,216,8476,8692,10174
+Actividades de trabajo doméstico no pagado para el uso del propio hogar,1,921,922,165,7636,7801,8723
+Actividades ilícitas o delictivas,0,80,80,0,64,64,144
+Actividades relacionadas con el aprendizaje,0,2,2,0,25,25,27
+Actividades relacionadas con el cuidado no pagado de miembros del hogar,0,228,228,37,1452,1489,1717
+Actividades relacionadas con el trabajo remunerado,0,134,134,4,697,701,835
+"Actividades relacionadas con la asistencia a eventos culturales, de entretenimiento y/o deportivos",0,258,258,27,1380,1407,1665
+Actividades relacionadas con los deportes y el ejercicio físico,0,3,3,2,19,21,24
+"Actividades relacionadas con manifestaciones públicas (marchas, protestas, etc.)",1,3,4,1,9,10,14
+Actividades vitales o relacionadas con el cuidado personal,5,1409,1414,198,10010,10208,11622
+Sin información,0,2,2,1,17,18,20
+TOTAL,16,4513,4529,651,29785,30436,34965
+VARIABLE: FACTOR DESENCADENANTE DE LA AGRESIÓN,,,,,,,
+Abandono,0,197,197,39,2266,2305,2502
+"Celos, desconfianza, infidelidad",5,1326,1331,281,11169,11450,12781
+Consumo de alcohol y/o sustancias psicoactivas,3,454,457,87,4464,4551,5008
+Económicas,0,40,40,2,118,120,160
+Enfermedad fisica o mental,0,13,13,0,22,22,35
+"Intolerancia, machismo",8,2288,2296,223,11117,11340,13636
+Otras razones,0,44,44,4,107,111,155
+Sin información,0,151,151,15,522,537,688
+TOTAL,16,4513,4529,651,29785,30436,34965
+VARIABLE: MECANISMO CAUSAL,,,,,,,
+Abrasivo,5,437,442,16,493,509,951
+Agente químico,0,2,2,0,8,8,10
+Agentes y mecanismo explosivo,0,0,0,0,2,2,2
+Agentes y mecanismos biológicos,0,5,5,1,19,20,25
+Biodinámico,0,13,13,0,83,83,96
+Cáustico ,0,2,2,0,1,1,3
+Contundente,3,898,901,319,15034,15353,16254
+Cortante,2,175,177,10,288,298,475
+Corto contundente,1,682,683,24,768,792,1475
+Corto punzante,0,163,163,9,316,325,488
+Generadores de asfixia,0,0,0,0,27,27,27
+Mecanismo múltiple,2,1468,1470,153,6151,6304,7774
+Proyectil de arma de fuego,0,0,0,0,31,31,31
+Punzante,0,4,4,0,21,21,25
+Térmico,0,7,7,1,27,28,35
+Tóxico,0,0,0,1,1,2,2
+Por determinar,3,657,660,117,6515,6632,7292
+TOTAL,16,4513,4529,651,29785,30436,34965
+VARIABLE: DIAGNÓSTICO TOPOGRÁFICO DE LA LESIÓN,,,,,,,
+Piel y faneras,0,129,129,21,687,708,837
+Por determinar,3,623,626,112,6368,6480,7106
+Trauma área Pélvica,0,7,7,1,40,41,48
+Trauma craneano,0,57,57,7,272,279,336
+Trauma de abdomen,0,19,19,2,52,54,73
+Trauma de cuello,0,79,79,7,291,298,377
+Trauma de miembros,0,508,508,36,2773,2809,3317
+Trauma de tórax,3,97,100,4,340,344,444
+Trauma facial,2,516,518,74,2905,2979,3497
+Politraumatismo,8,2478,2486,387,16057,16444,18930
+TOTAL,16,4513,4529,651,29785,30436,34965
+VARIABLE: DÍAS DE INCAPACIDAD MÉDICO LEGAL,,,,,,,
+1 a 30,12,3780,3792,529,22655,23184,26976
+31 a 90,0,56,56,9,486,495,551
+Más de 90,0,0,0,0,10,10,10
+Cero días y Sin información,4,677,681,113,6634,6747,7428
+TOTAL,16,4513,4529,651,29785,30436,34965
+VARIABLE: PAÍS DE NACIMIENTO DE LA VÍCTIMA,,,,,,,
+Afganistán,0,1,1,0,0,0,1
+Argentina,0,1,1,0,1,1,2
+Aruba,0,1,1,0,0,0,1
+Bolivia,0,0,0,0,1,1,1
+Brasil,0,0,0,0,3,3,3
+Canadá,0,0,0,0,1,1,1
+Chile,0,1,1,0,1,1,2
+Colombia,15,4289,4304,600,28080,28680,32984
+Cuba,0,0,0,0,1,1,1
+Ecuador,0,1,1,0,8,8,9
+España,0,2,2,0,0,0,2
+Estados Unidos,0,7,7,1,2,3,10
+India,0,1,1,0,0,0,1
+Italia,0,2,2,0,1,1,3
+Líbano,0,0,0,0,1,1,1
+Madagascar,0,1,1,0,0,0,1
+México,0,1,1,0,3,3,4
+Nicaragua,0,0,0,0,1,1,1
+Países Bajos,0,2,2,0,0,0,2
+Panamá,0,1,1,0,1,1,2
+Paraguay,0,0,0,0,1,1,1
+Perú,0,3,3,0,7,7,10
+Rumania,0,1,1,0,0,0,1
+Venezuela,1,149,150,48,1610,1658,1808
+Sin información,0,49,49,2,62,64,113
+TOTAL,16,4513,4529,651,29785,30436,34965
+VARIABLE: ESCENARIO DEL HECHO,,,,,,,
+Áreas deportivas y/o recreativas,0,36,36,5,145,150,186
+"Calle (autopista, avenida, dentro de la ciudad)",5,654,659,92,3774,3866,4525
+Carretera (fuera de la ciudad),0,15,15,5,170,175,190
+"Centro de atención médica (hospital, clínica, consultorio, etc.)",0,3,3,0,30,30,33
+Centros de reclusión,0,1,1,0,2,2,3
+Centros educativos,0,4,4,1,12,13,17
+"Espacios acuáticos al aire libre (mar, río, arroyo, humedal, lago, etc.)",0,0,0,1,3,4,4
+"Espacios terrestres al aire libre (bosque, potrero, montaña, playa, etc.)",0,10,10,3,64,67,77
+"Establecimiento comercial (tienda, centro comercial, almacén, plaza de mercado)",0,136,136,7,624,631,767
+"Establecimiento industrial (fábrica, planta) y/o obras en construcción",0,1,1,0,9,9,10
+"Establecimientos de expendio de comidas (restaurantes, asaderos, salsamentarias, etc.)",0,9,9,0,53,53,62
+"Establecimientos dedicados a la administración pública (cortes, juzgados, ministerios, etc.)",0,4,4,1,4,5,9
+Estaciones de servicio (bombas de gasolina),0,1,1,0,5,5,6
+Guarniciones militares y/o de policía,0,2,2,0,4,4,6
+"Lugares de actividades culturales (cines, teatros, museos, bibliotecas, etc.)",0,3,3,1,23,24,27
+"Lugares de cuidado de personas (hospicios, orfelinatos, hogares geriátricos, etc.)",0,0,0,0,6,6,6
+Lugares de esparcimiento con expendio de alcohol,0,39,39,5,276,281,320
+"Lugares de hospedaje (hoteles, campamentos y otros tipos de hospedaje no permanente, moteles, etc.)",0,142,142,11,605,616,758
+Oficinas y/o edificios de oficinas,0,12,12,0,28,28,40
+"Parqueaderos, estacionamientos",0,6,6,0,43,43,49
+"Sitio de culto (capilla, iglesia, templo, etc.)",0,1,1,0,7,7,8
+Taller,0,0,0,0,13,13,13
+Terminales de pasajeros,0,1,1,1,11,12,13
+Terreno baldío,0,0,0,0,5,5,5
+Vehículo de servicio particular,0,26,26,1,126,127,153
+Vía pública,1,267,268,56,1758,1814,2082
+Vivienda,10,3123,3133,459,21836,22295,25428
+Zonas de actividades agropecuarias,0,0,0,0,6,6,6
+Otros,0,3,3,0,77,77,80
+Sin Información,0,14,14,2,66,68,82
+TOTAL,16,4513,4529,651,29785,30436,34965
+VARIABLE: ZONA DEL HECHO,,,,,,,
+Cabecera municipal,16,4126,4142,588,26790,27378,31520
+"Centro poblado (corregimiento, inspección de policía y caserío) ",0,153,153,31,1185,1216,1369
+Parte rural (vereda y campo),0,212,212,32,1724,1756,1968
+Sin información,0,22,22,0,86,86,108
+TOTAL,16,4513,4529,651,29785,30436,34965
+VARIABLE: MES DEL HECHO,,,,,,,
+enero,0,307,307,43,2180,2223,2530
+febrero,3,349,352,51,2288,2339,2691
+marzo,2,369,371,57,2288,2345,2716
+abril,2,324,326,58,2110,2168,2494
+mayo,2,341,343,42,2357,2399,2742
+junio,1,322,323,55,2174,2229,2552
+julio,1,303,304,50,2373,2423,2727
+agosto,1,433,434,53,2668,2721,3155
+septiembre,2,448,450,60,2902,2962,3412
+octubre,1,434,435,63,2883,2946,3381
+noviembre,1,433,434,72,2760,2832,3266
+diciembre,0,450,450,47,2802,2849,3299
+TOTAL,16,4513,4529,651,29785,30436,34965
+VARIABLE: DÍA DEL HECHO,,,,,,,
+lunes,1,702,703,112,4298,4410,5113
+martes,0,562,562,91,3458,3549,4111
+miércoles,5,544,549,67,3477,3544,4093
+jueves,2,471,473,72,3236,3308,3781
+viernes,1,529,530,77,3414,3491,4021
+sábado,4,691,695,93,4692,4785,5480
+domingo,3,1014,1017,139,7210,7349,8366
+TOTAL,16,4513,4529,651,29785,30436,34965
+VARIABLE: RANGO DE HORA DEL HECHO (X 3 HORAS),,,,,,,
+(00:00 a 02:59),1,270,271,41,2414,2455,2726
+(03:00 a 05:59),0,233,233,27,1873,1900,2133
+(06:00 a 08:59),0,456,456,53,2628,2681,3137
+(09:00 a 11:59),2,575,577,89,3247,3336,3913
+(12:00 a 14:59),2,535,537,95,2856,2951,3488
+(15:00 a 17:59),4,545,549,82,3296,3378,3927
+(18:00 a 20:59),2,862,864,100,5768,5868,6732
+(21:00 a 23:59),4,705,709,98,5491,5589,6298
+Sin información,1,332,333,66,2212,2278,2611
+TOTAL,16,4513,4529,651,29785,30436,34965
+Violencia de pareja: se incluyen los grupos de edad mayores de 10 años,,,,,,,
+"Circunstancia del hecho: para el contexto de Violencia de Pareja es catalogada como la variable ""Factor desencadenante de la agresión""",,,,,,,
+FUENTE: Instituto Nacional de Medicina Legal y Ciencias Forenses - INMLCF,,,,,,,
+Grupo: Centro de Referencia Nacional Sobre la Violencia - GCERN,,,,,,,
+Base: Sistema de Información de Clínica y Odontología Forense - SICLICO ,,,,,,,

@@ -1,0 +1,234 @@
+SUICIDIOS EN COLOMBIA AÑO 2020,VIOLENTA - SUICIDIO,VIOLENTA - SUICIDIO.1,VIOLENTA - SUICIDIO.2,VIOLENTA - SUICIDIO.3,VIOLENTA - SUICIDIO.4,VIOLENTA - SUICIDIO.5,VIOLENTA - SUICIDIO.6
+SEXO,Hombre,Hombre,HOMBRE,Mujer,Mujer,MUJER,TOTAL
+VARIABLE / MAYOR DE EDAD (> 18 AÑOS) O MENOR DE EDAD (< 18 AÑOS),Menores de Edad (<18 años),Mayores de Edad (>18 años),TOTAL,Menores de Edad (<18 años),Mayores de Edad (>18 años),TOTAL,
+VARIABLE: GRUPO DE EDAD,,,,,,,
+(05 a 09),1,0,1,3,0,3,4
+(10 a 14),64,0,64,48,0,48,112
+(15 a 17),96,0,96,69,0,69,165
+(18 a 19),0,101,101,0,27,27,128
+(20 a 24),0,286,286,0,71,71,357
+(25 a 29),0,215,215,0,51,51,266
+(30 a 34),0,180,180,0,28,28,208
+(35 a 39),0,164,164,0,36,36,200
+(40 a 44),0,119,119,0,31,31,150
+(45 a 49),0,120,120,0,13,13,133
+(50 a 54),0,115,115,0,23,23,138
+(55 a 59),0,125,125,0,23,23,148
+(60 a 64),0,102,102,0,11,11,113
+(65 a 69),0,93,93,0,17,17,110
+(70 a 74),0,72,72,0,7,7,79
+(75 a 79),0,46,46,0,3,3,49
+(80 y más),0,58,58,0,2,2,60
+TOTAL,161,1796,1957,120,343,463,2420
+VARIABLE: GRUPO EDAD JUDICIAL,,,,,,,
+(05 a 09),1,0,1,3,0,3,4
+(10 a 13),44,0,44,31,0,31,75
+(14 a 17),116,0,116,86,0,86,202
+(18 a 19),0,101,101,0,27,27,128
+(20 a 24),0,286,286,0,71,71,357
+(25 a 28),0,184,184,0,41,41,225
+(29 a 34),0,211,211,0,38,38,249
+(35 a 39),0,164,164,0,36,36,200
+(40 a 44),0,119,119,0,31,31,150
+(45 a 49),0,120,120,0,13,13,133
+(50 a 54),0,115,115,0,23,23,138
+(55 a 59),0,125,125,0,23,23,148
+(60 a 64),0,102,102,0,11,11,113
+(65 a 69),0,93,93,0,17,17,110
+(70 a 74),0,72,72,0,7,7,79
+(75 a 79),0,46,46,0,3,3,49
+(80 y más),0,58,58,0,2,2,60
+TOTAL,161,1796,1957,120,343,463,2420
+VARIABLE: CICLO VITAL,,,,,,,
+(06 a 11) Infancia,14,0,14,8,0,8,22
+(12 a 17) Adolescencia,147,0,147,112,0,112,259
+(18 a 28) Juventud,0,571,571,0,139,139,710
+(29 a 59) Adultez,0,854,854,0,164,164,1018
+(Más de 60) Adulto Mayor,0,371,371,0,40,40,411
+TOTAL,161,1796,1957,120,343,463,2420
+VARIABLE: ESCOLARIDAD,,,,,,,
+Educación inicial y educación preescolar,21,187,208,11,27,38,246
+Educación básica primaria,78,511,589,55,69,124,713
+Educación básica secundaria o secundaria baja,32,94,126,33,28,61,187
+Educación media o secundaria alta,16,559,575,9,135,144,719
+Educación técnica profesional y tecnológica,0,121,121,0,40,40,161
+Universitario,0,5,5,0,2,2,7
+"Especialización, maestría o equivalente",0,2,2,0,3,3,5
+Doctorado o equivalente,0,1,1,0,0,0,1
+Sin escolaridad,0,80,80,1,11,12,92
+Sin información,14,236,250,11,28,39,289
+TOTAL,161,1796,1957,120,343,463,2420
+VARIABLE: ESTADO CIVIL,,,,,,,
+Soltero(a),148,802,950,94,151,245,1195
+Unión libre,3,424,427,13,90,103,530
+Casado(a),0,272,272,0,42,42,314
+"Separado(a), divorciado(a)",0,93,93,0,22,22,115
+Viudo(a),0,38,38,0,11,11,49
+No aplica,1,0,1,3,0,3,4
+Sin información,9,167,176,10,27,37,213
+TOTAL,161,1796,1957,120,343,463,2420
+VARIABLE: FACTOR DE VULNERABILIDAD,,,,,,,
+Campesinos (as) y/o trabajadores (as) del campo,9,90,99,6,7,13,112
+Comunidad LGBT,0,5,5,0,1,1,6
+Discapacitados,0,3,3,0,1,1,4
+Ex convictos (as),0,0,0,0,1,1,1
+Funcionarios judiciales,0,3,3,0,0,0,3
+Grupos étnicos,12,46,58,7,13,20,78
+Maestro/Educador,0,4,4,0,2,2,6
+Persona adicta a una droga natural o sintética,4,61,65,1,10,11,76
+Persona en condición de desplazamiento,0,6,6,2,4,6,12
+Persona habitante de la calle,0,5,5,0,0,0,5
+Personas bajo custodia,0,10,10,0,0,0,10
+Personas en situación de prostitución,0,0,0,0,1,1,1
+Personas que ejercen actividades de periodismo,0,1,1,0,0,0,1
+Personas que ejercen actividades políticas,0,3,3,0,1,1,4
+Personas que ejercen actividades relacionadas con la salud en zonas de conflicto,0,2,2,0,2,2,4
+Recicladores,0,1,1,0,0,0,1
+Religiosos,0,3,3,0,0,0,3
+Otro,3,37,40,4,6,10,50
+Ninguno,120,1297,1417,89,260,349,1766
+Sin información ,13,219,232,11,34,45,277
+TOTAL,161,1796,1957,120,343,463,2420
+VARIABLE: ANCESTRO RACIAL,,,,,,,
+Blanco,3,74,77,1,14,15,92
+Indigena,10,35,45,6,15,21,66
+Mestizo,134,1487,1621,100,266,366,1987
+Mulato,1,14,15,1,3,4,19
+Negro,2,50,52,4,14,18,70
+Sin Información,11,136,147,8,31,39,186
+TOTAL,161,1796,1957,120,343,463,2420
+VARIABLE: RAZÓN DEL SUICIDIO,,,,,,,
+Abuso de sustancia y alcohol,2,32,34,0,4,4,38
+Accesos a armas de fuego,1,1,2,0,0,0,2
+Bullying,3,2,5,2,0,2,7
+Conflicto con pareja o ex-pareja,4,216,220,7,45,52,272
+Desamor,12,107,119,13,17,30,149
+Económicas,3,109,112,2,14,16,128
+Enfermedad física o mental,10,297,307,9,80,89,396
+Escolares - educativas,5,3,8,7,1,8,16
+Estado de gestación,0,0,0,1,0,1,1
+Jurídicas,0,13,13,0,0,0,13
+Laborales,0,6,6,0,2,2,8
+Maltrato físico - sexual - psicológico,7,2,9,3,4,7,16
+Muerte de un familiar o amigo,2,24,26,1,11,12,38
+Orientación sexual diversa,0,4,4,0,0,0,4
+Suicidio de un familiar o amigo,1,4,5,0,1,1,6
+Víctima de hostigamiento,0,1,1,0,1,1,2
+Otras,6,29,35,6,5,11,46
+Sin información,105,946,1051,69,158,227,1278
+TOTAL,161,1796,1957,120,343,463,2420
+VARIABLE: MECANISMO CAUSAL,,,,,,,
+Agentes y mecanismo explosivo,0,1,1,0,0,0,1
+Caústico,0,0,0,0,1,1,1
+Contundente,3,114,117,3,36,39,156
+Cortante,0,11,11,1,0,1,12
+Cortocontundente,0,1,1,0,0,0,1
+Cortopunzante,0,20,20,0,1,1,21
+Generadores de asfixia,132,1200,1332,81,208,289,1621
+Proyectil de arma de fuego,8,197,205,2,11,13,218
+Térmico,0,7,7,0,1,1,8
+Tóxico,18,245,263,33,85,118,381
+TOTAL,161,1796,1957,120,343,463,2420
+VARIABLE: DIAGNÓSTICO TOPOGRÁFICO DE LA LESIÓN,,,,,,,
+Politraumatismo,1,115,116,4,35,39,155
+Trauma área pélvica,0,2,2,0,1,1,3
+Trauma craneano,7,192,199,4,15,19,218
+Trauma de abdomen,0,13,13,2,0,2,15
+Trauma de cuello,123,1118,1241,79,195,274,1515
+Trauma de miembros,0,10,10,0,0,0,10
+Trauma de tórax,2,43,45,0,6,6,51
+Trauma facial,0,4,4,0,0,0,4
+Sin lesiones,16,193,209,28,68,96,305
+Por determinar,12,106,118,3,23,26,144
+TOTAL,161,1796,1957,120,343,463,2420
+VARIABLE: PAÍS DE NACIMIENTO DE LA VÍCTIMA,,,,,,,
+Brasil,0,1,1,0,0,0,1
+Chile,0,1,1,0,0,0,1
+Colombia,152,1756,1908,116,333,449,2357
+Cuba,0,1,1,0,0,0,1
+Ecuador,0,0,0,0,1,1,1
+España,0,0,0,1,0,1,1
+Estados Unidos,0,5,5,1,0,1,6
+Italia,0,1,1,0,0,0,1
+México,0,1,1,0,0,0,1
+Reino Unido,0,1,1,0,0,0,1
+Venezuela,9,29,38,2,9,11,49
+TOTAL,161,1796,1957,120,343,463,2420
+VARIABLE: ESCENARIO DEL HECHO,,,,,,,
+Áreas Deportivas y/o Recreativas,0,4,4,0,2,2,6
+"Calle (Autopista, Avenida, Dentro de La Ciudad)",0,4,4,0,0,0,4
+Carretera (Fuera de La Ciudad),1,4,5,0,1,1,6
+"Centro de Atención Médica (Hospital, Clínica, Consultorio, Etc)",2,29,31,0,6,6,37
+Centros de Reclusión,1,18,19,0,0,0,19
+Centros Educativos,1,4,5,0,0,0,5
+"Espacios Acuáticos al Aire Libre (Mar, Río, Arroyo, Humedal, Lago, Etc)",2,14,16,1,0,1,17
+"Espacios Terrestres al Aire Libre (Bosque, Potrero, Montaña, Playa, Etc)",4,103,107,1,5,6,113
+"Establecimiento Comercial (Tienda, Centro Comercial, Almacén, Plaza de Mercado)",0,11,11,0,1,1,12
+"Establecimiento Industrial (Fábrica, Planta) y/o Obras en Construcción",0,8,8,0,0,0,8
+"Establecimientos de Expendio de Comidas (Restaurantes, Asaderos, Salsamentarias, Etc)",0,3,3,0,0,0,3
+Guarniciones Militares y/o de Policía,0,12,12,0,1,1,13
+Lugar Público sin Otra Indicación,1,5,6,0,2,2,8
+"Lugares de Cuidado de Personas (Hospicios, Orfelinatos, Hogares Geriatricos, Etc)",0,3,3,0,1,1,4
+Lugares de Esparcimiento con Expendio de Alcohol,0,1,1,0,0,0,1
+Lugares de Explotación de Minas Y Canteras,0,1,1,0,0,0,1
+"Lugares de Hospedaje (Hoteles, Campamentos y Otros Tipos de Hospedaje No Permanente, Moteles, Etc)",0,29,29,0,8,8,37
+Oficinas y/o Edificios de Oficinas,0,3,3,0,0,0,3
+"Parqueaderos, Estacionamientos",0,7,7,0,2,2,9
+"Sitio de Culto (Capilla, Iglesia, Templo, Etc)",0,2,2,0,0,0,2
+Taller,0,2,2,0,0,0,2
+Terminales de Pasajeros,0,3,3,0,0,0,3
+Terreno Baldío,1,1,2,0,0,0,2
+Vehículo Servicio Particular,0,6,6,1,0,1,7
+Vía Pública,4,98,102,1,7,8,110
+Vivienda,122,1188,1310,106,282,388,1698
+Zonas de Actividades Agropecuarias,14,129,143,4,12,16,159
+Otros,5,59,64,2,5,7,71
+Sin Información,3,45,48,4,8,12,60
+TOTAL,161,1796,1957,120,343,463,2420
+VARIABLE: ZONA DEL HECHO,,,,,,,
+Cabecera municipal,102,1300,1402,83,261,344,1746
+"Centro poblado (corregimiento, inspección de policía y caserío) ",6,74,80,7,14,21,101
+Parte rural (vereda y campo),51,402,453,28,65,93,546
+Sin información,2,20,22,2,3,5,27
+TOTAL,161,1796,1957,120,343,463,2420
+VARIABLE: MES DEL HECHO,,,,,,,
+enero,7,154,161,11,24,35,196
+febrero,10,164,174,12,32,44,218
+marzo,11,157,168,8,24,32,200
+abril,15,108,123,8,22,30,153
+mayo,13,149,162,8,36,44,206
+junio,16,158,174,3,27,30,204
+julio,11,140,151,10,26,36,187
+agosto,29,140,169,14,35,49,218
+septiembre,10,134,144,9,33,42,186
+octubre,15,152,167,9,26,35,202
+noviembre,12,167,179,15,27,42,221
+diciembre,12,173,185,13,31,44,229
+TOTAL,161,1796,1957,120,343,463,2420
+VARIABLE: DÍA DEL HECHO,,,,,,,
+lunes,23,253,276,10,34,44,320
+martes,23,244,267,20,51,71,338
+miércoles,15,240,255,21,67,88,343
+jueves,30,242,272,11,39,50,322
+viernes,27,241,268,17,45,62,330
+sábado,22,261,283,17,50,67,350
+domingo,21,315,336,24,57,81,417
+TOTAL,161,1796,1957,120,343,463,2420
+VARIABLE: RANGO DE HORA DEL HECHO (X 3 HORAS),,,,,,,
+00:00 a 02:59,1,30,31,1,3,4,35
+03:00 a 05:59,2,57,59,2,4,6,65
+06:00 a 08:59,1,80,81,4,14,18,99
+09:00 a 11:59,6,63,69,8,19,27,96
+12:00 a 14:59,9,79,88,4,11,15,103
+15:00 a 17:59,9,74,83,9,16,25,108
+18:00 a 20:59,8,62,70,4,16,20,90
+21:00 a 23:59,7,69,76,3,10,13,89
+Sin información,118,1282,1400,85,250,335,1735
+TOTAL,161,1796,1957,120,343,463,2420
+Rango de edad: Según la evidencia científica no se ha demostrado que las personas menores de 5 años cometan el acto del suicidio,,,,,,,
+"Circunstancia del hecho*: para el contexto de Suicidio es catalogada como la variable ""Razón del suicidio""",,,,,,,
+"Actividad durante el hecho: No se puede establecer exactamente la actividad que estaba realizando la víctima, por lo tanto para Suicidios esta variable no aplica",,,,,,,
+"No aplica ""Estado conyugal"": Corresponde a los menores de 10 años los cuales por su corta edad no es posible categorizarlos dentro de esta variable",,,,,,,
+FUENTE: Instituto Nacional de Medicina Legal y Ciencias Forenses - INMLCF,,,,,,,
+Grupo: Centro de Referencia Nacional sobre Violencia - GCRNV,,,,,,,
+2020: Base: Sistema de Información Red de Desaparecidos y Cadáveres - SIRDEC ,,,,,,,
