@@ -79,3 +79,9 @@ Data/3.[[:space:]]Resultados[[:space:]]Saber11/SB11_20222.TXT filter=lfs diff=lf
 .git/lfs/objects/c8/23/c8233823afee7ed688e2d12430ab8bc646bccbdad02d05cbd92bdd8f9822d89e filter=lfs diff=lfs merge=lfs -text
 .git/lfs/tmp/2182307198 filter=lfs diff=lfs merge=lfs -text
 .git/lfs/tmp/4289003181 filter=lfs diff=lfs merge=lfs -text
+Colombia filter=lfs diff=lfs merge=lfs -text
+Data/DCD-area-proypoblacion-Mun-1995-2004.xlsx filter=lfs diff=lfs merge=lfs -text
+Data/Geograficos filter=lfs diff=lfs merge=lfs -text
+backup_csv/datos filter=lfs diff=lfs merge=lfs -text
+Data/Datos filter=lfs diff=lfs merge=lfs -text
+Data/3. filter=lfs diff=lfs merge=lfs -text
