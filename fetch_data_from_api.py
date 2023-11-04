@@ -1,7 +1,7 @@
 import pandas as pd
 from sodapy import Socrata
 import logging
-
+'''
 # Configuración del logging
 logging.basicConfig(filename='etl_errors.log', level=logging.ERROR, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -52,3 +52,40 @@ def fetch_data_from_api(app_token: str, username: str, password: str, endpoint: 
         logging.error(f"Error fetching data from page {i+1} of endpoint {endpoint}. Error: {str(e)}")
         return None
 
+'''
+
+# Configuración del logging
+logging.basicConfig(filename='etl_errors.log', level=logging.ERROR, format='%(asctime)s - %(levelname)s - %(message)s')
+
+def fetch_data_from_api(app_token: str, username: str, password: str, endpoint: str) -> dict:
+    """
+    Fetches all data from the specified API endpoint and returns it as a dictionary.
+    
+    Parameters:
+    - app_token (str): The application token.
+    - username (str): The API username.
+    - password (str): The API password.
+    - endpoint (str): The endpoint of the dataset.
+    
+    Returns:
+    - dict: A dictionary where the key is the endpoint name and the value is its associated DataFrame.
+    """
+    
+    try:
+        # Initialize an authenticated client
+        client = Socrata("www.datos.gov.co", app_token, username=username, password=password)
+    except Exception as e:
+        logging.error(f"Authentication error for endpoint {endpoint}. Error: {str(e)}")
+        return None
+
+    try:
+        # Retrieve all records without specifying a limit
+        all_records = client.get(endpoint)
+        
+        # Convert to DataFrame
+        df = pd.DataFrame.from_records(all_records)
+
+        return {endpoint: df}
+    except Exception as e:
+        logging.error(f"Error fetching all data from endpoint {endpoint}. Error: {str(e)}")
+        return None
