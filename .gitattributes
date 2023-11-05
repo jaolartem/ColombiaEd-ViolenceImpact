@@ -79,3 +79,7 @@ Data/3.[[:space:]]Resultados[[:space:]]Saber11/SB11_20222.TXT filter=lfs diff=lf
 .git/lfs/objects/c8/23/c8233823afee7ed688e2d12430ab8bc646bccbdad02d05cbd92bdd8f9822d89e filter=lfs diff=lfs merge=lfs -text
 .git/lfs/tmp/2182307198 filter=lfs diff=lfs merge=lfs -text
 .git/lfs/tmp/4289003181 filter=lfs diff=lfs merge=lfs -text
+/backup_csv/datos[[:space:]]cargados/SB11_20002_SB11_20002_7395.csv filter=lfs diff=lfs merge=lfs -text
+/backup_csv/datos[[:space:]]cargados/SB11_20012_SB11_20012_c3a3.csv filter=lfs diff=lfs merge=lfs -text
+/backup_csv/datos[[:space:]]cargados/SB11_20032_SB11_20032_97d3.csv filter=lfs diff=lfs merge=lfs -text
+/backup_csv/datos[[:space:]]cargados/SB11_20042_SB11_20042_cb30.csv filter=lfs diff=lfs merge=lfs -text
