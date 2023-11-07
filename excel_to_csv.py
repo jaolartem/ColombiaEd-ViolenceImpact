@@ -1,68 +1,73 @@
-import os
-import glob
+from pathlib import Path
 import pandas as pd
 import logging
 import uuid
 
+# Configure logging to report errors.
 logging.basicConfig(filename='etl_errors.log', level=logging.ERROR,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
-def load_excel_to_dict(path, backup_folder="backup_csv"):
+def load_excel_to_dict(excel_path: Path, backup_folder: Path = Path("backup_csv/datos cargados")) -> dict:
     """
     Load all Excel files from the given folder or a single file into a dictionary of DataFrames.
-    Also creates backup CSVs and maintains a record of loaded CSVs.
+    Also creates backup CSVs and maintains a record of loaded Excel files.
     
     Args:
-    - path (str): Path to the Excel file or directory containing multiple Excel files.
+    - excel_path (Path): Path to the Excel file or directory containing multiple Excel files.
 
     Returns:
     - dict: Dictionary of DataFrames with unique identifiers as keys.
     """
-    dfs = {}  # Dictionary to store DataFrames
-    backup_data = []  # List to store meta information for backup
+    dfs = {}
+    backup_data = []
     
-    # Ensure the backup folder and its subfolder exists
-    backup_directory = os.path.join(backup_folder, "datos cargados")
-    if not os.path.exists(backup_directory):
-        os.makedirs(backup_directory)
+    backup_folder.mkdir(parents=True, exist_ok=True)
     
-    # Get list of Excel files
-    if os.path.isdir(path):
-        excel_files = [f for ext in ['*.xlsx', '*.xls'] for f in glob.glob(os.path.join(path, '**', ext), recursive=True)]
+    if excel_path.is_dir():
+        excel_files = list(excel_path.rglob('*.xlsx')) + list(excel_path.rglob('*.xls'))
+    elif excel_path.is_file() and excel_path.suffix in ['.xlsx', '.xls']:
+        excel_files = [excel_path]
     else:
-        excel_files = [path] if path.endswith(('.xlsx', '.xls')) else []
+        logging.error(f"Invalid path provided: {excel_path}. Expected a directory or an Excel file path.")
+        return {}
 
-    for full_path in excel_files:
+    for file_path in excel_files:
         try:
-            df_dict = pd.read_excel(full_path, sheet_name=None)
+            df_dict = pd.read_excel(file_path, sheet_name=None)
             for sheet_name, df in df_dict.items():
-                file_name = os.path.basename(full_path)
-                unique_id = f"{os.path.basename(file_name)}_{sheet_name}_{str(uuid.uuid4())[:4]}"
+                unique_id = f"{file_path.stem}_{sheet_name}_{uuid.uuid4().hex[:4]}"
                 dfs[unique_id] = df
 
-                # Backup the loaded excel
                 backup_file_name = f"{sheet_name}_{unique_id}.csv"
-                backup_path = os.path.join(backup_directory, backup_file_name)
+                backup_path = backup_folder / backup_file_name
                 df.to_csv(backup_path, index=False)
-                
+                if not backup_path.is_file():
+                    raise FileNotFoundError(f"Backup file was not created: {backup_path}")
+
                 backup_data.append({
-                    'Original_File': os.path.basename(full_path),
-                    'Document_Type': 'excel',
-                    'Original_Folder': os.path.dirname(full_path),
-                    'Backup_Path': backup_path,
+                    'Original_File': file_path.name,
+                    'Document_Type': 'Excel',
+                    'Original_Folder': file_path.parent.as_posix(),
+                    'Backup_Path': backup_path.as_posix(),
                     'Unique_Identifier': unique_id
                 })
 
-            # Update the backup_info.csv
-            backup_info_path = os.path.join(backup_folder, "backup_info.csv")
-            if os.path.exists(backup_info_path):
-                backup_info_df = pd.read_csv(backup_info_path)
-                backup_info_df = backup_info_df.append(pd.DataFrame(backup_data)).drop_duplicates().reset_index(drop=True)
-            else:
-                backup_info_df = pd.DataFrame(backup_data)
-            backup_info_df.to_csv(backup_info_path, index=False)
-        
+        except pd.errors.EmptyDataError:
+            logging.warning(f"No data in file {file_path}. Skipping.")
+        except FileNotFoundError as fnfe:
+            logging.error(fnfe)
         except Exception as e:
-            logging.error(f"Error processing Excel files in {full_path}. Error: {e}")
-    
+            logging.error(f"Unexpected error processing Excel file {file_path}: {e}")
+
+    backup_info_path = backup_folder / "backup_info.csv"
+    try:
+        backup_info_df = pd.concat([
+            pd.read_csv(backup_info_path) if backup_info_path.exists() else pd.DataFrame(),
+            pd.DataFrame(backup_data)
+        ], ignore_index=True)
+        backup_info_df.to_csv(backup_info_path, index=False)
+    except Exception as e:
+        logging.error(f"Failed to update backup info: {e}")
+
+    logging.info(f"Processed {len(dfs)} Excel files successfully.")
     return dfs

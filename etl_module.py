@@ -2,7 +2,7 @@ import os
 import glob
 from file_detector import process_directory
 
-
+# Global variable to hold all DataFrames
 ALL_DFS = {}
 
 class Extraction:
@@ -17,8 +17,6 @@ class Extraction:
         self.dataframes = {}
 
     def extract_from_directory(self, directory_path):
-        
-        global ALL_DFS
         """
         Extracts data from a directory, processing all supported file formats.
         
@@ -28,7 +26,7 @@ class Extraction:
         Updates:
         - self.dataframes: Dictionary containing extracted DataFrames.
         """
-        self.dataframes = process_directory(directory_path)        
+        self.dataframes = process_directory(directory_path)
         print("DataFrames after processing directory:", self.dataframes.keys())  # Debugging print statement
         ALL_DFS.update(self.dataframes) 
 
@@ -36,6 +34,10 @@ class Transformation:
     """
     Class responsible for data transformation.
     """
+
+    def __init__(self):
+        # Work with a local copy of the DataFrames for transformations
+        self.local_dfs = ALL_DFS.copy()
 
     def transform_and_save(self, sheet_name, dataframe):
         """
@@ -52,27 +54,22 @@ class Transformation:
         # Current logic is a placeholder. Actual transformation logic should replace this.
         return dataframe
 
-    def Violence_pivot(self):
+    def violence_pivot(self):
         """
         Transforms DataFrames that match certain conditions.
-        
-        Updates:
-        - ALL_DFS: Global dictionary containing transformed DataFrames.
-        
-        Returns:
-        - dict: Dictionary containing transformed DataFrames.
         """
-        global ALL_DFS
-        for df_name, df in list(ALL_DFS.items()):
+        for df_name, df in list(self.local_dfs.items()):
             if "municipio del hecho" in df_name.lower():
                 transformed_df = self.transform_and_save(df_name, df)
-                ALL_DFS[df_name] = transformed_df  
-        return ALL_DFS
+                self.local_dfs[df_name] = transformed_df  
+        return self.local_dfs
 
 if __name__ == "__main__":
-    folder_name = '/path/to/your/folder'
+    folder_name = '/path/to/your/folder'  # Update with the actual path
     extractor = Extraction()
     extractor.extract_from_directory(folder_name)
+
+    # Create a Transformation object and perform transformations
     transformer = Transformation()
-    dfs_dict = transformer.Violence_pivot()
-    print(dfs_dict)
+    transformed_dfs = transformer.violence_pivot()
+    print(transformed_dfs)
