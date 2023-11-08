@@ -34,7 +34,7 @@ def process_txt_to_dict_and_backup(txt_path: Path, backup_folder: Path = Path("b
         raise FileNotFoundError(error_msg)
 
     # Prepare backup folder
-    backup_txt_folder = backup_folder / "datos_cargados"
+    backup_txt_folder = backup_folder / "Datos_cargados"
     backup_txt_folder.mkdir(parents=True, exist_ok=True)
 
     # Find TXT files
