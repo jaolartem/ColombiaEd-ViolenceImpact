@@ -1,55 +1,69 @@
 from pathlib import Path
 import logging
+import sys
+import pandas as pd
+from typing import Dict
 from txt_to_df import process_txt_to_dict_and_backup
 from csv_to_df import load_csv_to_dict
 from excel_to_csv import load_excel_to_dict
 
-def process_directory(directory_path: Path) -> dict:
+def setup_logging(log_file: str = 'etl_errors.log') -> None:
     """
-    Scans a given directory and all its subdirectories for files with specific extensions
-    (.txt, .csv, .xls, .xlsx) and processes each file according to its type. The function 
-    aggregates all processed files into a single dictionary of DataFrames.
+    Sets up the logging configuration for the application.
+    """
+    logging.basicConfig(filename=log_file, level=logging.ERROR,
+                        format='%(asctime)s - %(levelname)s - %(message)s')
 
-    Parameters:
+   
+def process_directory(directory_path) -> Dict[str, pd.DataFrame]:
+    # Convert directory_path to a Path object if it is not already one
+    if not isinstance(directory_path, Path):
+        directory_path = Path(directory_path)
+
+    dfs = {}  # Dictionary to store the DataFrames keyed by file names
+    all_files = list(directory_path.rglob('*.*'))
+    """
+    Processes a directory and its subdirectories to detect and process files.
+
+    Args:
     - directory_path (Path): The Path object of the directory to be processed.
 
     Returns:
-    - dict: A dictionary with unique identifiers as keys and corresponding DataFrames as values.
-
-    Raises:
-    - Logs an error if any exception occurs during the processing of individual files.
+    - Dict[str, pd.DataFrame]: A dictionary with file names as keys and corresponding DataFrames as values.
     """
+    dfs = {}  # Dictionary to store the DataFrames keyed by file names
+    all_files = list(directory_path.rglob('*.*'))
 
-    dfs = {}  # Dictionary to store the DataFrames keyed by unique identifiers
-    all_files = list(directory_path.rglob('*.*'))  # Get all files in the directory and subdirectories
-
-    # Iterate over each file and process according to file type
     for file_path in all_files:
         try:
             if file_path.suffix == '.txt':
-                # Process .txt files and update the dictionary with the returned DataFrames
                 dfs.update(process_txt_to_dict_and_backup(file_path))
             elif file_path.suffix == '.csv':
-                # Process .csv files and update the dictionary with the returned DataFrames
                 dfs.update(load_csv_to_dict(file_path))
             elif file_path.suffix in ['.xls', '.xlsx']:
-                # Process Excel files and update the dictionary with the returned DataFrames
                 dfs.update(load_excel_to_dict(file_path))
+        except FileNotFoundError as e:
+            logging.error(f"File not found: {file_path}", exc_info=True)
+        except pd.errors.ParserError as e:
+            logging.error(f"Parsing error in file: {file_path}", exc_info=True)
         except Exception as e:
-            # Log any exceptions with detailed information
             logging.error(f"Error processing file {file_path}: {e}", exc_info=True)
 
-    return dfs  # Return the aggregated dictionary containing DataFrames
+    return dfs
 
-# The code below should only be executed when this script is the main program.
 if __name__ == "__main__":
-    # Configure logging to write errors to a log file with a specific format
-    logging.basicConfig(filename='file_detector_errors.log', level=logging.ERROR,
-                        format='%(asctime)s - %(levelname)s - %(message)s')
+    setup_logging()  # Setup logging
 
+    if len(sys.argv) > 1:
+        directory_to_process = Path(sys.argv[1])
+        if not directory_to_process.exists():
+            logging.error(f"The provided directory does not exist: {directory_to_process}")
+            sys.exit(1)
 
-    # Define the directory to be processed
-    directory_to_process = Path('/path/to/directory')
+        processed_data = process_directory(directory_to_process)
 
-    # Process the directory and capture the returned dictionary of DataFrames
-    processed_data = process_directory(directory_to_process)
+        # Here, you might want to do something with the processed data.
+        # For example, you could write it to a file, or pass it to another function for further processing.
+    else:
+        logging.error("No directory path provided as argument to the script.")
+        sys.exit(1)
