@@ -74,13 +74,14 @@ def process_txt_to_dict_and_backup(txt_path: Path, backup_folder: Path = Path("b
     backup_txt_folder.mkdir(parents=True, exist_ok=True)
 
     if txt_path.is_dir():
-        txt_files = list(txt_path.rglob('*.txt'))+list(txt_path.rglob('*.csv'))
-    elif txt_path.is_file() and txt_path.suffix == ['.txt', '.csv']:
+        txt_files = list(txt_path.rglob('*.txt')) + list(txt_path.rglob('*.csv'))
+    elif txt_path.is_file() and txt_path.suffix in ('.txt', '.csv'):
         txt_files = [txt_path]
     else:
         error_msg = f"Invalid path provided: {txt_path}. Expected a directory or a TXT file path."
         logging.error(error_msg)
         raise ValueError(error_msg)
+
 
     dfs = {}
     backup_data = []
