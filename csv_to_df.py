@@ -51,7 +51,7 @@ def load_csv_to_dict(csv_path: Path, backup_folder: Path = Path("backup_csv")) -
         try:
             separator, encoding = detect_separator(file_path)
             df = pd.read_csv(file_path, sep=separator, encoding=encoding)
-            unique_id = f"{file_path.stem}_{uuid.uuid4().hex}"
+            unique_id = f"{file_path.stem}_{uuid.uuid4().hex[:4]}"
             dfs[unique_id] = df
             backup_file = backup_csv_folder / f"{unique_id}.csv"
             df.to_csv(backup_file, index=False)

@@ -29,7 +29,7 @@ def load_excel_to_dict(excel_path: Path, backup_folder: Path = Path("backup_csv"
     backup_data = []
     
     # Create a subdirectory within the backup folder for storing the CSV backups.
-    backup_csv_folder = backup_folder / "Datos Cargados"
+    backup_csv_folder = backup_folder / "Datos_cargados"
     backup_csv_folder.mkdir(parents=True, exist_ok=True)
     
     # Determine if the provided path is a directory or a single file.

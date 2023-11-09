@@ -15,31 +15,26 @@ def setup_logging(log_file: str = 'etl_errors.log') -> None:
                         format='%(asctime)s - %(levelname)s - %(message)s')
 
    
-def process_directory(directory_path) -> Dict[str, pd.DataFrame]:
-    # Convert directory_path to a Path object if it is not already one
-    if not isinstance(directory_path, Path):
-        directory_path = Path(directory_path)
-
-    dfs = {}  # Dictionary to store the DataFrames keyed by file names
-    all_files = list(directory_path.rglob('*.*'))
+def process_directory(directory_path: Path) -> Dict[str, pd.DataFrame]:
     """
     Processes a directory and its subdirectories to detect and process files.
 
     Args:
-    - directory_path (Path): The Path object of the directory to be processed.
+        directory_path (Path): The Path object of the directory to be processed.
 
     Returns:
-    - Dict[str, pd.DataFrame]: A dictionary with file names as keys and corresponding DataFrames as values.
+        Dict[str, pd.DataFrame]: A dictionary with file names as keys and corresponding DataFrames as values.
     """
+    # Ensure directory_path is a Path object
+    directory_path = Path(directory_path) if not isinstance(directory_path, Path) else directory_path
+
     dfs = {}  # Dictionary to store the DataFrames keyed by file names
-    all_files = list(directory_path.rglob('*.*'))
+    all_files = list(directory_path.rglob('*.*'))  # Get all files in the directory
 
     for file_path in all_files:
         try:
-            if file_path.suffix == '.txt':
+            if file_path.suffix in ['.txt', '.csv']:
                 dfs.update(process_txt_to_dict_and_backup(file_path))
-            elif file_path.suffix == '.csv':
-                dfs.update(load_csv_to_dict(file_path))
             elif file_path.suffix in ['.xls', '.xlsx']:
                 dfs.update(load_excel_to_dict(file_path))
         except FileNotFoundError as e:
