@@ -1,61 +1,79 @@
-import os
+from pathlib import Path
 import pandas as pd
 import logging
 import uuid
+from txt_to_df import detect_separator  # Ensure this function is correctly defined before using
 
 logging.basicConfig(filename='etl_errors.log', level=logging.ERROR,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
-
-def load_csv_to_dict(csv_folder, backup_folder="backup_csv"):
+def load_csv_to_dict(csv_path: Path, backup_folder: Path = Path("backup_csv")) -> dict:
     """
-    Load all CSV files from the given folder into a dictionary of DataFrames.
-    Also creates backup CSVs and maintains a record of loaded CSVs.
-    
-    Args:
-    - csv_folder (str): Path to the folder containing CSV files.
+    Reads CSV files from a specified path into a dictionary of DataFrames, backing up the files.
+
+    The function dynamically detects the separator and encoding for each CSV file to ensure proper parsing. 
+    It generates a unique identifier for each DataFrame and stores backups in a specified folder.
+
+    Parameters:
+        csv_path (Path): Path to a directory of CSV files or a single CSV file.
+        backup_folder (Path): Path to the directory where backups will be stored.
 
     Returns:
-    - dict: Dictionary of DataFrames with unique identifiers as keys.
+        dict: A dictionary mapping unique identifiers to DataFrames.
+
+    Raises:
+        FileNotFoundError: If the path is not a directory or a CSV file.
+        Exception: For any other errors during CSV processing or backup.
     """
-    dfs = {}  # Dictionary to store DataFrames
-    backup_data = []  # List to store meta information for backup
-    
-    # Ensure the backup folder and its subfolder exists
-    backup_directory = os.path.join(backup_folder, "datos cargados")
-    if not os.path.exists(backup_directory):
-        os.makedirs(backup_directory)
+    if not csv_path.exists():
+        error_msg = f"Provided path does not exist: {csv_path}"
+        logging.error(error_msg)
+        raise FileNotFoundError(error_msg)
 
+    # Prepare backup folder
+    backup_csv_folder = backup_folder / "Datos_cargados"
+    backup_csv_folder.mkdir(parents=True, exist_ok=True)
+
+    # Find CSV files
+    if csv_path.is_dir():
+        csv_files = list(csv_path.rglob('*.csv'))
+    elif csv_path.is_file() and csv_path.suffix == '.csv':
+        csv_files = [csv_path]
+    else:
+        error_msg = f"Invalid path provided: {csv_path}. Expected a directory or a CSV file path."
+        logging.error(error_msg)
+        raise FileNotFoundError(error_msg)
+
+    dfs = {}
+    backup_data = []
+
+    for file_path in csv_files:
+        try:
+            separator, encoding = detect_separator(file_path)
+            df = pd.read_csv(file_path, sep=separator, encoding=encoding)
+            unique_id = f"{file_path.stem}_{uuid.uuid4().hex[:4]}"
+            dfs[unique_id] = df
+            backup_file = backup_csv_folder / f"{unique_id}.csv"
+            df.to_csv(backup_file, index=False)
+
+            backup_data.append({
+                'Original_File': file_path.name,
+                'Document_Type': 'CSV',
+                'Backup_Path': str(backup_file),
+                'Unique_Identifier': unique_id
+            })
+        except Exception as e:
+            logging.error(f"Error processing CSV file {file_path}: {e}", exc_info=True)
+
+    # Update backup information
+    backup_info_path = backup_folder / "backup_info.csv"
     try:
-        for file_name in os.listdir(csv_folder):
-            if file_name.endswith('.csv'):
-                unique_id = f"{os.path.basename(file_name)}_{str(uuid.uuid4())[:4]}"
-                full_path = os.path.join(csv_folder, file_name)
-                df = pd.read_csv(full_path)
-                dfs[unique_id] = df
-
-                # Backup the loaded CSV
-                backup_path = os.path.join(backup_directory, f"{file_name}_{unique_id}.csv")
-                df.to_csv(backup_path, index=False)
-                
-                backup_data.append({
-                    'Original_File': file_name,
-                    'Document_Type': 'CSV',
-                    'Original_Folder': csv_folder,
-                    'Backup_Path': backup_path,
-                    'Unique_Identifier': unique_id
-                })
-
-        # Update the backup_info.csv
-        backup_info_path = os.path.join(backup_folder, "backup_info.csv")
-        if os.path.exists(backup_info_path):
-            backup_info_df = pd.read_csv(backup_info_path)
-            backup_info_df = backup_info_df.append(pd.DataFrame(backup_data), ignore_index=True)
-        else:
-            backup_info_df = pd.DataFrame(backup_data)
+        backup_info_df = pd.DataFrame(backup_data)
+        if backup_info_path.exists():
+            existing_info_df = pd.read_csv(backup_info_path)
+            backup_info_df = pd.concat([existing_info_df, backup_info_df], ignore_index=True)
         backup_info_df.to_csv(backup_info_path, index=False)
-        
     except Exception as e:
-        logging.error(f"Error processing CSV files in {csv_folder}. Error: {e}")
-    
+        logging.error(f"Failed to update backup info: {e}", exc_info=True)
+
     return dfs

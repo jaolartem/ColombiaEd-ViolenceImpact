@@ -1,8 +1,18 @@
+# Ignore specific configuration files
+config.py
 config.json
+
+# Ignore directories and their contents
 /3. Resultados Saber11/
 /servicio 205/
-/.yml/
-.fuse_hidden0000034500000004
 /backup_csv/
 /Data/
+/__pycache__/
+/.yml/
+
+# Ignore hidden fuse files
+.fuse_hidden*
+
+# Ignore specific data files
 dataframes.h5
+etl_errors.log
