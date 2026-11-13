@@ -2,6 +2,12 @@
 Saber 11 microdata, one row per exam taker, 2000-2022, from the ICFES period files.
 
     python -m panel.dataicfes [--data "E:/Datos/proyecto/Data/3. Resultados Saber11"]
+    python -m panel.dataicfes --refresh 20061,20062     # read some periods' scores and answers again
+    python -m panel.dataicfes --derive                  # only the cleaning and the municipal scores
+
+Every run ends with the same cleaning: a test written as -1 is NULL; an exam with every test at 0 was not
+taken or was annulled, so its scores are NULL; global_mean is the simple mean of the five tests, the
+only global score before 2014-2, when ICFES started publishing its own weighted one (global_score).
 
 Reads every SB11_<year><semester> file (and Data_Icfes_SABER11_2022-1_v2.TXT) and appends to
 Education_Outcomes.Students / StudentScores / Schools and Student_Context.StudentHousehold /
@@ -50,12 +56,12 @@ ALIASES = {
     "mpio_code": ["COLE_COD_MCPIO_UBICACION"],
     "mpio_name": ["COLE_MCPIO_UBICACION"],
     "depto_name": ["COLE_DEPTO_UBICACION"],
-    "pres_code": ["ESTU_COD_MCPIO_PRESENTACION"],
-    "pres_mpio": ["ESTU_MCPIO_PRESENTACION"],
-    "pres_depto": ["ESTU_DEPTO_PRESENTACION"],
+    "pres_code": ["ESTU_COD_MCPIO_PRESENTACION", "ESTU_EXAM_COD_MPIO_PRESENTACIO"],
+    "pres_mpio": ["ESTU_MCPIO_PRESENTACION", "ESTU_MPIO_PRESENTACION"],
+    "pres_depto": ["ESTU_DEPTO_PRESENTACION", "ESTU_DEPT_PRESENTACION"],
     "math": ["PUNT_MATEMATICAS"],
     "critical_reading": ["PUNT_LECTURA_CRITICA", "PUNT_LENGUAJE"],
-    "social_direct": ["PUNT_SOCIALES_CIUDADANAS", "PUNT_CIENCIAS_SOCIALES"],
+    "social_direct": ["PUNT_SOCIALES_CIUDADANAS", "PUNT_CIENCIAS_SOCIALES", "PUNT_C_SOCIALES"],
     "history": ["PUNT_HISTORIA"], "geography": ["PUNT_GEOGRAFIA"],
     "science_direct": ["PUNT_C_NATURALES"],
     "biology": ["PUNT_BIOLOGIA"], "chemistry": ["PUNT_QUIMICA"], "physics": ["PUNT_FISICA"],
@@ -64,20 +70,20 @@ ALIASES = {
     "stratum": ["FAMI_ESTRATOVIVIENDA", "FAMI_ESTRATO_VIVIENDA"],
     "persons": ["FAMI_PERSONASHOGAR", "FAMI_PERSONAS_HOGAR"],
     "rooms": ["FAMI_CUARTOSHOGAR", "FAMI_CUARTOS_HOGAR"],
-    "floor": ["FAMI_PISOSHOGAR"],
-    "internet": ["FAMI_TIENEINTERNET"],
+    "floor": ["FAMI_PISOSHOGAR", "FAMI_PISOS_HOGAR"],
+    "internet": ["FAMI_TIENEINTERNET", "FAMI_INTERNET"],
     "computer": ["FAMI_TIENECOMPUTADOR", "FAMI_COMPUTADOR"],
-    "car": ["FAMI_TIENEAUTOMOVIL"],
-    "washer": ["FAMI_TIENELAVADORA"],
+    "car": ["FAMI_TIENEAUTOMOVIL", "FAMI_AUTOMOVIL"],
+    "washer": ["FAMI_TIENELAVADORA", "FAMI_LAVADORA"],
     "mother": ["FAMI_EDUCACIONMADRE", "FAMI_EDUCA_MADRE"],
     "father": ["FAMI_EDUCACIONPADRE", "FAMI_EDUCA_PADRE"],
     "ethnic": ["ESTU_ETNIA", "ESTU_TIENEETNIA"],
-    "work_hours": ["ESTU_HORASSEMANATRABAJA"],
+    "work_hours": ["ESTU_HORASSEMANATRABAJA", "ESTU_HORAS_TRABAJA"],
     "books": ["FAMI_NUMLIBROS"],
     "reading": ["ESTU_DEDICACIONLECTURADIARIA"],
     "internet_hours": ["ESTU_DEDICACIONINTERNET"],
 }
-YES = {"si": 1, "s": 1, "no": 0, "n": 0}
+YES = {"si": 1, "s": 1, "no": 0, "n": 0, "1": 1, "0": 0}     # 2008-2009 answer internet, car and washer with 1 / 0
 SECTOR_CODES = {"O": "OFICIAL", "N": "NO OFICIAL"}
 AREA_CODES = {"U": "URBANO", "R": "RURAL"}
 
@@ -122,8 +128,10 @@ def number(s: pd.Series) -> pd.Series:
     return pd.to_numeric(s.astype(str).str.replace(",", ".", regex=False).str.strip(), errors="coerce")
 
 
-def yes_no(s: pd.Series) -> pd.Series:
-    return s.astype(str).map(lambda v: YES.get(key(v))).astype("Int64")
+def yes_no(s: pd.Series, codes=True) -> pd.Series:
+    """1 / 0 from si / no. codes=False leaves the bare digits out: what 2 or 3 mean is not documented."""
+    table = YES if codes else {k: v for k, v in YES.items() if not k.isdigit()}
+    return s.astype(str).map(lambda v: table.get(key(v))).astype("Int64")
 
 
 def stratum(s: pd.Series) -> pd.Series:
@@ -191,15 +199,141 @@ def load_tsv(cur, table, df, columns, tmpdir):
                 f"FIELDS TERMINATED BY '\\t' LINES TERMINATED BY '\\n' ({', '.join('`' + c + '`' for c in columns)})")
 
 
+def scores_frame(chunk, ids):
+    mean = lambda *cols: pd.concat([number(pick(chunk, c)) for c in cols], axis=1).mean(axis=1)
+    social = number(pick(chunk, "social_direct")).fillna(mean("history", "geography"))
+    science = number(pick(chunk, "science_direct")).fillna(mean("biology", "chemistry", "physics"))
+    scores = pd.DataFrame({
+        "student_id": ids, "math": number(pick(chunk, "math")),
+        "critical_reading": number(pick(chunk, "critical_reading")), "social_citizenship": social,
+        "natural_sciences": science, "english": number(pick(chunk, "english")), "global_score": number(pick(chunk, "global")),
+    })
+    return scores
+
+
+def household_frames(chunk, ids):
+    household = pd.DataFrame({
+        "student_id": ids, "stratum": stratum(pick(chunk, "stratum")),
+        "persons_in_household": pick(chunk, "persons").str.slice(0, 40), "rooms": pick(chunk, "rooms").str.slice(0, 40),
+        "floor_type": pick(chunk, "floor").str.slice(0, 80), "has_internet": yes_no(pick(chunk, "internet")),
+        "has_computer": yes_no(pick(chunk, "computer"), codes=False), "has_car": yes_no(pick(chunk, "car")),
+        "has_washing_machine": yes_no(pick(chunk, "washer")),
+        "mother_education": pick(chunk, "mother").str.slice(0, 100), "father_education": pick(chunk, "father").str.slice(0, 100),
+        "ethnic_group": pick(chunk, "ethnic").str.slice(0, 80), "work_hours_per_week": pick(chunk, "work_hours").str.slice(0, 40),
+    })
+    practices = pd.DataFrame({
+        "student_id": ids, "books_at_home": pick(chunk, "books").str.slice(0, 40),
+        "reading_for_pleasure": pick(chunk, "reading").str.slice(0, 40),
+        "internet_hours_per_day": pick(chunk, "internet_hours").str.slice(0, 40),
+    })
+    return household, practices
+
+
+CLEAN_TESTS = ("math", "critical_reading", "social_citizenship", "natural_sciences", "english")
+
+
+def clean_scores(cur):
+    """The cleaning every load ends with. It only touches what the files themselves mark as no score."""
+    t = "Education_Outcomes.StudentScores"
+    # -1 is how 2005-2007 write a test that was not scored
+    cur.execute(f"UPDATE {t} SET " + ", ".join(f"{c} = IF({c} < 0, NULL, {c})" for c in CLEAN_TESTS)
+                + " WHERE " + " OR ".join(f"{c} < 0" for c in CLEAN_TESTS))
+    print(f"  tests marked -1 set to NULL: {cur.rowcount:,} students")
+    # every test at 0 is an exam not taken or annulled, not a score
+    cur.execute(f"UPDATE {t} SET " + ", ".join(f"{c} = NULL" for c in CLEAN_TESTS + ("global_score",))
+                + " WHERE " + " AND ".join(f"COALESCE({c}, 0) = 0" for c in CLEAN_TESTS)
+                + " AND (" + " OR ".join(f"{c} IS NOT NULL" for c in CLEAN_TESTS + ("global_score",)) + ")")
+    print(f"  exams with every test at 0 set to NULL: {cur.rowcount:,} students")
+    cur.execute(f"UPDATE {t} SET global_mean = ROUND((" + " + ".join(CLEAN_TESTS) + ") / 5, 2)")
+    print("  simple global mean written for every student with the five tests")
+
+
+def municipal_scores(cur):
+    cur.execute("TRUNCATE TABLE Education_Outcomes.MunicipalScoresMicro")
+    cur.execute("""
+        INSERT INTO Education_Outcomes.MunicipalScoresMicro
+        SELECT s.municipality_id, s.exam_period_id, COUNT(*), AVG(sc.math),
+               (AVG(sc.math) - n.m_math) / NULLIF(n.sd_math, 0), AVG(sc.g), (AVG(sc.g) - n.m_global) / NULLIF(n.sd_global, 0)
+        FROM Education_Outcomes.Students s
+        JOIN (SELECT student_id, math, COALESCE(global_score, global_mean) g FROM Education_Outcomes.StudentScores) sc
+          ON sc.student_id = s.id
+        JOIN (SELECT s2.exam_period_id, AVG(x.math) m_math, STDDEV_POP(x.math) sd_math,
+                     AVG(COALESCE(x.global_score, x.global_mean)) m_global,
+                     STDDEV_POP(COALESCE(x.global_score, x.global_mean)) sd_global
+              FROM Education_Outcomes.Students s2 JOIN Education_Outcomes.StudentScores x ON x.student_id = s2.id
+              GROUP BY s2.exam_period_id) n ON n.exam_period_id = s.exam_period_id
+        WHERE s.municipality_id IS NOT NULL
+        GROUP BY s.municipality_id, s.exam_period_id""")
+
+
+def derive(cur):
+    clean_scores(cur)
+    print("  municipal scores from the microdata")
+    municipal_scores(cur)
+    cur.execute("SET FOREIGN_KEY_CHECKS = 1")
+    for t in ("Education_Outcomes.Students", "Education_Outcomes.StudentScores", "Education_Outcomes.Schools",
+              "Student_Context.StudentHousehold", "Student_Context.StudentPractices", "Education_Outcomes.MunicipalScoresMicro"):
+        cur.execute(f"SELECT COUNT(*) FROM {t}")
+        print(f"  {t:<45} {cur.fetchone()[0]:>12,}")
+
+
+def refresh(cur, folder, periods, tmpdir):
+    """Reads again the scores and the household answers of some periods, for the students already loaded:
+    for when a field was missed because its column had a name the aliases did not know."""
+    staging = {"Education_Outcomes.StudentScores": "Education_Outcomes._refresh_scores",
+               "Student_Context.StudentHousehold": "Student_Context._refresh_household"}
+    for target, tmp in staging.items():
+        cur.execute(f"DROP TABLE IF EXISTS {tmp}")
+        cur.execute(f"CREATE TABLE {tmp} LIKE {target}")
+    columns = {}
+    for periodo, path in files(folder):
+        if periodo not in periods:
+            continue
+        tsv = Path(tmpdir) / "file.tsv"
+        encoding = to_tsv(path, tsv)
+        header = pd.read_csv(tsv, sep="\t", nrows=0, encoding=encoding, quoting=csv.QUOTE_NONE).columns
+        known_names = {n for names in ALIASES.values() for n in names}
+        wanted = [h for h in header if str(h).strip().upper() in known_names]
+        for chunk in pd.read_csv(tsv, sep="\t", dtype=str, usecols=wanted, encoding=encoding, quoting=csv.QUOTE_NONE,
+                                 chunksize=200_000, on_bad_lines="skip", encoding_errors="replace"):
+            chunk.columns = [str(c).strip().upper() for c in chunk.columns]
+            chunk = chunk.dropna(subset=["ESTU_CONSECUTIVO"])
+            ids = chunk["ESTU_CONSECUTIVO"].str.strip()
+            scores = scores_frame(chunk, ids)
+            household, _ = household_frames(chunk, ids)
+            for target, frame in (("Education_Outcomes.StudentScores", scores), ("Student_Context.StudentHousehold", household)):
+                columns[target] = list(frame.columns)
+                load_tsv(cur, staging[target], frame, list(frame.columns), tmpdir)
+        tsv.unlink()
+        print(f"  {path.name:<40} {periodo}  read again", flush=True)
+    for target, tmp in staging.items():
+        cols = [c for c in columns.get(target, []) if c != "student_id"]
+        if cols:
+            cur.execute(f"UPDATE {target} t JOIN {tmp} r ON r.student_id = t.student_id SET "
+                        + ", ".join(f"t.{c} = r.{c}" for c in cols))
+            print(f"  {target}: {cur.rowcount:,} rows changed")
+        cur.execute(f"DROP TABLE {tmp}")
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--data", default=DEFAULT_DATA, type=Path)
     parser.add_argument("--resume", action="store_true", help="keep the periods already loaded and continue with the rest")
+    parser.add_argument("--refresh", help="comma-separated periods, as in the file names, whose scores and household "
+                                          "answers are read again; then the cleaning and the municipal scores")
+    parser.add_argument("--derive", action="store_true", help="only the cleaning and the municipal scores")
     args = parser.parse_args()
     db = connect()
     cur = db.cursor()
     cur.execute("SET FOREIGN_KEY_CHECKS = 0")
     cur.execute("SET UNIQUE_CHECKS = 0")
+    if args.refresh or args.derive:
+        if args.refresh:
+            with tempfile.TemporaryDirectory(dir=Path("cache")) as tmpdir:
+                refresh(cur, args.data, {int(p) for p in args.refresh.split(",")}, tmpdir)
+        derive(cur)
+        db.close()
+        return
     done = set()
     if args.resume:
         cur.execute("SELECT DISTINCT exam_period_id FROM Education_Outcomes.Students")
@@ -258,28 +392,8 @@ def main():
                     "sex_id": pick(chunk, "sex").astype(str).str.strip().str.upper().str[:1].where(lambda s: s.isin(["F", "M"]), "U"),
                     "birth_year": birth.where(birth.between(1900, 2015)).astype("Int64"),
                 })
-                mean = lambda *cols: pd.concat([number(pick(chunk, c)) for c in cols], axis=1).mean(axis=1)
-                social = number(pick(chunk, "social_direct")).fillna(mean("history", "geography"))
-                science = number(pick(chunk, "science_direct")).fillna(mean("biology", "chemistry", "physics"))
-                scores = pd.DataFrame({
-                    "student_id": students["id"], "math": number(pick(chunk, "math")),
-                    "critical_reading": number(pick(chunk, "critical_reading")), "social_citizenship": social,
-                    "natural_sciences": science, "english": number(pick(chunk, "english")), "global_score": number(pick(chunk, "global")),
-                })
-                household = pd.DataFrame({
-                    "student_id": students["id"], "stratum": stratum(pick(chunk, "stratum")),
-                    "persons_in_household": pick(chunk, "persons").str.slice(0, 40), "rooms": pick(chunk, "rooms").str.slice(0, 40),
-                    "floor_type": pick(chunk, "floor").str.slice(0, 80), "has_internet": yes_no(pick(chunk, "internet")),
-                    "has_computer": yes_no(pick(chunk, "computer")), "has_car": yes_no(pick(chunk, "car")),
-                    "has_washing_machine": yes_no(pick(chunk, "washer")),
-                    "mother_education": pick(chunk, "mother").str.slice(0, 100), "father_education": pick(chunk, "father").str.slice(0, 100),
-                    "ethnic_group": pick(chunk, "ethnic").str.slice(0, 80), "work_hours_per_week": pick(chunk, "work_hours").str.slice(0, 40),
-                })
-                practices = pd.DataFrame({
-                    "student_id": students["id"], "books_at_home": pick(chunk, "books").str.slice(0, 40),
-                    "reading_for_pleasure": pick(chunk, "reading").str.slice(0, 40),
-                    "internet_hours_per_day": pick(chunk, "internet_hours").str.slice(0, 40),
-                })
+                scores = scores_frame(chunk, students["id"])
+                household, practices = household_frames(chunk, students["id"])
                 for sid, name, m, sector, area in zip(school, pick(chunk, "school_name"), mun, pick(chunk, "sector"), pick(chunk, "area")):
                     if pd.notna(sid) and sid not in schools:
                         sector = str(sector).strip().upper() if pd.notna(sector) else None
@@ -307,24 +421,7 @@ def main():
         sch = pd.DataFrame([(k, *v) for k, v in schools.items()], columns=["id", "name", "municipality_id", "sector", "area"])
         load_tsv(cur, "Education_Outcomes.Schools", sch, ["id", "name", "municipality_id", "sector", "area"], tmpdir)
 
-    print("  municipal scores from the microdata")
-    cur.execute("""
-        INSERT INTO Education_Outcomes.MunicipalScoresMicro
-        SELECT s.municipality_id, s.exam_period_id, COUNT(*), AVG(sc.math),
-               (AVG(sc.math) - n.m_math) / NULLIF(n.sd_math, 0), AVG(sc.global_score), (AVG(sc.global_score) - n.m_global) / NULLIF(n.sd_global, 0)
-        FROM Education_Outcomes.Students s
-        JOIN Education_Outcomes.StudentScores sc ON sc.student_id = s.id
-        JOIN (SELECT s2.exam_period_id, AVG(x.math) m_math, STDDEV_POP(x.math) sd_math,
-                     AVG(x.global_score) m_global, STDDEV_POP(x.global_score) sd_global
-              FROM Education_Outcomes.Students s2 JOIN Education_Outcomes.StudentScores x ON x.student_id = s2.id
-              GROUP BY s2.exam_period_id) n ON n.exam_period_id = s.exam_period_id
-        WHERE s.municipality_id IS NOT NULL
-        GROUP BY s.municipality_id, s.exam_period_id""")
-    cur.execute("SET FOREIGN_KEY_CHECKS = 1")
-    for t in ("Education_Outcomes.Students", "Education_Outcomes.StudentScores", "Education_Outcomes.Schools",
-              "Student_Context.StudentHousehold", "Student_Context.StudentPractices", "Education_Outcomes.MunicipalScoresMicro"):
-        cur.execute(f"SELECT COUNT(*) FROM {t}")
-        print(f"  {t:<45} {cur.fetchone()[0]:>12,}")
+    derive(cur)
     db.close()
 
 

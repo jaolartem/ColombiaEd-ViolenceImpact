@@ -454,7 +454,8 @@ CREATE TABLE `Education_Outcomes`.`StudentScores` (
     `social_citizenship` FLOAT NULL,
     `natural_sciences`   FLOAT NULL,
     `english`            FLOAT NULL,
-    `global_score`       FLOAT NULL,
+    `global_score`       FLOAT NULL,                     -- ICFES's own, weighted, 0-500; only since 2014-2
+    `global_mean`        FLOAT NULL,                     -- simple mean of the five tests, every period; NULL if one is missing
     FOREIGN KEY (`student_id`) REFERENCES `Education_Outcomes`.`Students` (`id`)
 );
 
@@ -464,7 +465,7 @@ CREATE TABLE `Education_Outcomes`.`MunicipalScoresMicro` (   -- from the microda
     `students`        INT   NOT NULL,
     `mean_math`       FLOAT NULL,
     `math_z`          FLOAT NULL,                        -- against the national mean and SD of the period
-    `mean_global`     FLOAT NULL,
+    `mean_global`     FLOAT NULL,                        -- ICFES's global score where it exists, else the simple mean
     `global_z`        FLOAT NULL,
     PRIMARY KEY (`municipality_id`, `exam_period_id`),
     FOREIGN KEY (`municipality_id`) REFERENCES `RelationsAndConclusions`.`Municipalities` (`id`),

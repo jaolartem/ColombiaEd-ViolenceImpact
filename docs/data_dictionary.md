@@ -63,9 +63,9 @@ Generated from the loaded database by `python -m panel.dictionary`. The model an
 | `ExamPeriods` | 45 | Saber 11 periods, calendar, scale (the exam changed in 2014-2) and government in office. |
 | `MunicipalScores` | 25,717 | Saber 11 per municipality of the school, period and sex, 2010-2022 (ICFES API): students and mean scores, and z-scores against the national mean and SD of the period. |
 | `Schools` | 13,222 | Schools seen in the Saber 11 microdata: DANE code, name, municipality, sector (official or not) and area (urban or rural), as the newest file that names each school records them. 796 have no area. |
-| `MunicipalScoresMicro` | 28,232 | Saber 11 per municipality and period from the microdata, 2000-2022: students, mean and z-score of mathematics (every period) and of the global score (since 2014-2). |
+| `MunicipalScoresMicro` | 28,232 | Saber 11 per municipality and period from the microdata, 2000-2022: students, mean and z-score of mathematics and of the global score: ICFES's own since 2014-2, the simple mean of the five tests before. |
 | `Students` | 11,817,681 | Each exam taker, 2000-1 to 2022-2 (ICFES period files). |
-| `StudentScores` | 11,817,681 | Each exam taker's scores; before 2014-2 sciences and social are means of the old areas. |
+| `StudentScores` | 11,817,681 | Each exam taker's scores; before 2014-2 sciences and social are means of the old areas. global_mean, the simple mean of the five tests, exists for every period. |
 | `EnrolmentAndDropout` | 15,704 | MEN: net enrolment, dropout, approval, repetition per municipality, 2011-2024. |
 | `SaberProByMunicipality` | 12,804 | Saber Pro 2018-2022 by the municipality of the school the student finished: the other side of the door. |
 | `HigherEdEnrolment` | 9,481 | MEN higher-education enrolment by municipality where the programme is offered, 2015-2021. |
@@ -151,6 +151,10 @@ Rows (or cases) per source and year.
   write a score with a decimal comma and are left out. Before 2014-2 there is no global score and only
   mathematics and English are present; periods are compared as z-scores.
 - **The exam changed in 2014-2**: scores before and after are not on the same scale.
+- **Saber 11 microdata, cleaned on load**: a test written as -1 (2005-2007) is NULL, and an exam with every
+  test at 0 was not taken or was annulled, so its scores are NULL. A single test at 0 is kept. In 2008-2009
+  the computer question is coded 0/1/2 or 0/3 without a codebook and is left NULL. Floor, books, reading,
+  internet hours and work hours exist only in the periods whose questionnaire asked them.
 - **Police intra-family and sexual violence** rise three to five times between 2003 and 2026: they follow
   reporting (complaint channels, registration) more than prevalence. Homicide is the reliable long series.
 - **Massacres disagree across sources.** From 2020, INDEPAZ and Police agree on 75-79% of events each way;
