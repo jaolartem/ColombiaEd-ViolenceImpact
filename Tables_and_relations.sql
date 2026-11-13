@@ -1232,3 +1232,12 @@ INSERT INTO `Research_Design`.`DecisionTopics` VALUES
 INSERT INTO `Research_Design`.`CaseRoles` VALUES
     (1, 'typical', 'Typical case: the medoid of its group'), (2, 'deviant', 'Deviant case: like its group, different outcome'),
     (3, 'twin', 'Twin: nearest neighbour in material and administrative conditions');
+
+INSERT INTO `State_Action`.`ObjectiveTypes` VALUES   -- the researcher's thesis (2019): an objective is a mandate that changes actions
+    (1, 'coverage', 'Change of coverage', 'Changes who or how many are reached by an action (population, territory, cases).'),
+    (2, 'financing_criteria', 'Change of financing criteria', 'Changes how an action is financed or by which rule resources are allocated.'),
+    (3, 'definitions', 'Change of definitions', 'Changes what something is taken to be: who counts as a victim, what counts as the problem.'),
+    (4, 'intervention_instruments', 'Change of intervention instruments', 'Changes the instruments through which the State acts (programmes, funds, information systems).'),
+    (5, 'processes', 'Change of processes', 'Changes the procedure by which an action is carried out.'),
+    (6, 'responsibles', 'Change of responsibles', 'Changes which entity is responsible for an action, or how far its responsibility reaches.'),
+    (7, 'times_and_deadlines', 'Change of times and deadlines', 'Changes when an action must happen or how long it lasts.');
