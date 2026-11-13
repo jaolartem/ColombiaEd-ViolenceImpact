@@ -13,7 +13,8 @@ The project has made significant strides in understanding, processing, and prepa
   - DANE: population by sex and age 1995-2042, census 2018.
   - Education: Saber 11 aggregates and microdata 2000-2022, Saber Pro, MEN enrolment and dropout, higher education, Generacion E, ICETEX.
   - Access: schools and health sites.
-- **Model**: seven schemas loaded into MariaDB, with rates by government and phase, and the physical, cultural, gender, structural and final indices.
+  - Territory and money: DNP TerriData (1,624 indicators per municipality: demography, public finance, municipal and fiscal performance, economy, poverty, peace and victims, rurality category) and CUIPO budget execution from 2023.
+- **Model**: ten schemas loaded into MariaDB, with rates by government and phase, and the physical, cultural, gender, structural and final indices.
 - **Documentation**: data dictionary with coverage and the known problems of each source.
 
 ### :soon: Next
@@ -23,6 +24,8 @@ The project has made significant strides in understanding, processing, and prepa
 3. Maps by government.
 
 ## :triangular_ruler: Research Design
+
+**Objective.** To analyse the relation between violence, in its forms, structural violence included, and the results of the Saber exams, read in the frame Colombia makes observable: armed conflict, peace negotiation, post-conflict and alternative governments. The project is in its data collection, cleaning and loading phase; the exploratory analysis will set the variables, the studies and the questions.
 
 **The exam as an operator.** Saber 11 translates years of a student's life into a number that universities, scholarships and credits know how to read. In some places that number opens a door, and in others it does not. Violence is followed as a material effect that opens or closes those doors: a closed road, a mine on the way to school, a recruitment, a confinement, a massacre.
 
@@ -34,7 +37,7 @@ The project takes symmetric sociology as its frame. It assumes no structure that
 
 **Time.** Every dated fact is placed in a government: Uribe I and II, Santos I and II, the latter split into negotiation and implementation of the peace agreement, Duque, and Petro. This gives the long-term comparison from 2002 to 2026.
 
-The model is in `Tables_and_relations.sql` (seven schemas). What each table holds, its coverage and the known problems of the data are in [`docs/data_dictionary.md`](docs/data_dictionary.md); what the validation of each source found, municipality by municipality, is in [`docs/data_quality.md`](docs/data_quality.md).
+The model is in `Tables_and_relations.sql` (ten schemas). What each table holds, its coverage and the known problems of the data are in [`docs/data_dictionary.md`](docs/data_dictionary.md); what the validation of each source found, municipality by municipality, is in [`docs/data_quality.md`](docs/data_quality.md). The review of the model and its pending fixes are in [`docs/model_review.md`](docs/model_review.md); every decision taken, with who took it and why, is in [`research/decisions.csv`](research/decisions.csv).
 
 ## :inbox_tray: Getting the Data
 
@@ -54,6 +57,10 @@ python -m panel.student_context  # what each municipality's exam takers report, 
 python -m panel.load_db          # everything into MariaDB/MySQL (DB_HOST, DB_USER, DB_PASS), with rates and indices
 python -m panel.dataicfes --data "path/to/Saber11 files"   # Saber 11 microdata 2000-2022, one row per student
 python -m panel.dataicfes --refresh 20061,20062           # read some periods again; --derive only cleans and aggregates
+python -m panel.dnp              # DNP TerriData: every indicator per municipality, all years (3.3 GB)
+python -m panel.fiscal           # CUIPO: income and spending of each municipality, 2023 onwards
+python -m panel.certification    # MEN: which certified entity runs each municipality's education, 2011 onwards
+python -m panel.design           # the decision log (research/decisions.csv) into Research_Design
 python -m panel.quality          # validates each source by its own rules; writes docs/data_quality.md
 python -m panel.dictionary       # rewrites docs/data_dictionary.md from the database
 ```

@@ -14,17 +14,24 @@ series can do from one year to the next. Every finding is one row of RelationsAn
 - extreme:      atypical after taking its base into account. A real case: kept as it is, and annotated.
 
 Nothing is overwritten. Where a value rests on a base that can be weighed (person-years behind a rate,
-students behind a mean or a share), empirical Bayes pulls it toward its department, more the fewer
-people stand behind it, and the result goes to RelationsAndConclusions.SmoothedValues:
+students behind a mean or a share), empirical Bayes pulls it toward the municipalities of its own kind,
+more the fewer people stand behind it, and the result goes to RelationsAndConclusions.SmoothedValues:
 Marshall's (1991) local estimator for rates, normal-normal shrinkage for means and shares.
+
+Municipalities are compared with their peers, never with the whole country: the peer group is DNP's
+rurality category (cities and agglomerations, intermediate, rural, dispersed rural; TerriData indicator
+010010007). The 21 territories DNP does not classify (the Amazon's non-municipalized areas, San Andres,
+Nuevo Belen de Bajira) are compared within their department.
 
 Atypical is judged in one of two ways, depending on the source:
 - dense measures, where most municipalities have cases every period (homicide, intra-family violence,
-  scores): a robust z above 3.5 (median and median absolute deviation) within the period, on the log
+  scores): a robust z above 3.5 (median and median absolute deviation) within the period and the
+  rurality category, on the log
   scale for rates and the logit scale for shares;
 - sparse measures, where most municipalities have no case in a period (massacres, kidnapping, landmines):
-  the Poisson probability of seeing that many events if the municipality had the national rate. Below
-  1 in 1,000 is an extreme; a rate ten times the national one that is not that improbable is a small base.
+  the Poisson probability of seeing that many events if the municipality had the rate of its rurality
+  category. Below 1 in 1,000 is an extreme; a rate ten times the category's that is not that improbable is
+  a small base.
 
 Writes the two tables and docs/data_quality.md.
 """
@@ -74,8 +81,8 @@ def zscore(values: pd.Series, period: pd.Series, scale=None) -> pd.Series:
 
 
 def eb_rates(df, keys):
-    """Marshall's local empirical Bayes rate, per keys and department. Returns rate, weight, reference."""
-    by = [df[k] for k in keys + ["department_id"]]
+    """Marshall's local empirical Bayes rate, per keys and peer group. Returns rate, weight, reference."""
+    by = [df[k] for k in keys + ["peer"]]
     r = df["cases"] / df["person_years"]
     m = df["cases"].groupby(by).transform("sum") / df["person_years"].groupby(by).transform("sum")
     nbar = df["person_years"].groupby(by).transform("mean")
@@ -86,9 +93,9 @@ def eb_rates(df, keys):
 
 
 def eb_means(df, value, keys, unit_var):
-    """Normal-normal shrinkage toward the department; unit_var / students is the sampling variance."""
+    """Normal-normal shrinkage toward the peer group; unit_var / students is the sampling variance."""
     d = df.dropna(subset=[value])
-    by = [d[k] for k in keys + ["department_id"]]
+    by = [d[k] for k in keys + ["peer"]]
     n = d["students"].astype(float)
     mu = (d[value] * n).groupby(by).transform("sum") / n.groupby(by).transform("sum")
     v = (unit_var(mu) if callable(unit_var) else unit_var) / n
@@ -128,9 +135,10 @@ class Findings:
     def dense(self, frame, table, column, period, raw, smoothed, scale):
         """Extreme if still atypical after smoothing; small base if atypical only before."""
         ok = raw.notna()
-        z_raw = zscore(raw[ok], period[ok], scale)
-        z_s = zscore(smoothed[ok], period[ok], scale)
-        med = raw[ok].groupby(period[ok]).transform("median")
+        key = compared(frame, period)[ok]
+        z_raw = zscore(raw[ok], key, scale)
+        z_s = zscore(smoothed[ok], key, scale)
+        med = raw[ok].groupby(key).transform("median")
         f = frame[ok]
         extreme = z_s.abs() > THRESHOLD
         self.add(f, extreme, table, column, period[ok], "extreme", raw[ok], smoothed[ok], med, z_s)
@@ -142,13 +150,19 @@ class Findings:
         ok = values.notna()
         if (values[ok] == 0).mean() > 0.5:
             return
-        z = zscore(values[ok], period[ok], scale)
-        med = values[ok].groupby(period[ok]).transform("median")
+        key = compared(frame, period)[ok]
+        z = zscore(values[ok], key, scale)
+        med = values[ok].groupby(key).transform("median")
         self.add(frame[ok], z.abs() > THRESHOLD, table, column, period[ok], "extreme", values[ok], median=med, z=z)
 
 
+def compared(frame, period):
+    """What a value is compared with: the same period and the same peer group."""
+    return period.astype(str) + "|" + frame["peer"]
+
+
 def rates(fd: Findings, df, table, column, dense: bool):
-    """A rate per municipality and period: df has municipality_id, department_id, period, cases, person_years."""
+    """A rate per municipality and period: df has municipality_id, peer, period, cases, person_years."""
     df = df.copy()
     nobase = ~(df["person_years"] > 0)
     fd.add(df, nobase, table, column, df["period"], "missing", note="no population behind the rate")
@@ -160,11 +174,12 @@ def rates(fd: Findings, df, table, column, dense: bool):
     if dense:
         fd.dense(df, table, column, df["period"], raw, smoothed, lambda x: np.log1p(x))
         return
-    national = df.groupby("period")["cases"].transform("sum") / df.groupby("period")["person_years"].transform("sum")
+    by = [df["period"], df["peer"]]
+    national = df["cases"].groupby(by).transform("sum") / df["person_years"].groupby(by).transform("sum")
     expected = national * df["person_years"]
     p = pd.Series(poisson.sf(df["cases"] - 1, expected.clip(lower=1e-12)), index=df.index)
     extreme = (p < P_EXTREME) & (df["cases"] > 0)
-    note = df["cases"].astype(int).astype(str) + " observed, " + expected.round(2).astype(str) + " expected at the national rate"
+    note = df["cases"].astype(int).astype(str) + " observed, " + expected.round(2).astype(str) + " expected at the rate of its rurality category"
     fd.add(df, extreme, table, column, df["period"], "extreme", raw, smoothed, national * 1e5, None, note)
     fd.add(df, ~extreme & (df["cases"] > 0) & (raw > 10 * national * 1e5), table, column, df["period"], "small_base",
            raw, smoothed, national * 1e5, None, note)
@@ -199,8 +214,8 @@ def dane_population(cur, dept):
 
 def dane_census(cur, dept):
     fd = Findings("DANE")
-    c = query(cur, "SELECT * FROM Structural_Violence.Census2018Municipal")
-    cols = [x for x in c.columns if x != "municipality_id"]
+    c = query(cur, "SELECT * FROM Structural_Violence.Census2018Municipal").merge(dept, on="municipality_id")
+    cols = [x for x in c.columns if x not in ("municipality_id", "peer")]
     c[cols] = c[cols].astype(float)
     t, period = "Census2018Municipal", pd.Series("2018", index=c.index)
     for col in cols:
@@ -333,8 +348,8 @@ def student_context(cur, dept):
 
 def men(cur, dept):
     fd = Findings("MEN")
-    en = query(cur, "SELECT * FROM Education_Outcomes.EnrolmentAndDropout")
-    cols = [c for c in en.columns if c not in ("municipality_id", "year")]
+    en = query(cur, "SELECT * FROM Education_Outcomes.EnrolmentAndDropout").merge(dept, on="municipality_id")
+    cols = [c for c in en.columns if c not in ("municipality_id", "year", "peer")]
     en[cols] = en[cols].astype(float)
     en = en.sort_values(["municipality_id", "year"]).reset_index(drop=True)
     period, t = en["year"].astype(str), "EnrolmentAndDropout"
@@ -376,10 +391,22 @@ SOURCES = [dane_population, dane_census, police, cnmh, indepaz, medicina_legal, 
 
 # --------------------------------------------------------------------------------------------- run
 
+def peers(cur):
+    """Each municipality's peer group: DNP's rurality category, or its department when DNP gives none."""
+    m = query(cur, """
+        SELECT m.id municipality_id, m.department_id,
+               (SELECT mi.value_text FROM Territorial_Context.MunicipalIndicators mi
+                WHERE mi.municipality_id = m.id AND mi.indicator_code = '010010007' AND mi.value_text IS NOT NULL
+                ORDER BY mi.year DESC LIMIT 1) rurality
+        FROM RelationsAndConclusions.Municipalities m""")
+    m["peer"] = m["rurality"].fillna("department " + m["department_id"].astype(str))
+    return m[["municipality_id", "peer"]]
+
+
 def main():
     db = connect()
     cur = db.cursor()
-    dept = query(cur, "SELECT id municipality_id, department_id FROM RelationsAndConclusions.Municipalities")
+    dept = peers(cur)
     flags, smooth = [], []
     for check in SOURCES:
         fd = check(cur, dept)
@@ -390,8 +417,10 @@ def main():
     flags = pd.concat(flags, ignore_index=True)
     smooth = pd.concat(smooth, ignore_index=True)
     cur.execute("SET FOREIGN_KEY_CHECKS = 0")
-    for t in ("RelationsAndConclusions.DataQualityFlags", "RelationsAndConclusions.SmoothedValues"):
-        cur.execute(f"TRUNCATE TABLE {t}")
+    # the loaders that validate on entry (panel.dnp, panel.fiscal) keep their own findings
+    own = ", ".join(f"'{s}'" for s in flags["source"].unique())
+    cur.execute(f"DELETE FROM RelationsAndConclusions.DataQualityFlags WHERE source IN ({own})")
+    cur.execute("TRUNCATE TABLE RelationsAndConclusions.SmoothedValues")
     load(cur, "RelationsAndConclusions.SmoothedValues", smooth, SMOOTH_COLUMNS)
     load(cur, "RelationsAndConclusions.DataQualityFlags", flags, FLAG_COLUMNS)
     cur.execute("SET FOREIGN_KEY_CHECKS = 1")
@@ -401,7 +430,7 @@ def main():
 
 
 KINDS = ("error", "missing", "inconsistent", "break", "small_base", "extreme")
-ORDER = ["DANE", "ICFES", "MEN", "POLICE", "CNMH", "INDEPAZ", "MEDICINA_LEGAL"]
+ORDER = ["DANE", "DNP", "CUIPO", "ICFES", "MEN", "POLICE", "CNMH", "INDEPAZ", "MEDICINA_LEGAL"]
 
 
 def report(cur):
@@ -431,7 +460,7 @@ def report(cur):
         s = f[f["source"] == source]
         if not len(s):
             continue
-        lines += [f"## {source.replace('_', ' ').title() if source not in ('DANE', 'ICFES', 'MEN', 'CNMH', 'INDEPAZ') else source}", "",
+        lines += [f"## {source.replace('_', ' ').title() if source not in ('DANE', 'DNP', 'CUIPO', 'ICFES', 'MEN', 'CNMH', 'INDEPAZ') else source}", "",
                   "| Table | Column | " + " | ".join(KINDS) + " |", "|---|---|" + "---:|" * len(KINDS)]
         counts = s.pivot_table(index=["source_table", "column_name"], columns="kind", values="period", aggfunc="count", fill_value=0)
         for (t, c), r in counts.iterrows():

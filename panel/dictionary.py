@@ -57,7 +57,7 @@ TABLES = {
     },
     "Education_Outcomes": {
         "ExamPeriods": "Saber 11 periods, calendar, scale (the exam changed in 2014-2) and government in office.",
-        "MunicipalScores": "Saber 11 per municipality of the school, period and sex, 2010-2022 (ICFES API): students and mean scores, and z-scores against the national mean and SD of the period.",
+        "MunicipalScores": "Saber 11 per municipality of the school, period and sex, 2010-2022 (ICFES API). A check only: MunicipalScoresMicro, from the microdata, is the canonical table.",
         "Schools": "Schools seen in the Saber 11 microdata: DANE code, name, municipality, sector (official or not) and area (urban or rural), as the newest file that names each school records them. 796 have no area.",
         "MunicipalScoresMicro": "Saber 11 per municipality and period from the microdata, 2000-2022: students, mean and z-score of mathematics and of the global score: ICFES's own since 2014-2, the simple mean of the five tests before.",
         "Students": "Each exam taker, 2000-1 to 2022-2 (ICFES period files).",
@@ -72,6 +72,40 @@ TABLES = {
         "StudentHousehold": "What each exam taker reports about home; each period asked different questions, so blanks mean not asked.",
         "StudentPractices": "Books at home, daily reading, internet use (asked since the 2010s).",
         "MunicipalStudentContext": "What a municipality's exam takers report, 2010-2022 (ICFES API): internet, computer, car, washing machine, stratum 1-2, mother's education.",
+    },
+    "Territorial_Context": {
+        "TerriDataIndicators": "DNP TerriData's indicators: code, dimension (demography, education, health, housing, public finance, municipal and fiscal performance, economy, environment, poverty, labour, justice, peace and victims, ...), name and unit.",
+        "TerriDataSources": "The entities TerriData takes each value from.",
+        "MunicipalIndicators": "Every TerriData value per municipality, indicator, year and month, numeric or text (rurality category, development environment, DNP typology, Law 617 category, PDET).",
+        "CuipoAccounts": "CUIPO's income account tree; each level adds up the next.",
+        "CuipoFundingSources": "CUIPO's funding sources (SGP by sector, royalties, own resources, ...).",
+        "CuipoSectors": "CUIPO's spending sectors.",
+        "MunicipalIncome": "Pesos collected per municipality, account and funding source, year-end closes from 2023 and the latest quarter (CUIPO, CGR).",
+        "MunicipalSpending": "Commitments, obligations and payments per municipality, sector and funding source, same periods (CUIPO, CGR).",
+        "DepartmentalIndicators": "TerriData values for department totals, among them DANE's departmental Gini.",
+        "TerriDataCategories": "The labels TerriData's text indicators take (rurality category, Law 617 category, ...), once each.",
+    },
+    "State_Action": {
+        "StateEntities": "Every State entity that can hold a responsibility, with its kind and level.",
+        "EntityJurisdictions": "Connection: entity and the municipalities it acts on, with validity.",
+        "EntityFunctionAssignments": "Connection: entity and its functions (education, security, justice, victims ...), with validity.",
+        "EntitySuccessions": "Connection: an entity and the one that replaced it.",
+        "Norms": "Each norm read: type, number, date, title, government.",
+        "NormProvisions": "Articles, paragraphs and numerals, with their text.",
+        "NormExcerpts": "The literal piece of a provision a coding rests on.",
+        "Objectives": "Desired future states named by a norm, with their type.",
+        "Problems": "Socially relevant problems: the uncomfortable fact and the explanation given to it.",
+        "Responsibilities": "What an entity must do, how far it reaches and where another's begins.",
+        "Resources": "What a norm assigns: money, staff, time, authority, information, infrastructure.",
+        "ExcerptObjectives": "Connection: excerpt and the objective coded in it, by coder.",
+        "ObjectiveResources": "Connection: objective and a resource assigned to it, by coder.",
+    },
+    "Research_Design": {
+        "Decisions": "The decision log: what was decided, when, by whom (researcher, assistant, both) and why (research/decisions.csv).",
+        "DecisionObjects": "Connection: decision and the tables, modules or documents it governs.",
+        "TypologyRuns": "Each grouping of municipalities: method, base year.",
+        "TypologyMemberships": "Connection: municipality and its group in a run.",
+        "CaseSelections": "Connection: group and a municipality chosen as a case, with its role (typical, deviant, twin).",
     },
 }
 
@@ -116,6 +150,12 @@ KNOWN_PROBLEMS = """
   the database keeps the code written inside the file. The 2019-1 file writes its column names in lowercase.
 - **Saber 11 microdata 2000-2009** place the school's municipality by name; it is matched within the
   department, or through the school's ICFES code as later files place it.
+- **TerriData** gives no value for 21 territories: the 19 non-municipalized areas of the Amazon, San Andres
+  and Nuevo Belen de Bajira. Its values are in current pesos (finance) or the unit of each indicator; many
+  indicators exist only for some years. The rurality category (indicator 010010007) is the peer group of
+  `panel.quality`.
+- **CUIPO** starts in 2023 for municipalities on datos.gov.co; each quarter is cumulative. The money of
+  2000-2024 is in TerriData's public finance dimension.
 - **Codes**: Medicina Legal writes 5001, ICFES and DANE 05001. Every source is normalised to the DANE code;
   names never join.
 """
@@ -153,6 +193,8 @@ def main():
         "Saber 11 microdata": "SELECT p.year, COUNT(*) FROM Education_Outcomes.Students s JOIN Education_Outcomes.ExamPeriods p ON p.id = s.exam_period_id GROUP BY p.year",
         "Saber Pro students": "SELECT year, SUM(students) FROM Education_Outcomes.SaberProByMunicipality GROUP BY year",
         "MEN enrolment/dropout": "SELECT year, COUNT(*) FROM Education_Outcomes.EnrolmentAndDropout GROUP BY year",
+        "TerriData values": "SELECT year, COUNT(*) FROM Territorial_Context.MunicipalIndicators GROUP BY year",
+        "CUIPO income rows": "SELECT period DIV 10000, COUNT(*) FROM Territorial_Context.MunicipalIncome GROUP BY period DIV 10000",
         "Population": "SELECT year, SUM(population) FROM RelationsAndConclusions.Population GROUP BY year",
     }
     matrix = {}

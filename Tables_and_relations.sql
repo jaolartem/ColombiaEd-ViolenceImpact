@@ -44,6 +44,9 @@ DROP SCHEMA IF EXISTS `Cultural_violence`;
 DROP SCHEMA IF EXISTS `GENDER_VIOLENCE`;
 DROP SCHEMA IF EXISTS `Student_Context`;
 DROP SCHEMA IF EXISTS `Education_Outcomes`;
+DROP SCHEMA IF EXISTS `Territorial_Context`;
+DROP SCHEMA IF EXISTS `State_Action`;
+DROP SCHEMA IF EXISTS `Research_Design`;
 
 CREATE SCHEMA `RelationsAndConclusions` DEFAULT CHARACTER SET utf8mb4;   -- place, population, time, sources, final index
 CREATE SCHEMA `Physical_violence`       DEFAULT CHARACTER SET utf8mb4;
@@ -52,6 +55,9 @@ CREATE SCHEMA `Cultural_violence`       DEFAULT CHARACTER SET utf8mb4;
 CREATE SCHEMA `GENDER_VIOLENCE`         DEFAULT CHARACTER SET utf8mb4;
 CREATE SCHEMA `Student_Context`         DEFAULT CHARACTER SET utf8mb4;   -- what students report; never in an index
 CREATE SCHEMA `Education_Outcomes`      DEFAULT CHARACTER SET utf8mb4;   -- Saber 11, Saber Pro, MEN, scholarships
+CREATE SCHEMA `Territorial_Context`     DEFAULT CHARACTER SET utf8mb4;   -- DNP TerriData: every indicator per municipality
+CREATE SCHEMA `State_Action`            DEFAULT CHARACTER SET utf8mb4;   -- the State as a network: entities, norms, coding
+CREATE SCHEMA `Research_Design`         DEFAULT CHARACTER SET utf8mb4;   -- decision log, typology, case selection
 
 
 -- =====================================================================================================
@@ -444,7 +450,8 @@ CREATE TABLE `Education_Outcomes`.`Students` (           -- one exam taker in on
     `birth_year`      SMALLINT    NULL,
     FOREIGN KEY (`exam_period_id`)  REFERENCES `Education_Outcomes`.`ExamPeriods` (`id`),
     FOREIGN KEY (`municipality_id`) REFERENCES `RelationsAndConclusions`.`Municipalities` (`id`),
-    FOREIGN KEY (`sex_id`)          REFERENCES `RelationsAndConclusions`.`Sexes` (`id`)
+    FOREIGN KEY (`sex_id`)          REFERENCES `RelationsAndConclusions`.`Sexes` (`id`),
+    FOREIGN KEY (`school_id`)       REFERENCES `Education_Outcomes`.`Schools` (`id`)
 );
 
 CREATE TABLE `Education_Outcomes`.`StudentScores` (
@@ -483,6 +490,25 @@ CREATE TABLE `Education_Outcomes`.`EnrolmentAndDropout` (   -- MEN, per municipa
     `repetition`                    FLOAT NULL,
     PRIMARY KEY (`municipality_id`, `year`),
     FOREIGN KEY (`municipality_id`) REFERENCES `RelationsAndConclusions`.`Municipalities` (`id`)
+);
+
+CREATE TABLE `Education_Outcomes`.`CertifiedEntities` (    -- ETC: who runs public education (Law 715 of 2001)
+    `id`              INT          NOT NULL PRIMARY KEY,      -- MEN's ETC code
+    `name`            VARCHAR(120) NOT NULL,
+    `kind`            ENUM('municipality', 'department') NOT NULL,   -- a certified municipality, or a department
+    `department_id`   INT          NOT NULL,
+    `municipality_id` INT          NULL,                      -- for a certified municipality, itself
+    FOREIGN KEY (`department_id`)   REFERENCES `RelationsAndConclusions`.`Departments` (`id`),
+    FOREIGN KEY (`municipality_id`) REFERENCES `RelationsAndConclusions`.`Municipalities` (`id`)
+);
+
+CREATE TABLE `Education_Outcomes`.`EducationAuthority` (   -- which ETC runs each municipality's schools, by year
+    `municipality_id` INT      NOT NULL,
+    `year`            SMALLINT NOT NULL,
+    `entity_id`       INT      NOT NULL,
+    PRIMARY KEY (`municipality_id`, `year`),
+    FOREIGN KEY (`municipality_id`) REFERENCES `RelationsAndConclusions`.`Municipalities` (`id`),
+    FOREIGN KEY (`entity_id`)       REFERENCES `Education_Outcomes`.`CertifiedEntities` (`id`)
 );
 
 CREATE TABLE `Education_Outcomes`.`SaberProByMunicipality` (    -- by municipality of the school the student finished
@@ -579,6 +605,109 @@ CREATE TABLE `Student_Context`.`MunicipalStudentContext` (  -- what a municipali
 
 
 -- =====================================================================================================
+-- Territorial_Context: DNP TerriData (python -m panel.dnp), every indicator DNP publishes per municipality
+-- =====================================================================================================
+
+CREATE TABLE `Territorial_Context`.`TerriDataIndicators` (
+    `code`        CHAR(9)      NOT NULL PRIMARY KEY,         -- DNP's nine-digit indicator code
+    `dimension`   VARCHAR(255) NOT NULL,
+    `subcategory` VARCHAR(255) NULL,
+    `name`        VARCHAR(255) NOT NULL,                     -- as DNP publishes it
+    `unit`        VARCHAR(255) NULL
+);
+
+CREATE TABLE `Territorial_Context`.`TerriDataSources` (
+    `id`   INT          NOT NULL PRIMARY KEY,
+    `name` VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE `Territorial_Context`.`TerriDataCategories` (    -- the labels text indicators take, once each
+    `id`             INT          NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `indicator_code` CHAR(9)      NOT NULL,                  -- 010010007 rurality: Rural, Intermedio, ...
+    `label`          VARCHAR(255) NOT NULL,
+    UNIQUE KEY (`indicator_code`, `label`),
+    FOREIGN KEY (`indicator_code`) REFERENCES `Territorial_Context`.`TerriDataIndicators` (`code`)
+);
+
+CREATE TABLE `Territorial_Context`.`MunicipalIndicators` (   -- only rows that passed validation (panel.dnp)
+    `municipality_id` INT      NOT NULL,
+    `indicator_code`  CHAR(9)  NOT NULL,
+    `year`            SMALLINT NOT NULL,
+    `month`           TINYINT  NOT NULL,                     -- 0 when the indicator is yearly or has no date
+    `value`           DOUBLE   NULL,
+    `category_id`     INT      NULL,                         -- for text indicators
+    `source_id`       INT      NULL,
+    PRIMARY KEY (`municipality_id`, `indicator_code`, `year`, `month`),
+    KEY (`indicator_code`, `year`),
+    FOREIGN KEY (`municipality_id`) REFERENCES `RelationsAndConclusions`.`Municipalities` (`id`),
+    FOREIGN KEY (`indicator_code`)  REFERENCES `Territorial_Context`.`TerriDataIndicators` (`code`),
+    FOREIGN KEY (`category_id`)     REFERENCES `Territorial_Context`.`TerriDataCategories` (`id`),
+    FOREIGN KEY (`source_id`)       REFERENCES `Territorial_Context`.`TerriDataSources` (`id`)
+);
+
+CREATE TABLE `Territorial_Context`.`DepartmentalIndicators` (  -- department totals: DANE's departmental Gini, ...
+    `department_id`  INT      NOT NULL,
+    `indicator_code` CHAR(9)  NOT NULL,
+    `year`           SMALLINT NOT NULL,
+    `month`          TINYINT  NOT NULL,
+    `value`          DOUBLE   NULL,
+    `category_id`    INT      NULL,
+    `source_id`      INT      NULL,
+    PRIMARY KEY (`department_id`, `indicator_code`, `year`, `month`),
+    FOREIGN KEY (`department_id`)  REFERENCES `RelationsAndConclusions`.`Departments` (`id`),
+    FOREIGN KEY (`indicator_code`) REFERENCES `Territorial_Context`.`TerriDataIndicators` (`code`),
+    FOREIGN KEY (`category_id`)    REFERENCES `Territorial_Context`.`TerriDataCategories` (`id`),
+    FOREIGN KEY (`source_id`)      REFERENCES `Territorial_Context`.`TerriDataSources` (`id`)
+);
+
+
+-- CUIPO (python -m panel.fiscal): each municipality's budget execution as reported to CGN and CGR, 2023 on.
+-- Year-end closes (period YYYY1201) and the latest quarter. Before 2023: TerriData, dimension Finanzas publicas.
+
+CREATE TABLE `Territorial_Context`.`CuipoAccounts` (          -- the income account tree
+    `code`  VARCHAR(60)  NOT NULL PRIMARY KEY,                -- 1.1.02.06.001.01 = SGP, participation for education
+    `name`  VARCHAR(255) NOT NULL,
+    `depth` TINYINT      NOT NULL                             -- 1 = total income; each level adds up the next
+);
+
+CREATE TABLE `Territorial_Context`.`CuipoFundingSources` (
+    `code` VARCHAR(60)  NOT NULL PRIMARY KEY,
+    `name` VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE `Territorial_Context`.`CuipoSectors` (
+    `code` VARCHAR(40)  NOT NULL PRIMARY KEY,
+    `name` VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE `Territorial_Context`.`MunicipalIncome` (       -- pesos collected, cumulative to the period
+    `municipality_id` INT          NOT NULL,
+    `period`          INT          NOT NULL,                  -- YYYYMMDD of the cut: 20241201 is the 2024 close
+    `account`         VARCHAR(60)  NOT NULL,
+    `funding_source`  VARCHAR(60)  NOT NULL,
+    `collected`       DOUBLE       NULL,
+    PRIMARY KEY (`municipality_id`, `period`, `account`, `funding_source`),
+    FOREIGN KEY (`municipality_id`) REFERENCES `RelationsAndConclusions`.`Municipalities` (`id`),
+    FOREIGN KEY (`account`)         REFERENCES `Territorial_Context`.`CuipoAccounts` (`code`),
+    FOREIGN KEY (`funding_source`)  REFERENCES `Territorial_Context`.`CuipoFundingSources` (`code`)
+);
+
+CREATE TABLE `Territorial_Context`.`MunicipalSpending` (     -- pesos, cumulative to the period
+    `municipality_id` INT          NOT NULL,
+    `period`          INT          NOT NULL,
+    `sector`          VARCHAR(40)  NOT NULL,                  -- 'NO APLICA' is spending that is not investment
+    `funding_source`  VARCHAR(60)  NOT NULL,
+    `commitments`     DOUBLE       NULL,
+    `obligations`     DOUBLE       NULL,
+    `payments`        DOUBLE       NULL,
+    PRIMARY KEY (`municipality_id`, `period`, `sector`, `funding_source`),
+    FOREIGN KEY (`municipality_id`) REFERENCES `RelationsAndConclusions`.`Municipalities` (`id`),
+    FOREIGN KEY (`sector`)          REFERENCES `Territorial_Context`.`CuipoSectors` (`code`),
+    FOREIGN KEY (`funding_source`)  REFERENCES `Territorial_Context`.`CuipoFundingSources` (`code`)
+);
+
+
+-- =====================================================================================================
 -- Data quality (python -m panel.quality), the validation step of each source. Original values are never overwritten.
 -- =====================================================================================================
 
@@ -597,7 +726,7 @@ CREATE TABLE `RelationsAndConclusions`.`SmoothedValues` (   -- empirical Bayes, 
 
 CREATE TABLE `RelationsAndConclusions`.`DataQualityFlags` (   -- each source checked against its own rules
     `id`              INT          NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    `source`          VARCHAR(20)  NOT NULL,                -- DANE, ICFES, MEN, POLICE, CNMH, INDEPAZ, MEDICINA_LEGAL
+    `source`          VARCHAR(40)  NOT NULL,                -- Sources.code: dane, icfes, men, police, cnmh, indepaz, medicina_legal, dnp, cuipo
     `source_table`    VARCHAR(80)  NOT NULL,
     `column_name`     VARCHAR(80)  NOT NULL,                -- for PeriodRates and ViolenceCases, the measure
     `municipality_id` INT          NOT NULL,
@@ -616,7 +745,369 @@ CREATE TABLE `RelationsAndConclusions`.`DataQualityFlags` (   -- each source che
     `note`            VARCHAR(200) NULL,
     KEY (`source`, `source_table`, `column_name`, `kind`),
     KEY (`municipality_id`),
+    FOREIGN KEY (`source`)          REFERENCES `RelationsAndConclusions`.`Sources` (`code`),
     FOREIGN KEY (`municipality_id`) REFERENCES `RelationsAndConclusions`.`Municipalities` (`id`)
+);
+
+
+-- =====================================================================================================
+-- State_Action: the State as a network. Entities, the norms that inscribe them, and what the norms say.
+--
+-- Rules of this schema (owner's decision, see Research_Design.Decisions):
+--   every thing is its own table, and everything said of it depends only on its key (third normal form);
+--   every relation between two things is its own connection table and holds nothing else (fourth
+--   normal form): no list, no second fact, no repeated column;
+--   relations that change in time carry their validity (valid_from, valid_to);
+--   what a norm says is stored literally (NormExcerpts) and every coding points to the excerpt it rests on.
+-- =====================================================================================================
+
+CREATE TABLE `State_Action`.`GovernmentLevels` (            -- national, departmental, municipal, school
+    `id`   TINYINT     NOT NULL PRIMARY KEY,
+    `code` VARCHAR(20) NOT NULL UNIQUE,
+    `name` VARCHAR(60) NOT NULL
+);
+
+CREATE TABLE `State_Action`.`EntityKinds` (                 -- ministry, agency, governorship, mayoralty, ETC, school, court ...
+    `id`   SMALLINT     NOT NULL PRIMARY KEY,
+    `code` VARCHAR(40)  NOT NULL UNIQUE,
+    `name` VARCHAR(120) NOT NULL
+);
+
+CREATE TABLE `State_Action`.`StateEntities` (               -- every entity that can hold a responsibility
+    `id`       INT          NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `name`     VARCHAR(255) NOT NULL,
+    `kind_id`  SMALLINT     NOT NULL,
+    `level_id` TINYINT      NOT NULL,
+    FOREIGN KEY (`kind_id`)  REFERENCES `State_Action`.`EntityKinds` (`id`),
+    FOREIGN KEY (`level_id`) REFERENCES `State_Action`.`GovernmentLevels` (`id`)
+);
+
+CREATE TABLE `State_Action`.`EntityJurisdictions` (         -- connection: entity - territory, in time
+    `entity_id`       INT  NOT NULL,
+    `municipality_id` INT  NOT NULL,
+    `valid_from`      DATE NOT NULL,
+    `valid_to`        DATE NULL,
+    PRIMARY KEY (`entity_id`, `municipality_id`, `valid_from`),
+    FOREIGN KEY (`entity_id`)       REFERENCES `State_Action`.`StateEntities` (`id`),
+    FOREIGN KEY (`municipality_id`) REFERENCES `RelationsAndConclusions`.`Municipalities` (`id`)
+);
+
+CREATE TABLE `State_Action`.`EntityFunctions` (             -- education, security, justice, transitional justice, reparation ...
+    `id`   SMALLINT     NOT NULL PRIMARY KEY,
+    `code` VARCHAR(40)  NOT NULL UNIQUE,
+    `name` VARCHAR(120) NOT NULL
+);
+
+CREATE TABLE `State_Action`.`EntityFunctionAssignments` (   -- connection: entity - function, in time
+    `entity_id`   INT      NOT NULL,
+    `function_id` SMALLINT NOT NULL,
+    `valid_from`  DATE     NOT NULL,
+    `valid_to`    DATE     NULL,
+    PRIMARY KEY (`entity_id`, `function_id`, `valid_from`),
+    FOREIGN KEY (`entity_id`)   REFERENCES `State_Action`.`StateEntities` (`id`),
+    FOREIGN KEY (`function_id`) REFERENCES `State_Action`.`EntityFunctions` (`id`)
+);
+
+CREATE TABLE `State_Action`.`EntitySuccessions` (           -- connection: entity - the entity that replaced it
+    `predecessor_id` INT  NOT NULL,
+    `successor_id`   INT  NOT NULL,
+    `on_date`        DATE NOT NULL,
+    PRIMARY KEY (`predecessor_id`, `successor_id`),
+    FOREIGN KEY (`predecessor_id`) REFERENCES `State_Action`.`StateEntities` (`id`),
+    FOREIGN KEY (`successor_id`)   REFERENCES `State_Action`.`StateEntities` (`id`)
+);
+
+CREATE TABLE `State_Action`.`NormTypes` (                   -- constitution, law, decree, resolution, CONPES, PND, agreement ...
+    `id`   SMALLINT     NOT NULL PRIMARY KEY,
+    `code` VARCHAR(40)  NOT NULL UNIQUE,
+    `name` VARCHAR(120) NOT NULL
+);
+
+CREATE TABLE `State_Action`.`Norms` (
+    `id`            INT          NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `type_id`       SMALLINT     NOT NULL,
+    `number`        VARCHAR(40)  NULL,
+    `issued_on`     DATE         NOT NULL,
+    `title`         VARCHAR(500) NOT NULL,
+    `source_url`    VARCHAR(500) NULL,                       -- SUIN-Juriscol, Funcion Publica, DNP ...
+    `government_id` INT          NULL,
+    UNIQUE KEY (`type_id`, `number`, `issued_on`),
+    FOREIGN KEY (`type_id`)       REFERENCES `State_Action`.`NormTypes` (`id`),
+    FOREIGN KEY (`government_id`) REFERENCES `RelationsAndConclusions`.`Governments` (`id`)
+);
+
+CREATE TABLE `State_Action`.`NormIssuers` (                 -- connection: norm - entity that issues it (a joint resolution has several)
+    `norm_id`   INT NOT NULL,
+    `entity_id` INT NOT NULL,
+    PRIMARY KEY (`norm_id`, `entity_id`),
+    FOREIGN KEY (`norm_id`)   REFERENCES `State_Action`.`Norms` (`id`),
+    FOREIGN KEY (`entity_id`) REFERENCES `State_Action`.`StateEntities` (`id`)
+);
+
+CREATE TABLE `State_Action`.`NormProvisions` (              -- article, paragraph, numeral: the unit that is read
+    `id`        INT          NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `norm_id`   INT          NOT NULL,
+    `parent_id` INT          NULL,                           -- a numeral inside its article
+    `label`     VARCHAR(60)  NOT NULL,                       -- 'Art. 20', 'Par. 1', 'Num. 2'
+    `text`      MEDIUMTEXT   NOT NULL,
+    UNIQUE KEY (`norm_id`, `label`, `parent_id`),
+    FOREIGN KEY (`norm_id`)   REFERENCES `State_Action`.`Norms` (`id`),
+    FOREIGN KEY (`parent_id`) REFERENCES `State_Action`.`NormProvisions` (`id`)
+);
+
+CREATE TABLE `State_Action`.`NormAmendments` (              -- connection: a provision - the provision that amends or repeals it
+    `provision_id`  INT NOT NULL,
+    `amended_by_id` INT NOT NULL,
+    `kind`          ENUM('amends', 'repeals', 'adds', 'regulates') NOT NULL,
+    PRIMARY KEY (`provision_id`, `amended_by_id`),
+    FOREIGN KEY (`provision_id`)  REFERENCES `State_Action`.`NormProvisions` (`id`),
+    FOREIGN KEY (`amended_by_id`) REFERENCES `State_Action`.`NormProvisions` (`id`)
+);
+
+CREATE TABLE `State_Action`.`NormExcerpts` (                -- the literal piece of a provision a coding rests on
+    `id`           INT        NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `provision_id` INT        NOT NULL,
+    `start_char`   INT        NOT NULL,                      -- position in NormProvisions.text
+    `end_char`     INT        NOT NULL,
+    `text`         TEXT       NOT NULL,                      -- the excerpt as written in the norm
+    UNIQUE KEY (`provision_id`, `start_char`, `end_char`),
+    FOREIGN KEY (`provision_id`) REFERENCES `State_Action`.`NormProvisions` (`id`)
+);
+
+-- What the norms say, coded. Each coded unit is its own thing; each link between them is its own table.
+
+CREATE TABLE `State_Action`.`Coders` (                      -- who coded: the researcher, the assistant, a second reader
+    `id`   SMALLINT     NOT NULL PRIMARY KEY,
+    `name` VARCHAR(120) NOT NULL,
+    `kind` ENUM('human', 'ai') NOT NULL
+);
+
+CREATE TABLE `State_Action`.`ObjectiveTypes` (              -- the typology of objectives (the owner's thesis, or another)
+    `id`          SMALLINT     NOT NULL PRIMARY KEY,
+    `code`        VARCHAR(40)  NOT NULL UNIQUE,
+    `name`        VARCHAR(120) NOT NULL,
+    `definition`  TEXT         NOT NULL
+);
+
+CREATE TABLE `State_Action`.`Objectives` (                  -- a desired future state
+    `id`           INT          NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `statement`    TEXT         NOT NULL,
+    `type_id`      SMALLINT     NULL,
+    `horizon_year` SMALLINT     NULL,
+    FOREIGN KEY (`type_id`) REFERENCES `State_Action`.`ObjectiveTypes` (`id`)
+);
+
+CREATE TABLE `State_Action`.`Problems` (                    -- a socially relevant problem: a fact and its explanation
+    `id`          INT  NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `fact`        TEXT NOT NULL,                             -- the uncomfortable fact (the power goes out)
+    `explanation` TEXT NOT NULL                              -- why it happens, as this framing says (a transformer failed)
+);
+
+CREATE TABLE `State_Action`.`SocialGroups` (                -- for whom a fact is uncomfortable
+    `id`   SMALLINT     NOT NULL PRIMARY KEY,
+    `code` VARCHAR(60)  NOT NULL UNIQUE,
+    `name` VARCHAR(160) NOT NULL
+);
+
+CREATE TABLE `State_Action`.`Responsibilities` (            -- what an entity must do, and where it stops
+    `id`        INT  NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `entity_id` INT  NOT NULL,
+    `action`    TEXT NOT NULL,
+    `scope`     TEXT NULL,                                   -- how far it reaches
+    `boundary`  TEXT NULL,                                   -- where another entity's starts
+    FOREIGN KEY (`entity_id`) REFERENCES `State_Action`.`StateEntities` (`id`)
+);
+
+CREATE TABLE `State_Action`.`ResourceTypes` (               -- money, staff, time, authority, information, infrastructure
+    `id`   SMALLINT     NOT NULL PRIMARY KEY,
+    `code` VARCHAR(40)  NOT NULL UNIQUE,
+    `name` VARCHAR(120) NOT NULL
+);
+
+CREATE TABLE `State_Action`.`Resources` (                   -- what is assigned: its kind, how much, from whom, to whom
+    `id`             INT          NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `type_id`        SMALLINT     NOT NULL,
+    `description`    TEXT         NOT NULL,
+    `amount`         DOUBLE       NULL,
+    `unit`           VARCHAR(60)  NULL,                      -- pesos of a year, posts, months, ...
+    `from_entity_id` INT          NULL,
+    `to_entity_id`   INT          NULL,
+    FOREIGN KEY (`type_id`)        REFERENCES `State_Action`.`ResourceTypes` (`id`),
+    FOREIGN KEY (`from_entity_id`) REFERENCES `State_Action`.`StateEntities` (`id`),
+    FOREIGN KEY (`to_entity_id`)   REFERENCES `State_Action`.`StateEntities` (`id`)
+);
+
+-- Connections. The coder is part of every key, so two readings of the same excerpt can be compared.
+
+CREATE TABLE `State_Action`.`ExcerptObjectives` (
+    `excerpt_id` INT NOT NULL, `objective_id` INT NOT NULL, `coder_id` SMALLINT NOT NULL,
+    PRIMARY KEY (`excerpt_id`, `objective_id`, `coder_id`),
+    FOREIGN KEY (`excerpt_id`)   REFERENCES `State_Action`.`NormExcerpts` (`id`),
+    FOREIGN KEY (`objective_id`) REFERENCES `State_Action`.`Objectives` (`id`),
+    FOREIGN KEY (`coder_id`)     REFERENCES `State_Action`.`Coders` (`id`)
+);
+
+CREATE TABLE `State_Action`.`ExcerptProblems` (
+    `excerpt_id` INT NOT NULL, `problem_id` INT NOT NULL, `coder_id` SMALLINT NOT NULL,
+    PRIMARY KEY (`excerpt_id`, `problem_id`, `coder_id`),
+    FOREIGN KEY (`excerpt_id`) REFERENCES `State_Action`.`NormExcerpts` (`id`),
+    FOREIGN KEY (`problem_id`) REFERENCES `State_Action`.`Problems` (`id`),
+    FOREIGN KEY (`coder_id`)   REFERENCES `State_Action`.`Coders` (`id`)
+);
+
+CREATE TABLE `State_Action`.`ExcerptResponsibilities` (
+    `excerpt_id` INT NOT NULL, `responsibility_id` INT NOT NULL, `coder_id` SMALLINT NOT NULL,
+    PRIMARY KEY (`excerpt_id`, `responsibility_id`, `coder_id`),
+    FOREIGN KEY (`excerpt_id`)        REFERENCES `State_Action`.`NormExcerpts` (`id`),
+    FOREIGN KEY (`responsibility_id`) REFERENCES `State_Action`.`Responsibilities` (`id`),
+    FOREIGN KEY (`coder_id`)          REFERENCES `State_Action`.`Coders` (`id`)
+);
+
+CREATE TABLE `State_Action`.`ExcerptResources` (
+    `excerpt_id` INT NOT NULL, `resource_id` INT NOT NULL, `coder_id` SMALLINT NOT NULL,
+    PRIMARY KEY (`excerpt_id`, `resource_id`, `coder_id`),
+    FOREIGN KEY (`excerpt_id`)  REFERENCES `State_Action`.`NormExcerpts` (`id`),
+    FOREIGN KEY (`resource_id`) REFERENCES `State_Action`.`Resources` (`id`),
+    FOREIGN KEY (`coder_id`)    REFERENCES `State_Action`.`Coders` (`id`)
+);
+
+CREATE TABLE `State_Action`.`ExcerptEntityEvents` (         -- connection: excerpt - an entity it creates, abolishes, certifies ...
+    `excerpt_id` INT NOT NULL, `entity_id` INT NOT NULL,
+    `event`      ENUM('creates', 'abolishes', 'merges', 'renames', 'certifies', 'decertifies', 'assigns_function') NOT NULL,
+    `coder_id`   SMALLINT NOT NULL,
+    PRIMARY KEY (`excerpt_id`, `entity_id`, `event`, `coder_id`),
+    FOREIGN KEY (`excerpt_id`) REFERENCES `State_Action`.`NormExcerpts` (`id`),
+    FOREIGN KEY (`entity_id`)  REFERENCES `State_Action`.`StateEntities` (`id`),
+    FOREIGN KEY (`coder_id`)   REFERENCES `State_Action`.`Coders` (`id`)
+);
+
+CREATE TABLE `State_Action`.`ObjectiveProblems` (           -- connection: objective - the problem it answers
+    `objective_id` INT NOT NULL, `problem_id` INT NOT NULL, `coder_id` SMALLINT NOT NULL,
+    PRIMARY KEY (`objective_id`, `problem_id`, `coder_id`),
+    FOREIGN KEY (`objective_id`) REFERENCES `State_Action`.`Objectives` (`id`),
+    FOREIGN KEY (`problem_id`)   REFERENCES `State_Action`.`Problems` (`id`),
+    FOREIGN KEY (`coder_id`)     REFERENCES `State_Action`.`Coders` (`id`)
+);
+
+CREATE TABLE `State_Action`.`ObjectiveResources` (          -- connection: objective - a resource assigned to it
+    `objective_id` INT NOT NULL, `resource_id` INT NOT NULL, `coder_id` SMALLINT NOT NULL,
+    PRIMARY KEY (`objective_id`, `resource_id`, `coder_id`),
+    FOREIGN KEY (`objective_id`) REFERENCES `State_Action`.`Objectives` (`id`),
+    FOREIGN KEY (`resource_id`)  REFERENCES `State_Action`.`Resources` (`id`),
+    FOREIGN KEY (`coder_id`)     REFERENCES `State_Action`.`Coders` (`id`)
+);
+
+CREATE TABLE `State_Action`.`ResponsibilityObjectives` (    -- connection: responsibility - the objective it serves
+    `responsibility_id` INT NOT NULL, `objective_id` INT NOT NULL, `coder_id` SMALLINT NOT NULL,
+    PRIMARY KEY (`responsibility_id`, `objective_id`, `coder_id`),
+    FOREIGN KEY (`responsibility_id`) REFERENCES `State_Action`.`Responsibilities` (`id`),
+    FOREIGN KEY (`objective_id`)      REFERENCES `State_Action`.`Objectives` (`id`),
+    FOREIGN KEY (`coder_id`)          REFERENCES `State_Action`.`Coders` (`id`)
+);
+
+CREATE TABLE `State_Action`.`ProblemGroups` (               -- connection: problem - a group for whom the fact is uncomfortable
+    `problem_id` INT NOT NULL, `group_id` SMALLINT NOT NULL, `coder_id` SMALLINT NOT NULL,
+    PRIMARY KEY (`problem_id`, `group_id`, `coder_id`),
+    FOREIGN KEY (`problem_id`) REFERENCES `State_Action`.`Problems` (`id`),
+    FOREIGN KEY (`group_id`)   REFERENCES `State_Action`.`SocialGroups` (`id`),
+    FOREIGN KEY (`coder_id`)   REFERENCES `State_Action`.`Coders` (`id`)
+);
+
+CREATE TABLE `State_Action`.`ProblemFramers` (              -- connection: problem - the entity whose explanation it is
+    `problem_id` INT NOT NULL, `entity_id` INT NOT NULL, `coder_id` SMALLINT NOT NULL,
+    PRIMARY KEY (`problem_id`, `entity_id`, `coder_id`),
+    FOREIGN KEY (`problem_id`) REFERENCES `State_Action`.`Problems` (`id`),
+    FOREIGN KEY (`entity_id`)  REFERENCES `State_Action`.`StateEntities` (`id`),
+    FOREIGN KEY (`coder_id`)   REFERENCES `State_Action`.`Coders` (`id`)
+);
+
+
+-- =====================================================================================================
+-- Research_Design: the decisions taken, the municipal typology and the cases chosen from it
+-- =====================================================================================================
+
+CREATE TABLE `Research_Design`.`DecisionTopics` (           -- objective, frame, data, cleaning, model, method, design
+    `id`   SMALLINT     NOT NULL PRIMARY KEY,
+    `code` VARCHAR(40)  NOT NULL UNIQUE,
+    `name` VARCHAR(120) NOT NULL
+);
+
+CREATE TABLE `Research_Design`.`Decisions` (                -- the decision log: what was decided, by whom, why
+    `id`            INT      NOT NULL PRIMARY KEY,
+    `decided_on`    DATE     NOT NULL,
+    `topic_id`      SMALLINT NOT NULL,
+    `decision`      TEXT     NOT NULL,
+    `reason`        TEXT     NULL,
+    `decided_by`    ENUM('researcher', 'assistant', 'both') NOT NULL,   -- assistant: proposed by the AI and accepted
+    `superseded_by` INT      NULL,
+    FOREIGN KEY (`topic_id`)      REFERENCES `Research_Design`.`DecisionTopics` (`id`),
+    FOREIGN KEY (`superseded_by`) REFERENCES `Research_Design`.`Decisions` (`id`)
+);
+
+CREATE TABLE `Research_Design`.`DecisionObjects` (          -- connection: decision - a table, module or document it governs
+    `decision_id` INT          NOT NULL,
+    `object_name` VARCHAR(120) NOT NULL,                    -- 'panel.quality', 'Education_Outcomes.StudentScores', 'README'
+    PRIMARY KEY (`decision_id`, `object_name`),
+    FOREIGN KEY (`decision_id`) REFERENCES `Research_Design`.`Decisions` (`id`)
+);
+
+CREATE TABLE `Research_Design`.`TypologyRuns` (             -- one grouping of municipalities: method, base year, variables
+    `id`          INT          NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `method`      VARCHAR(60)  NOT NULL,                     -- k-medoids, Ward, latent profiles ...
+    `base_year`   SMALLINT     NOT NULL,
+    `run_on`      DATE         NOT NULL,
+    `decision_id` INT          NULL,
+    FOREIGN KEY (`decision_id`) REFERENCES `Research_Design`.`Decisions` (`id`)
+);
+
+CREATE TABLE `Research_Design`.`TypologyVariables` (        -- connection: run - a variable it groups by
+    `run_id`   INT          NOT NULL,
+    `variable` VARCHAR(120) NOT NULL,                        -- 'TerriData 010010007', 'Census2018Municipal.ipm', ...
+    PRIMARY KEY (`run_id`, `variable`),
+    FOREIGN KEY (`run_id`) REFERENCES `Research_Design`.`TypologyRuns` (`id`)
+);
+
+CREATE TABLE `Research_Design`.`TypologyGroups` (           -- the groups a run produced, with the name the researcher gives them
+    `id`     INT          NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `run_id` INT          NOT NULL,
+    `label`  VARCHAR(120) NOT NULL,
+    `profile` TEXT        NULL,
+    FOREIGN KEY (`run_id`) REFERENCES `Research_Design`.`TypologyRuns` (`id`)
+);
+
+CREATE TABLE `Research_Design`.`TypologyMemberships` (      -- connection: municipality - its group in a run
+    `group_id`        INT NOT NULL,
+    `municipality_id` INT NOT NULL,
+    PRIMARY KEY (`group_id`, `municipality_id`),
+    FOREIGN KEY (`group_id`)        REFERENCES `Research_Design`.`TypologyGroups` (`id`),
+    FOREIGN KEY (`municipality_id`) REFERENCES `RelationsAndConclusions`.`Municipalities` (`id`)
+);
+
+CREATE TABLE `Research_Design`.`CaseRoles` (                -- typical (medoid), deviant, twin (nearest neighbour)
+    `id`   TINYINT     NOT NULL PRIMARY KEY,
+    `code` VARCHAR(20) NOT NULL UNIQUE,
+    `name` VARCHAR(80) NOT NULL
+);
+
+CREATE TABLE `Research_Design`.`CaseSelections` (           -- connection: group - a municipality chosen as a case, with its role
+    `group_id`        INT     NOT NULL,
+    `municipality_id` INT     NOT NULL,
+    `role_id`         TINYINT NOT NULL,
+    `reason`          TEXT    NULL,
+    PRIMARY KEY (`group_id`, `municipality_id`, `role_id`),
+    FOREIGN KEY (`group_id`)        REFERENCES `Research_Design`.`TypologyGroups` (`id`),
+    FOREIGN KEY (`municipality_id`) REFERENCES `RelationsAndConclusions`.`Municipalities` (`id`),
+    FOREIGN KEY (`role_id`)         REFERENCES `Research_Design`.`CaseRoles` (`id`)
+);
+
+CREATE TABLE `RelationsAndConclusions`.`MunicipalLineage` (  -- connection: a municipality - the one it was split from
+    `daughter_id` INT      NOT NULL,
+    `mother_id`   INT      NOT NULL,
+    `created_in`  SMALLINT NOT NULL,                         -- first year with its own population
+    `evidence`    ENUM('inferred_population', 'divipola') NOT NULL,   -- inferred until DANE's DIVIPOLA confirms it
+    PRIMARY KEY (`daughter_id`, `mother_id`),
+    FOREIGN KEY (`daughter_id`) REFERENCES `RelationsAndConclusions`.`Municipalities` (`id`),
+    FOREIGN KEY (`mother_id`)   REFERENCES `RelationsAndConclusions`.`Municipalities` (`id`)
 );
 
 
@@ -681,7 +1172,9 @@ INSERT INTO `RelationsAndConclusions`.`Sources` VALUES
     (6, 'icfes', 'Instituto Colombiano para la Evaluacion de la Educacion', 'administrative', 'https://www.datos.gov.co', 'Saber 11 and Saber Pro'),
     (7, 'men', 'Ministerio de Educacion Nacional', 'administrative', 'https://www.datos.gov.co', 'Enrolment, dropout, schools, higher education, Generacion E'),
     (8, 'minsalud', 'Ministerio de Salud y Proteccion Social', 'administrative', 'https://www.datos.gov.co', 'REPS health providers'),
-    (9, 'icetex', 'Instituto Colombiano de Credito Educativo y Estudios Tecnicos en el Exterior', 'administrative', 'https://www.datos.gov.co', 'Student credits');
+    (9, 'icetex', 'Instituto Colombiano de Credito Educativo y Estudios Tecnicos en el Exterior', 'administrative', 'https://www.datos.gov.co', 'Student credits'),
+    (10, 'dnp', 'Departamento Nacional de Planeacion', 'administrative', 'https://terridata.dnp.gov.co', 'TerriData: territorial statistics per municipality and department'),
+    (11, 'cuipo', 'Contraloria General de la Republica and Contaduria General de la Nacion', 'administrative', 'https://www.datos.gov.co', 'CUIPO: budget execution of territorial entities');
 
 INSERT INTO `RelationsAndConclusions`.`ViolenceIndicators` VALUES
     (1,  'homicide',                'physical', 'Homicides'),
@@ -701,3 +1194,41 @@ INSERT INTO `Physical_violence`.`EventModalities` VALUES
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
+INSERT INTO `State_Action`.`GovernmentLevels` VALUES
+    (1, 'national', 'National'), (2, 'departmental', 'Departmental'), (3, 'municipal', 'Municipal'), (4, 'school', 'School');
+
+INSERT INTO `State_Action`.`EntityKinds` VALUES
+    (1, 'presidency', 'Presidency of the Republic'), (2, 'ministry', 'Ministry'), (3, 'administrative_department', 'Administrative department (DNP, DANE ...)'),
+    (4, 'agency', 'Agency or unit (ART, ICFES, ICETEX, Victims Unit ...)'), (5, 'governorship', 'Departmental government'),
+    (6, 'mayoralty', 'Municipal government'), (7, 'education_secretariat', 'Education secretariat of a certified entity (ETC)'),
+    (8, 'school', 'Official school'), (9, 'court', 'Court or tribunal'), (10, 'congress', 'Congress'),
+    (11, 'control_body', 'Control body (Comptroller, Procurator, Ombudsman)'), (12, 'security_force', 'Military or police force'),
+    (13, 'transitional_justice', 'Transitional justice body (JEP, Truth Commission, Search Unit)');
+
+INSERT INTO `State_Action`.`EntityFunctions` VALUES
+    (1, 'education', 'Education'), (2, 'security', 'Security and public order'), (3, 'justice', 'Justice'),
+    (4, 'transitional_justice', 'Transitional justice'), (5, 'victims', 'Attention and reparation to victims'),
+    (6, 'planning', 'Planning and budget'), (7, 'territorial_development', 'Territorial development (PDET, rural reform)'),
+    (8, 'social_protection', 'Social protection'), (9, 'evaluation', 'Evaluation and measurement'), (10, 'control', 'Fiscal and disciplinary control');
+
+INSERT INTO `State_Action`.`NormTypes` VALUES
+    (1, 'constitution', 'Constitution'), (2, 'legislative_act', 'Legislative act (constitutional amendment)'), (3, 'law', 'Law'),
+    (4, 'development_plan', 'National Development Plan (law and its bases)'), (5, 'decree', 'Decree'), (6, 'resolution', 'Resolution'),
+    (7, 'conpes', 'CONPES document'), (8, 'ruling', 'Court ruling'), (9, 'agreement', 'Agreement (the 2016 Final Agreement ...)'),
+    (10, 'sector_plan', 'Sector plan (ten-year education plans ...)');
+
+INSERT INTO `State_Action`.`ResourceTypes` VALUES
+    (1, 'money', 'Money'), (2, 'staff', 'People: posts, teachers, officials'), (3, 'time', 'Time: deadlines, terms'),
+    (4, 'authority', 'Authority: a competence or a power'), (5, 'information', 'Information: systems, records, measurement'),
+    (6, 'infrastructure', 'Infrastructure: buildings, roads, connectivity');
+
+INSERT INTO `State_Action`.`Coders` VALUES (1, 'Researcher', 'human'), (2, 'Claude (assistant)', 'ai');
+
+INSERT INTO `Research_Design`.`DecisionTopics` VALUES
+    (1, 'objective', 'Objective and questions'), (2, 'frame', 'Theoretical frame'), (3, 'data', 'Data sources'),
+    (4, 'cleaning', 'Cleaning and validation'), (5, 'model', 'Data model'), (6, 'method', 'Method of analysis'), (7, 'design', 'Research design');
+
+INSERT INTO `Research_Design`.`CaseRoles` VALUES
+    (1, 'typical', 'Typical case: the medoid of its group'), (2, 'deviant', 'Deviant case: like its group, different outcome'),
+    (3, 'twin', 'Twin: nearest neighbour in material and administrative conditions');

@@ -68,7 +68,13 @@ def query(dataset: str, select: str, where: str = None, group: str = None, order
     while True:
         params["$offset"] = offset
         for attempt in range(retries):
-            response = requests.get(f"{DOMAIN}/resource/{dataset}.json", params=params, headers=headers, timeout=300)
+            try:
+                response = requests.get(f"{DOMAIN}/resource/{dataset}.json", params=params, headers=headers, timeout=300)
+            except (requests.exceptions.Timeout, requests.exceptions.ConnectionError):
+                if attempt < retries - 1:                # a heavy aggregation can outlast one request
+                    time.sleep(10 * (attempt + 1))
+                    continue
+                raise
             if response.status_code == 200:
                 break
             if response.status_code in (429, 500, 502, 503, 504) and attempt < retries - 1:
