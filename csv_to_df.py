@@ -2,7 +2,7 @@ from pathlib import Path
 import pandas as pd
 import logging
 import uuid
-from txt_to_df import detect_separator  # Ensure this function is correctly defined before using
+from txt_to_df import detect_encoding, detect_separator
 
 logging.basicConfig(filename='etl_errors.log', level=logging.ERROR,
                     format='%(asctime)s - %(levelname)s - %(message)s')
@@ -25,6 +25,7 @@ def load_csv_to_dict(csv_path: Path, backup_folder: Path = Path("backup_csv")) -
         FileNotFoundError: If the path is not a directory or a CSV file.
         Exception: For any other errors during CSV processing or backup.
     """
+    csv_path = Path(csv_path)
     if not csv_path.exists():
         error_msg = f"Provided path does not exist: {csv_path}"
         logging.error(error_msg)
@@ -34,10 +35,10 @@ def load_csv_to_dict(csv_path: Path, backup_folder: Path = Path("backup_csv")) -
     backup_csv_folder = backup_folder / "Datos_cargados"
     backup_csv_folder.mkdir(parents=True, exist_ok=True)
 
-    # Find CSV files
+    # Find CSV files (extension compared case-insensitively: data sources mix .csv and .CSV)
     if csv_path.is_dir():
-        csv_files = list(csv_path.rglob('*.csv'))
-    elif csv_path.is_file() and csv_path.suffix == '.csv':
+        csv_files = [p for p in csv_path.rglob('*') if p.is_file() and p.suffix.lower() == '.csv']
+    elif csv_path.is_file() and csv_path.suffix.lower() == '.csv':
         csv_files = [csv_path]
     else:
         error_msg = f"Invalid path provided: {csv_path}. Expected a directory or a CSV file path."
@@ -49,7 +50,8 @@ def load_csv_to_dict(csv_path: Path, backup_folder: Path = Path("backup_csv")) -
 
     for file_path in csv_files:
         try:
-            separator, encoding = detect_separator(file_path)
+            encoding = detect_encoding(file_path)
+            separator = detect_separator(file_path, encoding)
             df = pd.read_csv(file_path, sep=separator, encoding=encoding)
             unique_id = f"{file_path.stem}_{uuid.uuid4().hex[:4]}"
             dfs[unique_id] = df
@@ -59,6 +61,7 @@ def load_csv_to_dict(csv_path: Path, backup_folder: Path = Path("backup_csv")) -
             backup_data.append({
                 'Original_File': file_path.name,
                 'Document_Type': 'CSV',
+                'Original_Folder': file_path.parent.as_posix(),
                 'Backup_Path': str(backup_file),
                 'Unique_Identifier': unique_id
             })

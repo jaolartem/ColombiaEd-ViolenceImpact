@@ -1,0 +1,9 @@
+pandas
+openpyxl
+xlrd
+chardet
+sodapy
+mysql-connector-python
+requests
+numpy
+lxml
