@@ -29,7 +29,6 @@ import mysql.connector
 import numpy as np
 import pandas as pd
 
-from panel import catalogs
 from panel import dane, events as events_module, governments, indices, longterm, socrata, sources
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -430,6 +429,7 @@ def main():
 
     # ------------------------------------------------------------------ catalogs of the categories the facts store
     print("catalogs")
+    from panel import catalogs          # imported here: catalogs uses this module's connect
     catalogs.build(cur)
 
     # ------------------------------------------------------------------ checks

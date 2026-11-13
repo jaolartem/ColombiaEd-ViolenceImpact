@@ -19,6 +19,8 @@ IncomeBrackets). From those brackets a Gini is estimated per municipality and ye
 Check: the same estimate for each department and each department capital, against DANE's Gini of the same
 year. The correlation and the mean difference are printed and written to output/panel/gini_check.csv.
 
+Result (2026-11-13, decision 37): the estimate failed its check (correlation 0.07 with DANE's departmental
+Gini, -0.05 with the city Gini), so it is not loaded; run with --load only if a revised method passes.
 Loads Structural_Violence.Inequality (measure 'saber11_income_brackets'). DANE's own Gini stays in
 Territorial_Context (MunicipalIndicators for cities, DepartmentalIndicators for departments).
 """
@@ -100,6 +102,10 @@ def main():
         checks.append(both.assign(level=label).rename(columns={key: "place_id"}))
     pd.concat(checks).to_csv(ROOT / "output" / "panel" / "gini_check.csv", index=False)
 
+    import sys
+    if "--load" not in sys.argv:                    # decision 37: the estimate did not pass its check
+        db.close()
+        return
     cur.execute("SET FOREIGN_KEY_CHECKS = 0")
     cur.execute("DELETE FROM Structural_Violence.Inequality WHERE measure = 'saber11_income_brackets'")
     load(cur, "Structural_Violence.Inequality", mun.dropna(subset=["gini"]).assign(measure="saber11_income_brackets"),
