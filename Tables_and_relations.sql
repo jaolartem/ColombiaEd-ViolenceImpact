@@ -216,6 +216,28 @@ CREATE TABLE `Physical_violence`.`Perpetrators` (
     `name` VARCHAR(150) NOT NULL UNIQUE                  -- as the source writes it: GRUPO PARAMILITAR, GUERRILLA, ...
 );
 
+CREATE TABLE `Physical_violence`.`PerpetratorGroups` (     -- the armed group, under its category
+    `id`             INT          NOT NULL PRIMARY KEY,
+    `perpetrator_id` INT          NOT NULL,
+    `name`           VARCHAR(200) NOT NULL,                 -- as CNMH writes it: FARC, ELN, AUTODEFENSAS UNIDAS DE COLOMBIA AUC ...
+    UNIQUE KEY (`perpetrator_id`, `name`),
+    FOREIGN KEY (`perpetrator_id`) REFERENCES `Physical_violence`.`Perpetrators` (`id`)
+);
+
+CREATE TABLE `Physical_violence`.`SimultaneousActs` (      -- acts CNMH records together with an event
+    `id`   TINYINT      NOT NULL PRIMARY KEY,
+    `code` VARCHAR(40)  NOT NULL UNIQUE,
+    `name` VARCHAR(120) NOT NULL
+);
+
+CREATE TABLE `Physical_violence`.`ActForms` (              -- the form an act took, when the source writes it (gender-based violence)
+    `id`     INT          NOT NULL PRIMARY KEY,
+    `act_id` TINYINT      NOT NULL,
+    `label`  VARCHAR(200) NOT NULL,
+    UNIQUE KEY (`act_id`, `label`),
+    FOREIGN KEY (`act_id`) REFERENCES `Physical_violence`.`SimultaneousActs` (`id`)
+);
+
 CREATE TABLE `Physical_violence`.`ViolenceEvents` (
     `id`               INT          NOT NULL AUTO_INCREMENT PRIMARY KEY,
     `dataset_id`       INT          NOT NULL,
@@ -225,16 +247,27 @@ CREATE TABLE `Physical_violence`.`ViolenceEvents` (
     `date_precision`   ENUM('day', 'month', 'year') NULL,
     `municipality_id`  INT          NULL,
     `victims`          FLOAT        NULL,
-    `perpetrator_id`   INT          NULL,
-    `displacement`     FLOAT        NULL,                -- simultaneous facts recorded by CNMH
-    `confinement`      FLOAT        NULL,
+    `perpetrator_id`   INT          NULL,                -- the category: guerrilla, paramilitary group, agent of the State ...
+    `perpetrator_group_id` INT      NULL,                -- the group: FARC, ELN, AUC, National Army ... (panel.event_details)
     `massacre_cluster` VARCHAR(60)  NULL,                -- same value = the same massacre in several sources
     UNIQUE (`dataset_id`, `source_event_id`),
     KEY `by_place_day` (`municipality_id`, `day`),
     FOREIGN KEY (`dataset_id`)      REFERENCES `RelationsAndConclusions`.`SourceDatasets` (`id`),
     FOREIGN KEY (`modality_code`)   REFERENCES `Physical_violence`.`EventModalities` (`code`),
     FOREIGN KEY (`municipality_id`) REFERENCES `RelationsAndConclusions`.`Municipalities` (`id`),
-    FOREIGN KEY (`perpetrator_id`)  REFERENCES `Physical_violence`.`Perpetrators` (`id`)
+    FOREIGN KEY (`perpetrator_id`)  REFERENCES `Physical_violence`.`Perpetrators` (`id`),
+    FOREIGN KEY (`perpetrator_group_id`) REFERENCES `Physical_violence`.`PerpetratorGroups` (`id`)
+);
+
+CREATE TABLE `Physical_violence`.`EventSimultaneousActs` (  -- connection: event - an act committed with it
+    `event_id` INT     NOT NULL,
+    `act_id`   TINYINT NOT NULL,
+    `persons`  INT     NULL,                                -- persons who suffered it, when the source counts them
+    `form_id`  INT     NULL,                                -- its form, when the source writes one
+    PRIMARY KEY (`event_id`, `act_id`),
+    FOREIGN KEY (`event_id`) REFERENCES `Physical_violence`.`ViolenceEvents` (`id`),
+    FOREIGN KEY (`act_id`)   REFERENCES `Physical_violence`.`SimultaneousActs` (`id`),
+    FOREIGN KEY (`form_id`)  REFERENCES `Physical_violence`.`ActForms` (`id`)
 );
 
 CREATE TABLE `Physical_violence`.`EventLinks` (           -- triangulation: same municipality, <= 3 days (15 if month only)
@@ -361,12 +394,20 @@ CREATE TABLE `Structural_Violence`.`Census2018Municipal` (      -- DANE CNPV 201
     FOREIGN KEY (`municipality_id`) REFERENCES `RelationsAndConclusions`.`Municipalities` (`id`)
 );
 
-CREATE TABLE `Structural_Violence`.`Inequality` (    -- no municipal Gini is published yearly: documented gap, empty
-    `municipality_id` INT   NOT NULL,
-    `reference_year`  YEAR  NOT NULL,
-    `gini_index`      FLOAT NULL,
-    PRIMARY KEY (`municipality_id`, `reference_year`),
-    FOREIGN KEY (`municipality_id`) REFERENCES `RelationsAndConclusions`.`Municipalities` (`id`)
+CREATE TABLE `Structural_Violence`.`InequalityMeasures` (   -- how a Gini was obtained
+    `code`        VARCHAR(40)  NOT NULL PRIMARY KEY,
+    `description` VARCHAR(500) NOT NULL
+);
+
+CREATE TABLE `Structural_Violence`.`Inequality` (            -- municipal Gini estimates (no yearly official one exists)
+    `municipality_id` INT         NOT NULL,
+    `year`            SMALLINT    NOT NULL,
+    `measure`         VARCHAR(40) NOT NULL,
+    `gini`            FLOAT       NOT NULL,
+    `households`      INT         NULL,                       -- the base it rests on
+    PRIMARY KEY (`municipality_id`, `year`, `measure`),
+    FOREIGN KEY (`municipality_id`) REFERENCES `RelationsAndConclusions`.`Municipalities` (`id`),
+    FOREIGN KEY (`measure`)         REFERENCES `Structural_Violence`.`InequalityMeasures` (`code`)
 );
 
 CREATE TABLE `Structural_Violence`.`SchoolsByMunicipality` (    -- MEN directory, pre-school to secondary
@@ -549,7 +590,7 @@ CREATE TABLE `Education_Outcomes`.`GeneracionE` (
 CREATE TABLE `Education_Outcomes`.`IcetexCredits` (       -- ICETEX publishes the department of origin only
     `department_id` INT          NOT NULL,
     `year`          YEAR         NOT NULL,
-    `sex`           VARCHAR(20)  NOT NULL,
+    `sex`           CHAR(1)      NOT NULL,                -- the key of Sexes: F, M, I (intersex), U (no information)
     `level`         VARCHAR(80)  NOT NULL,
     `kind`          ENUM('new', 'renewal') NOT NULL,
     `beneficiaries` INT          NOT NULL,
@@ -561,6 +602,13 @@ CREATE TABLE `Education_Outcomes`.`IcetexCredits` (       -- ICETEX publishes th
 -- =====================================================================================================
 -- Student_Context: what each student reports (ICFES questionnaire); never in an index
 -- =====================================================================================================
+
+CREATE TABLE `Student_Context`.`IncomeBrackets` (          -- family monthly income, in legal minimum wages (SMLV)
+    `id`         TINYINT     NOT NULL PRIMARY KEY,
+    `label`      VARCHAR(60) NOT NULL,
+    `lower_smlv` FLOAT       NOT NULL,
+    `upper_smlv` FLOAT       NULL                             -- NULL: the open top bracket
+);
 
 CREATE TABLE `Student_Context`.`StudentHousehold` (
     `student_id`            VARCHAR(40)  NOT NULL PRIMARY KEY,
@@ -576,7 +624,9 @@ CREATE TABLE `Student_Context`.`StudentHousehold` (
     `father_education`      VARCHAR(100) NULL,
     `ethnic_group`          VARCHAR(80)  NULL,
     `work_hours_per_week`   VARCHAR(40)  NULL,
-    FOREIGN KEY (`student_id`) REFERENCES `Education_Outcomes`.`Students` (`id`)
+    `income_bracket_id`     TINYINT      NULL,                 -- 2009-2 to 2016-2
+    FOREIGN KEY (`student_id`) REFERENCES `Education_Outcomes`.`Students` (`id`),
+    FOREIGN KEY (`income_bracket_id`) REFERENCES `Student_Context`.`IncomeBrackets` (`id`)
 );
 
 CREATE TABLE `Student_Context`.`StudentPractices` (       -- reading, books at home, internet use
@@ -608,12 +658,25 @@ CREATE TABLE `Student_Context`.`MunicipalStudentContext` (  -- what a municipali
 -- Territorial_Context: DNP TerriData (python -m panel.dnp), every indicator DNP publishes per municipality
 -- =====================================================================================================
 
+CREATE TABLE `Territorial_Context`.`TerriDataDimensions` (     -- demography, education, public finance, ...
+    `id`   SMALLINT     NOT NULL PRIMARY KEY,
+    `name` VARCHAR(255) NOT NULL UNIQUE
+);
+
+CREATE TABLE `Territorial_Context`.`TerriDataSubcategories` (
+    `id`           SMALLINT     NOT NULL PRIMARY KEY,
+    `dimension_id` SMALLINT     NOT NULL,
+    `name`         VARCHAR(255) NOT NULL,
+    UNIQUE KEY (`dimension_id`, `name`),
+    FOREIGN KEY (`dimension_id`) REFERENCES `Territorial_Context`.`TerriDataDimensions` (`id`)
+);
+
 CREATE TABLE `Territorial_Context`.`TerriDataIndicators` (
-    `code`        CHAR(9)      NOT NULL PRIMARY KEY,         -- DNP's nine-digit indicator code
-    `dimension`   VARCHAR(255) NOT NULL,
-    `subcategory` VARCHAR(255) NULL,
-    `name`        VARCHAR(255) NOT NULL,                     -- as DNP publishes it
-    `unit`        VARCHAR(255) NULL
+    `code`           CHAR(9)      NOT NULL PRIMARY KEY,       -- DNP's nine-digit indicator code
+    `subcategory_id` SMALLINT     NOT NULL,
+    `name`           VARCHAR(255) NOT NULL,                   -- as DNP publishes it
+    `unit`           VARCHAR(255) NULL,
+    FOREIGN KEY (`subcategory_id`) REFERENCES `Territorial_Context`.`TerriDataSubcategories` (`id`)
 );
 
 CREATE TABLE `Territorial_Context`.`TerriDataSources` (
@@ -1111,6 +1174,64 @@ CREATE TABLE `RelationsAndConclusions`.`MunicipalLineage` (  -- connection: a mu
 );
 
 
+CREATE TABLE `RelationsAndConclusions`.`ConstantTerritories` (   -- municipalities whose borders changed together, joined
+    `id`   INT          NOT NULL PRIMARY KEY,
+    `name` VARCHAR(255) NOT NULL                              -- the names of its municipalities
+);
+
+CREATE TABLE `RelationsAndConclusions`.`ConstantTerritoryMembers` (   -- connection: territory - municipality (each in one)
+    `territory_id`    INT NOT NULL,
+    `municipality_id` INT NOT NULL,
+    PRIMARY KEY (`territory_id`, `municipality_id`),
+    UNIQUE KEY (`municipality_id`),
+    FOREIGN KEY (`territory_id`)    REFERENCES `RelationsAndConclusions`.`ConstantTerritories` (`id`),
+    FOREIGN KEY (`municipality_id`) REFERENCES `RelationsAndConclusions`.`Municipalities` (`id`)
+);
+
+
+-- =====================================================================================================
+-- Catalogs of categories the facts store (python -m panel.catalogs fills them from the data)
+-- =====================================================================================================
+
+CREATE TABLE `RelationsAndConclusions`.`Measures` (           -- what a measure of PeriodRates counts
+    `code`          VARCHAR(60) NOT NULL PRIMARY KEY,         -- cnmh_massacre_victims, police_homicide, ...
+    `source_code`   VARCHAR(40) NOT NULL,
+    `modality_code` CHAR(2)     NULL,                         -- CNMH modality (MA for every massacre count)
+    `indicator_id`  INT         NULL,                         -- Medicina Legal / Police indicator
+    `unit`          ENUM('events', 'victims', 'cases') NOT NULL,
+    FOREIGN KEY (`source_code`)   REFERENCES `RelationsAndConclusions`.`Sources` (`code`),
+    FOREIGN KEY (`modality_code`) REFERENCES `Physical_violence`.`EventModalities` (`code`),
+    FOREIGN KEY (`indicator_id`)  REFERENCES `RelationsAndConclusions`.`ViolenceIndicators` (`id`)
+);
+
+CREATE TABLE `RelationsAndConclusions`.`Periods` (            -- the windows rates are computed over
+    `kind`          ENUM('government', 'phase') NOT NULL,
+    `code`          VARCHAR(40) NOT NULL,
+    `government_id` INT         NOT NULL,
+    `phase_id`      INT         NULL,
+    PRIMARY KEY (`kind`, `code`),
+    FOREIGN KEY (`government_id`) REFERENCES `RelationsAndConclusions`.`Governments` (`id`),
+    FOREIGN KEY (`phase_id`)      REFERENCES `RelationsAndConclusions`.`Government_Phases` (`id`)
+);
+
+CREATE TABLE `Structural_Violence`.`HealthProviderClasses` (`name` VARCHAR(120) NOT NULL PRIMARY KEY);
+CREATE TABLE `Structural_Violence`.`LegalNatures`          (`name` VARCHAR(60)  NOT NULL PRIMARY KEY);
+CREATE TABLE `Education_Outcomes`.`SchoolSectors`          (`code` VARCHAR(40)  NOT NULL PRIMARY KEY);   -- OFICIAL, NO_OFICIAL
+CREATE TABLE `Education_Outcomes`.`SchoolAreas`            (`code` VARCHAR(40)  NOT NULL PRIMARY KEY);   -- URBANO, RURAL
+CREATE TABLE `Education_Outcomes`.`IcetexLevels`           (`name` VARCHAR(80)  NOT NULL PRIMARY KEY);
+CREATE TABLE `Education_Outcomes`.`HigherEdSectors` (        -- SNIES sector codes
+    `id`   TINYINT     NOT NULL PRIMARY KEY,
+    `name` VARCHAR(80) NULL                                   -- to be filled from the SNIES codebook
+);
+CREATE TABLE `Education_Outcomes`.`HigherEdLevels` (         -- SNIES level-of-training codes
+    `id`   TINYINT     NOT NULL PRIMARY KEY,
+    `name` VARCHAR(80) NULL                                   -- to be filled from the SNIES codebook
+);
+CREATE TABLE `Education_Outcomes`.`SaberProPeriods` (
+    `id`   INT      NOT NULL PRIMARY KEY,                     -- ICFES period code
+    `year` SMALLINT NOT NULL
+);
+
 -- =====================================================================================================
 -- Views
 -- =====================================================================================================
@@ -1132,6 +1253,19 @@ JOIN `RelationsAndConclusions`.`SourceDatasets` sd ON sd.`id` = e.`dataset_id`
 JOIN `RelationsAndConclusions`.`Governments` g ON e.`day` >= g.`start_date` AND e.`day` < g.`end_date`
 GROUP BY e.`municipality_id`, g.`code`, e.`modality_code`, sd.`dataset`;
 
+CREATE VIEW `RelationsAndConclusions`.`PopulationConstantTerritory` AS   -- population with borders that do not change
+SELECT ct.`territory_id`, p.`year`, SUM(p.`population`) AS `population`
+FROM `RelationsAndConclusions`.`Population` p
+JOIN `RelationsAndConclusions`.`ConstantTerritoryMembers` ct ON ct.`municipality_id` = p.`municipality_id`
+GROUP BY ct.`territory_id`, p.`year`;
+
+CREATE VIEW `RelationsAndConclusions`.`PeriodRatesConstantTerritory` AS  -- rates by government and phase, constant borders
+SELECT ct.`territory_id`, r.`period_kind`, r.`period_code`, r.`measure`, SUM(r.`cases`) AS `cases`,
+       SUM(r.`person_years`) AS `person_years`, SUM(r.`cases`) / NULLIF(SUM(r.`person_years`), 0) * 100000 AS `rate_per_100k`
+FROM `RelationsAndConclusions`.`PeriodRates` r
+JOIN `RelationsAndConclusions`.`ConstantTerritoryMembers` ct ON ct.`municipality_id` = r.`municipality_id`
+GROUP BY ct.`territory_id`, r.`period_kind`, r.`period_code`, r.`measure`;
+
 CREATE VIEW `Student_Context`.`StudentsVersusCensus` AS    -- exam takers 2019 against the census 2018
 SELECT c.`municipality_id`, sc.`exam_period_id`, sc.`students`,
        sc.`share_internet`    AS `students_internet`,    c.`share_internet`    AS `census_internet`,
@@ -1144,7 +1278,7 @@ JOIN `Structural_Violence`.`Census2018Municipal` c ON c.`municipality_id` = sc.`
 -- Reference rows
 -- =====================================================================================================
 
-INSERT INTO `RelationsAndConclusions`.`Sexes` VALUES ('F', 'Female'), ('M', 'Male'), ('U', 'Unknown / total');
+INSERT INTO `RelationsAndConclusions`.`Sexes` VALUES ('F', 'Female'), ('M', 'Male'), ('U', 'Unknown / total'), ('I', 'Intersex');
 
 INSERT INTO `RelationsAndConclusions`.`Governments` VALUES
     (1, 'uribe_1',  'Alvaro Uribe Velez (I)',  '2002-08-07', '2006-08-07'),
@@ -1241,3 +1375,30 @@ INSERT INTO `State_Action`.`ObjectiveTypes` VALUES   -- the researcher's thesis 
     (5, 'processes', 'Change of processes', 'Changes the procedure by which an action is carried out.'),
     (6, 'responsibles', 'Change of responsibles', 'Changes which entity is responsible for an action, or how far its responsibility reaches.'),
     (7, 'times_and_deadlines', 'Change of times and deadlines', 'Changes when an action must happen or how long it lasts.');
+
+INSERT INTO `Student_Context`.`IncomeBrackets` VALUES
+    (1, 'Less than 1 SMLV', 0, 1), (2, '1 to less than 2 SMLV', 1, 2), (3, '2 to less than 3 SMLV', 2, 3),
+    (4, '3 to less than 5 SMLV', 3, 5), (5, '5 to less than 7 SMLV', 5, 7), (6, '7 to less than 10 SMLV', 7, 10),
+    (7, '10 SMLV or more', 10, NULL);
+
+INSERT INTO `Structural_Violence`.`InequalityMeasures` VALUES
+    ('saber11_income_brackets', 'Income Gini of the families of calendar A Saber 11 exam takers, from the income brackets in legal minimum wages, 2009-2016 (panel.gini). Below the survey Gini: it ignores inequality within brackets.');
+
+-- Keys from the facts to their catalogs (the catalogs are filled by panel.catalogs after the load)
+ALTER TABLE RelationsAndConclusions.PeriodRates
+  ADD FOREIGN KEY (measure) REFERENCES RelationsAndConclusions.Measures (code),
+  ADD FOREIGN KEY (period_kind, period_code) REFERENCES RelationsAndConclusions.Periods (kind, code);
+ALTER TABLE Structural_Violence.HealthSites
+  ADD FOREIGN KEY (provider_class) REFERENCES Structural_Violence.HealthProviderClasses (name),
+  ADD FOREIGN KEY (legal_nature) REFERENCES Structural_Violence.LegalNatures (name);
+ALTER TABLE Structural_Violence.SchoolsByMunicipality ADD FOREIGN KEY (sector) REFERENCES Education_Outcomes.SchoolSectors (code);
+ALTER TABLE Education_Outcomes.Schools
+  ADD FOREIGN KEY (sector) REFERENCES Education_Outcomes.SchoolSectors (code),
+  ADD FOREIGN KEY (area) REFERENCES Education_Outcomes.SchoolAreas (code);
+ALTER TABLE Education_Outcomes.IcetexCredits
+  ADD FOREIGN KEY (sex) REFERENCES RelationsAndConclusions.Sexes (id),
+  ADD FOREIGN KEY (level) REFERENCES Education_Outcomes.IcetexLevels (name);
+ALTER TABLE Education_Outcomes.HigherEdEnrolment
+  ADD FOREIGN KEY (sector_id) REFERENCES Education_Outcomes.HigherEdSectors (id),
+  ADD FOREIGN KEY (level_id) REFERENCES Education_Outcomes.HigherEdLevels (id);
+ALTER TABLE Education_Outcomes.SaberProByMunicipality ADD FOREIGN KEY (periodo) REFERENCES Education_Outcomes.SaberProPeriods (id);

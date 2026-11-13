@@ -29,6 +29,7 @@ import mysql.connector
 import numpy as np
 import pandas as pd
 
+from panel import catalogs
 from panel import dane, events as events_module, governments, indices, longterm, socrata, sources
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -257,7 +258,7 @@ def main():
     ev = ev.rename(columns={"modality": "modality_code", "cluster": "massacre_cluster"})
     load(cur, "Physical_violence.ViolenceEvents", ev,
          ["id", "dataset_id", "source_event_id", "modality_code", "day", "date_precision", "municipality_id", "victims",
-          "perpetrator_id", "displacement", "confinement", "massacre_cluster"])
+          "perpetrator_id", "massacre_cluster"])        # group and simultaneous acts: panel.event_details
     links = read(out, "event_links.csv")
     ids = dict(zip(ev["source_event_id"], ev["id"]))
     links = links.assign(event_a_id=links["event_a"].map(ids), event_b_id=links["event_b"].map(ids))
@@ -371,6 +372,7 @@ def main():
     ic = ic.assign(sex=ic["sex"].fillna("Sin informacion").str.slice(0, 20), level=ic["level"].fillna("Sin informacion").str.slice(0, 80))
     ic = ic.dropna(subset=["department_id", "year"]).groupby(["department_id", "year", "sex", "level", "kind"], as_index=False)["beneficiaries"].sum()
     ic = ic[ic["department_id"].isin(set(departments["id"]))]
+    ic["sex"] = ic["sex"].map({"Femenino": "F", "Masculino": "M", "Intersexual": "I"}).fillna("U")   # the key of Sexes
     load(cur, "Education_Outcomes.IcetexCredits", ic, ["department_id", "year", "sex", "level", "kind", "beneficiaries"])
 
     # ------------------------------------------------------------------ rates by government and phase
@@ -426,18 +428,24 @@ def main():
     load(cur, "RelationsAndConclusions.FinalViolenceIndex", known(fin, municipalities, label="final index"),
          ["municipality_id", "year", "physical_index", "cultural_index", "gender_index", "structural_index", "final_violence_index"])
 
+    # ------------------------------------------------------------------ catalogs of the categories the facts store
+    print("catalogs")
+    catalogs.build(cur)
+
     # ------------------------------------------------------------------ checks
     cur.execute("SET FOREIGN_KEY_CHECKS = 1")
     print("checks")
     cur.execute("""SELECT COUNT(*) FROM information_schema.TABLE_CONSTRAINTS
                    WHERE CONSTRAINT_TYPE = 'FOREIGN KEY' AND TABLE_SCHEMA IN ('RelationsAndConclusions','Physical_violence',
-                   'Structural_Violence','Cultural_violence','GENDER_VIOLENCE','Student_Context','Education_Outcomes')""")
+                   'Structural_Violence','Cultural_violence','GENDER_VIOLENCE','Student_Context','Education_Outcomes',
+                   'Territorial_Context','State_Action','Research_Design')""")
     print(f"  foreign keys declared: {cur.fetchone()[0]}")
     orphans = 0
     cur.execute("""SELECT k.TABLE_SCHEMA, k.TABLE_NAME, k.COLUMN_NAME, k.REFERENCED_TABLE_SCHEMA, k.REFERENCED_TABLE_NAME,
                           k.REFERENCED_COLUMN_NAME FROM information_schema.KEY_COLUMN_USAGE k
                    WHERE k.REFERENCED_TABLE_NAME IS NOT NULL AND k.TABLE_SCHEMA IN ('RelationsAndConclusions','Physical_violence',
-                   'Structural_Violence','Cultural_violence','GENDER_VIOLENCE','Student_Context','Education_Outcomes')""")
+                   'Structural_Violence','Cultural_violence','GENDER_VIOLENCE','Student_Context','Education_Outcomes',
+                   'Territorial_Context','State_Action','Research_Design')""")
     for s, t, c, rs, rt, rc in cur.fetchall():
         cur.execute(f"SELECT COUNT(*) FROM `{s}`.`{t}` x LEFT JOIN `{rs}`.`{rt}` r ON r.`{rc}` = x.`{c}` "
                     f"WHERE x.`{c}` IS NOT NULL AND r.`{rc}` IS NULL")

@@ -22,6 +22,8 @@ fiscal performance index.
 Loads Territorial_Context.CuipoAccounts, CuipoFundingSources, CuipoSectors, MunicipalIncome and
 MunicipalSpending.
 """
+from pathlib import Path
+
 import pandas as pd
 
 from panel import dane
@@ -57,23 +59,40 @@ def income():
     return pd.concat(frames, ignore_index=True)
 
 
+SPENDING_SELECT = ("periodo, codigo_entidad, cod_sector, nom_sector, cod_fuentes_financiacion, nom_fuentes_financiacion, "
+                   "sum(compromisos) as commitments, sum(obligaciones) as obligations, sum(pagos) as payments")
+SPENDING_GROUP = "periodo, codigo_entidad, cod_sector, nom_sector, cod_fuentes_financiacion, nom_fuentes_financiacion"
+
+
 def spending():
-    """Twelve million rows do not aggregate in one request: one query per period and department."""
-    departments = sorted({c[:2] for c in dane.municipalities()["cod_mpio"]})
+    """Twelve million rows do not aggregate in one request: one query per period and department, saved to
+    cache/cuipo as it arrives (a rerun continues where it stopped); a department too heavy for the server is
+    asked municipality by municipality."""
+    codes = dane.municipalities()["cod_mpio"]
+    departments = sorted({c[:2] for c in codes})
+    cache = Path("cache") / "cuipo"
+    cache.mkdir(parents=True, exist_ok=True)
     frames = []
     for per in periods(SPENDING):
         n = 0
         for d in departments:
-            df = query(SPENDING, "periodo, codigo_entidad, cod_sector, nom_sector, cod_fuentes_financiacion, "
-                                 "nom_fuentes_financiacion, sum(compromisos) as commitments, sum(obligaciones) as obligations, "
-                                 "sum(pagos) as payments",
-                       where=f"ambito_nombre='Municipios' AND periodo='{per}' AND codigo_entidad like '%{d}___'",
-                       group="periodo, codigo_entidad, cod_sector, nom_sector, cod_fuentes_financiacion, nom_fuentes_financiacion",
-                       token=app_token())
+            path = cache / f"spending_{per}_{d}.csv"
+            if path.exists():
+                df = pd.read_csv(path, dtype=str)
+            else:
+                where = f"ambito_nombre='Municipios' AND periodo='{per}'"
+                try:
+                    df = query(SPENDING, SPENDING_SELECT, where=f"{where} AND codigo_entidad like '%{d}___'",
+                               group=SPENDING_GROUP, token=app_token(), retries=2)
+                except Exception:
+                    parts = [query(SPENDING, SPENDING_SELECT, where=f"{where} AND codigo_entidad like '%{m}'",
+                                   group=SPENDING_GROUP, token=app_token()) for m in codes[codes.str[:2] == d]]
+                    df = pd.concat([p for p in parts if len(p)], ignore_index=True) if any(len(p) for p in parts) else pd.DataFrame()
+                df.to_csv(path, index=False)
             n += len(df)
             frames.append(df)
         print(f"  spending {per}: {n:,} rows", flush=True)
-    return pd.concat(frames, ignore_index=True)
+    return pd.concat([f for f in frames if len(f)], ignore_index=True)
 
 
 def validate(inc, spe):

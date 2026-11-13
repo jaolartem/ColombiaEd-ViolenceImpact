@@ -24,11 +24,13 @@ Validate. Every row goes first to a staging table and is checked there; only wha
 - a negative count (people, events, hectares, number of ...) or a negative percentage that is not a change:
   not loaded (error);
 - a percentage above 100: loaded and annotated (inconsistent); some indicators legitimately exceed 100;
-- a value more than ten times, or less than a tenth of, the year before: loaded and annotated (break).
+- a stock or count more than ten times, or less than a tenth of, the year before, when neither year is close
+  to zero (both at least a tenth of the indicator's median that year): loaded and annotated (break). Money
+  and shares of spending move with projects and are not checked this way.
 The findings go to RelationsAndConclusions.DataQualityFlags with source DNP.
 
 Load, in the schema Territorial_Context:
-- TerriDataIndicators: one row per indicator (code, dimension, subcategory, name, unit);
+- TerriDataDimensions, TerriDataSubcategories and TerriDataIndicators (code, subcategory, name, unit);
 - TerriDataSources: the source entities;
 - TerriDataCategories: the categories text indicators take, each label once per indicator;
 - MunicipalIndicators and DepartmentalIndicators: place, indicator, year, month, numeric value or category,
@@ -162,18 +164,30 @@ def validate(cur):
                            FROM {st} s JOIN Territorial_Context.TerriDataIndicators i ON i.code = s.indicator_code
                            WHERE s.level = 'M' AND s.reject = 0 AND s.value > 100 AND i.unit LIKE 'Porcentaje%'
                              AND i.unit NOT LIKE '%multiplicado%'""")
-    # yearly series that jump tenfold from one year to the next
-    cur.execute(FLAG + f"""SELECT 'DNP', 'MunicipalIndicators', indicator_code, place, year, 'break', value,
-                           CONCAT(ROUND(value / prev, 1), ' times the year before (', prev, ')')
-                           FROM (SELECT s.place, s.indicator_code, s.year, s.value,
-                                        LAG(s.value) OVER (PARTITION BY s.place, s.indicator_code ORDER BY s.year) prev,
-                                        LAG(s.year) OVER (PARTITION BY s.place, s.indicator_code ORDER BY s.year) prev_year
-                                 FROM {st} s WHERE s.level = 'M' AND s.month IN (0, 12) AND s.reject = 0
-                                   AND s.value IS NOT NULL) t
-                           WHERE prev_year = year - 1 AND prev > 0 AND value > 0 AND (value / prev > 10 OR value / prev < 0.1)""")
+    breaks(cur, st, "s.level = 'M' AND s.reject = 0 AND", "s.place")
     cur.execute("SELECT kind, COUNT(*) FROM RelationsAndConclusions.DataQualityFlags WHERE source = 'DNP' GROUP BY kind")
     for kind, n in cur.fetchall():
         print(f"  DNP {kind:<14} {n:>9,}")
+
+
+def breaks(cur, table, where, place):
+    """Yearly series that jump more than tenfold from one year to the next, when the jump is not between
+    values close to zero: both years must be at least a tenth of the indicator's median that year.
+    Only stocks and counts: money and shares of spending move with projects and are not checked.
+    Usable on the staging table and on Territorial_Context.MunicipalIndicators (--breaks)."""
+    cur.execute("DELETE FROM RelationsAndConclusions.DataQualityFlags WHERE source = 'DNP' AND kind = 'break'")
+    cur.execute(FLAG + f"""SELECT 'DNP', 'MunicipalIndicators', indicator_code, place, year, 'break', value,
+                           CONCAT(ROUND(value / prev, 1), ' times the year before (', prev, ')')
+                           FROM (SELECT {place} place, s.indicator_code, s.year, s.value,
+                                        LAG(s.value) OVER (PARTITION BY {place}, s.indicator_code ORDER BY s.year) prev,
+                                        LAG(s.year) OVER (PARTITION BY {place}, s.indicator_code ORDER BY s.year) prev_year,
+                                        MEDIAN(s.value) OVER (PARTITION BY s.indicator_code, s.year) med
+                                 FROM {table} s JOIN Territorial_Context.TerriDataIndicators i ON i.code = s.indicator_code
+                                 WHERE {where} s.month IN (0, 12) AND s.value > 0
+                                   AND i.unit NOT LIKE '%pesos%' AND i.unit NOT LIKE 'Porcentaje%') t
+                           WHERE prev_year = year - 1 AND prev > 0
+                             AND (value / prev > 10 OR value / prev < 0.1)
+                             AND LEAST(value, prev) >= 0.1 * med""")
 
 
 def load_db(cat, src, facts):
@@ -184,7 +198,18 @@ def load_db(cat, src, facts):
         cur.execute(f"TRUNCATE TABLE Territorial_Context.{t}")
     for c in ("dimension", "subcategory", "name", "unit"):
         cat[c] = cat[c].str.slice(0, 255)
-    load(cur, "Territorial_Context.TerriDataIndicators", cat, ["code", "dimension", "subcategory", "name", "unit"])
+    # the dimension depends on the subcategory, which depends on the indicator: two catalogs
+    dims = pd.DataFrame({"name": sorted(cat["dimension"].unique())})
+    dims["id"] = range(1, len(dims) + 1)
+    cat["dimension_id"] = cat["dimension"].map(dict(zip(dims["name"], dims["id"])))
+    subs = cat.drop_duplicates(["dimension_id", "subcategory"])[["dimension_id", "subcategory"]].reset_index(drop=True)
+    subs["id"] = range(1, len(subs) + 1)
+    cat = cat.merge(subs.rename(columns={"id": "subcategory_id"}), on=["dimension_id", "subcategory"])
+    for t in ("TerriDataSubcategories", "TerriDataDimensions"):
+        cur.execute(f"TRUNCATE TABLE Territorial_Context.{t}")
+    load(cur, "Territorial_Context.TerriDataDimensions", dims, ["id", "name"])
+    load(cur, "Territorial_Context.TerriDataSubcategories", subs.rename(columns={"subcategory": "name"}), ["id", "dimension_id", "name"])
+    load(cur, "Territorial_Context.TerriDataIndicators", cat, ["code", "subcategory_id", "name", "unit"])
     src["name"] = src["name"].str.slice(0, 255)
     load(cur, "Territorial_Context.TerriDataSources", src, ["id", "name"])
     cur.execute("DROP TABLE IF EXISTS Territorial_Context._staging")
@@ -219,6 +244,16 @@ def load_db(cat, src, facts):
 
 
 def main():
+    import sys
+    if "--breaks" in sys.argv:                    # only the breaks check, on what is already loaded
+        db = connect()
+        cur = db.cursor()
+        breaks(cur, "Territorial_Context.MunicipalIndicators", "", "s.municipality_id")
+        cur.execute("SELECT COUNT(*) FROM RelationsAndConclusions.DataQualityFlags WHERE source = 'DNP' AND kind = 'break'")
+        print(f"  DNP break {cur.fetchone()[0]:>9,}")
+        db.commit()
+        db.close()
+        return
     cat, src, facts = transform(download())
     load_db(cat, src, facts)
 

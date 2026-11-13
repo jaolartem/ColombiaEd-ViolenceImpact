@@ -82,10 +82,16 @@ ALIASES = {
     "books": ["FAMI_NUMLIBROS"],
     "reading": ["ESTU_DEDICACIONLECTURADIARIA"],
     "internet_hours": ["ESTU_DEDICACIONINTERNET"],
+    # only the labelled brackets (2009-2 to 2016-2); 2000-2009 code them 0-9 or 1-7 without a dictionary in hand
+    "income": ["FAMI_INGRESOFMILIARMENSUAL"],
 }
 YES = {"si": 1, "s": 1, "no": 0, "n": 0, "1": 1, "0": 0}     # 2008-2009 answer internet, car and washer with 1 / 0
 SECTOR_CODES = {"O": "OFICIAL", "N": "NO OFICIAL"}
 AREA_CODES = {"U": "URBANO", "R": "RURAL"}
+# Student_Context.IncomeBrackets: family monthly income in legal minimum wages (SMLV)
+INCOME_BRACKETS = {"menos de 1 smlv": 1, "entre 1 y menos de 2 smlv": 2, "entre 2 y menos de 3 smlv": 3,
+                   "entre 3 y menos de 5 smlv": 4, "entre 5 y menos de 7 smlv": 5, "entre 7 y menos de 10 smlv": 6,
+                   "10 o mas smlv": 7}
 
 
 def files(folder: Path):
@@ -132,6 +138,10 @@ def yes_no(s: pd.Series, codes=True) -> pd.Series:
     """1 / 0 from si / no. codes=False leaves the bare digits out: what 2 or 3 mean is not documented."""
     table = YES if codes else {k: v for k, v in YES.items() if not k.isdigit()}
     return s.astype(str).map(lambda v: table.get(key(v))).astype("Int64")
+
+
+def income_bracket(s: pd.Series) -> pd.Series:
+    return s.astype(str).map(lambda v: INCOME_BRACKETS.get(key(v))).astype("Int64")
 
 
 def stratum(s: pd.Series) -> pd.Series:
@@ -220,6 +230,7 @@ def household_frames(chunk, ids):
         "has_washing_machine": yes_no(pick(chunk, "washer")),
         "mother_education": pick(chunk, "mother").str.slice(0, 100), "father_education": pick(chunk, "father").str.slice(0, 100),
         "ethnic_group": pick(chunk, "ethnic").str.slice(0, 80), "work_hours_per_week": pick(chunk, "work_hours").str.slice(0, 40),
+        "income_bracket_id": income_bracket(pick(chunk, "income")),
     })
     practices = pd.DataFrame({
         "student_id": ids, "books_at_home": pick(chunk, "books").str.slice(0, 40),
