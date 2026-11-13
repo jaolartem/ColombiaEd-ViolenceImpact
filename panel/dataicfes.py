@@ -113,7 +113,7 @@ def pick(df: pd.DataFrame, role: str):
     for name in ALIASES[role]:
         if name in df.columns:
             return df[name]
-    return pd.Series(np.nan, index=df.index)
+    return pd.Series(pd.NA, index=df.index, dtype="string")      # the file does not have this field
 
 
 def number(s: pd.Series) -> pd.Series:
@@ -143,7 +143,7 @@ def municipality_lookup():
     by_name[("bogota", "bogota d c")] = by_name[("bogota d c", "bogota d c")]
     by_name[("bogota d c", "bogota")] = by_name[("bogota d c", "bogota d c")]
     by_name[("bogota", "bogota")] = by_name[("bogota d c", "bogota d c")]
-    by_name[("antioquia", "antioquia")] = by_name[("antioquia", "santa fe de antioquia")]   # its old name
+    by_name[("antioquia", "antioquia")] = by_name[("antioquia", "santafe de antioquia")]   # its old name
     only_mpio = {}
     for (d, m), c in by_name.items():
         only_mpio.setdefault(m, set()).add(c)
@@ -177,8 +177,13 @@ def resolve_municipality(df, by_name, unique_name, icfes_map):
 
 def load_tsv(cur, table, df, columns, tmpdir):
     path = Path(tmpdir) / (table.replace(".", "__") + ".tsv")
-    df[columns].to_csv(path, sep="\t", index=False, header=False, na_rep="\\N", lineterminator="\n",
-                       quoting=csv.QUOTE_NONE, escapechar="\\")
+    out = df[columns].copy()
+    for c in out.columns:          # a backslash in a text would be read as an escape by the server
+        if out[c].dtype == object or str(out[c].dtype) == "string":
+            out[c] = out[c].map(lambda v: v.replace("\\", "/") if isinstance(v, str) else v)
+    # \N must reach the server as written: it is how LOAD DATA reads NULL. No escaping, no quoting.
+    out.to_csv(path, sep="\t", index=False, header=False, na_rep="\\N", lineterminator="\n",
+               quoting=csv.QUOTE_NONE, quotechar="\x07")
     schema, name = table.split(".")
     cur.execute(f"LOAD DATA LOCAL INFILE '{path.as_posix()}' IGNORE INTO TABLE `{schema}`.`{name}` CHARACTER SET utf8mb4 "
                 f"FIELDS TERMINATED BY '\\t' LINES TERMINATED BY '\\n' ({', '.join('`' + c + '`' for c in columns)})")
@@ -187,14 +192,21 @@ def load_tsv(cur, table, df, columns, tmpdir):
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--data", default=DEFAULT_DATA, type=Path)
+    parser.add_argument("--resume", action="store_true", help="keep the periods already loaded and continue with the rest")
     args = parser.parse_args()
     db = connect()
     cur = db.cursor()
     cur.execute("SET FOREIGN_KEY_CHECKS = 0")
     cur.execute("SET UNIQUE_CHECKS = 0")
-    for t in ("Student_Context.StudentPractices", "Student_Context.StudentHousehold", "Education_Outcomes.StudentScores",
-              "Education_Outcomes.Students", "Education_Outcomes.Schools", "Education_Outcomes.MunicipalScoresMicro"):
-        cur.execute(f"TRUNCATE TABLE {t}")
+    done = set()
+    if args.resume:
+        cur.execute("SELECT DISTINCT exam_period_id FROM Education_Outcomes.Students")
+        done = {r[0] for r in cur.fetchall()}
+        cur.execute("TRUNCATE TABLE Education_Outcomes.MunicipalScoresMicro")
+    else:
+        for t in ("Student_Context.StudentPractices", "Student_Context.StudentHousehold", "Education_Outcomes.StudentScores",
+                  "Education_Outcomes.Students", "Education_Outcomes.Schools", "Education_Outcomes.MunicipalScoresMicro"):
+            cur.execute(f"TRUNCATE TABLE {t}")
     cur.execute("SELECT id FROM RelationsAndConclusions.Municipalities")
     municipalities = {r[0] for r in cur.fetchall()}
     by_name, unique_name = municipality_lookup()
@@ -206,13 +218,20 @@ def main():
     icfes_map, schools = {}, {}
     with tempfile.TemporaryDirectory(dir=Path("cache")) as tmpdir:
         for periodo, path in todo:
+            # inside the files the second semester of 2019-2022 is 20194 ... 20224; the file names say 20192
+            same_exam = lambda p: (p // 10, "B" if p % 10 == 1 else "A")
+            if same_exam(periodo) in {same_exam(p) for p in done}:
+                print(f"  {path.name:<40} {periodo}  already loaded", flush=True)
+                continue
             tsv = Path(tmpdir) / "file.tsv"
             encoding = to_tsv(path, tsv)
             header = pd.read_csv(tsv, sep="\t", nrows=0, encoding=encoding, quoting=csv.QUOTE_NONE).columns
-            wanted = [n for names in ALIASES.values() for n in names if n in header]
+            known_names = {n for names in ALIASES.values() for n in names}
+            wanted = [h for h in header if str(h).strip().upper() in known_names]     # 2019-1 writes them in lowercase
             total = matched = 0
             for chunk in pd.read_csv(tsv, sep="\t", dtype=str, usecols=wanted, encoding=encoding, quoting=csv.QUOTE_NONE,
                                      chunksize=200_000, on_bad_lines="skip", encoding_errors="replace"):
+                chunk.columns = [str(c).strip().upper() for c in chunk.columns]
                 chunk = chunk.dropna(subset=["ESTU_CONSECUTIVO"])
                 per = pick(chunk, "periodo").fillna(str(periodo)).str.strip()
                 per = pd.to_numeric(per, errors="coerce").fillna(periodo).astype(int)
@@ -287,7 +306,7 @@ def main():
     cur.execute("""
         INSERT INTO Education_Outcomes.MunicipalScoresMicro
         SELECT s.municipality_id, s.exam_period_id, COUNT(*), AVG(sc.math),
-               (AVG(sc.math) - n.m_math) / n.sd_math, AVG(sc.global_score), (AVG(sc.global_score) - n.m_global) / n.sd_global
+               (AVG(sc.math) - n.m_math) / NULLIF(n.sd_math, 0), AVG(sc.global_score), (AVG(sc.global_score) - n.m_global) / NULLIF(n.sd_global, 0)
         FROM Education_Outcomes.Students s
         JOIN Education_Outcomes.StudentScores sc ON sc.student_id = s.id
         JOIN (SELECT s2.exam_period_id, AVG(x.math) m_math, STDDEV_POP(x.math) sd_math,

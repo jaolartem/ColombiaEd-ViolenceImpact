@@ -56,9 +56,10 @@ TABLES = {
     "Education_Outcomes": {
         "ExamPeriods": "Saber 11 periods, calendar, scale (the exam changed in 2014-2) and government in office.",
         "MunicipalScores": "Saber 11 per municipality of the school, period and sex, 2010-2022 (ICFES API): students and mean scores, and z-scores against the national mean and SD of the period.",
-        "Schools": "Schools seen in the Saber 11 microdata (filled by the DataIcfes load).",
-        "Students": "Each exam taker (DataIcfes microdata).",
-        "StudentScores": "Each exam taker's scores (DataIcfes microdata).",
+        "Schools": "Schools seen in the Saber 11 microdata: DANE code and municipality (name, sector and area are written by a full `panel.dataicfes` run).",
+        "MunicipalScoresMicro": "Saber 11 per municipality and period from the microdata, 2000-2022: students, mean and z-score of mathematics (every period) and of the global score (since 2014-2).",
+        "Students": "Each exam taker, 2000-1 to 2022-2 (ICFES period files).",
+        "StudentScores": "Each exam taker's scores; before 2014-2 sciences and social are means of the old areas.",
         "EnrolmentAndDropout": "MEN: net enrolment, dropout, approval, repetition per municipality, 2011-2024.",
         "SaberProByMunicipality": "Saber Pro 2018-2022 by the municipality of the school the student finished: the other side of the door.",
         "HigherEdEnrolment": "MEN higher-education enrolment by municipality where the programme is offered, 2015-2021.",
@@ -66,8 +67,8 @@ TABLES = {
         "IcetexCredits": "ICETEX new credits and renewals by department of origin (no municipality is published).",
     },
     "Student_Context": {
-        "StudentHousehold": "What each exam taker reports about home (DataIcfes microdata).",
-        "StudentPractices": "Reading, books at home, internet use (DataIcfes microdata).",
+        "StudentHousehold": "What each exam taker reports about home; each period asked different questions, so blanks mean not asked.",
+        "StudentPractices": "Books at home, daily reading, internet use (asked since the 2010s).",
         "MunicipalStudentContext": "What a municipality's exam takers report, 2010-2022 (ICFES API): internet, computer, car, washing machine, stratum 1-2, mother's education.",
     },
 }
@@ -97,6 +98,18 @@ KNOWN_PROBLEMS = """
 - **DANE files** do not agree on where the code is (the 1995-2004 file has it in DPMP, 2005-2017 in MPIO).
 - **ICETEX** publishes the department of origin only.
 - **No municipal Gini** is published yearly: `Structural_Violence.Inequality` is empty on purpose.
+- **The cultural index sits near its floor** in most municipality-years: socio-political homicide is rare,
+  so one component is often zero, and a geometric mean with a zero component collapses to the floor
+  (0.001). Multi-year windows, or another way of combining that dimension, are an analysis decision.
+- **Saber 11 2023-2025** are only published on DataIcfes (icfes.gov.co), which answers 403 Forbidden from
+  the machine that built this database. The microdata here run 2000-1 to 2022-2, from the ICFES period
+  files. Before 2014-2 the exam had other areas: natural sciences is the mean of biology, chemistry and
+  physics, social is the mean of history and geography, critical reading is language.
+- **Saber 11 microdata gaps and codes**: there is no 2003-1 file (calendar B, first semester of 2003). Inside
+  the files the second semester of 2019-2022 is coded 20194, 20204, 20214, 20224 (the file names say 20192 ...);
+  the database keeps the code written inside the file. The 2019-1 file writes its column names in lowercase.
+- **Saber 11 microdata 2000-2009** place the school's municipality by name; it is matched within the
+  department, or through the school's ICFES code as later files place it.
 - **Codes**: Medicina Legal writes 5001, ICFES and DANE 05001. Every source is normalised to the DANE code;
   names never join.
 """
