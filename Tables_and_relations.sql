@@ -727,7 +727,7 @@ CREATE TABLE `Territorial_Context`.`DepartmentalIndicators` (  -- department tot
 -- CUIPO (python -m panel.fiscal): each municipality's budget execution as reported to CGN and CGR, 2023 on.
 -- Year-end closes (period YYYY1201) and the latest quarter. Before 2023: TerriData, dimension Finanzas publicas.
 
-CREATE TABLE `Territorial_Context`.`CuipoAccounts` (          -- the income account tree
+CREATE TABLE `Territorial_Context`.`CuipoAccounts` (          -- the account tree: 1 income, 2 spending
     `code`  VARCHAR(60)  NOT NULL PRIMARY KEY,                -- 1.1.02.06.001.01 = SGP, participation for education
     `name`  VARCHAR(255) NOT NULL,
     `depth` TINYINT      NOT NULL                             -- 1 = total income; each level adds up the next
@@ -738,9 +738,16 @@ CREATE TABLE `Territorial_Context`.`CuipoFundingSources` (
     `name` VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE `Territorial_Context`.`CuipoSectors` (
-    `code` VARCHAR(40)  NOT NULL PRIMARY KEY,
-    `name` VARCHAR(255) NOT NULL
+CREATE TABLE `Territorial_Context`.`CuipoSectors` (            -- first two digits of the programmatic code
+    `code` CHAR(2)      NOT NULL PRIMARY KEY,                    -- 19 health, 22 education, ...
+    `name` VARCHAR(120) NULL                                     -- from DNP's programmatic classification manual
+);
+
+CREATE TABLE `Territorial_Context`.`CuipoProducts` (           -- the seven-digit programmatic code of a spending line
+    `code`        VARCHAR(10)  NOT NULL PRIMARY KEY,             -- 'NO APLICA' for spending that is not investment
+    `name`        VARCHAR(255) NOT NULL,
+    `sector_code` CHAR(2)      NULL,
+    FOREIGN KEY (`sector_code`) REFERENCES `Territorial_Context`.`CuipoSectors` (`code`)
 );
 
 CREATE TABLE `Territorial_Context`.`MunicipalIncome` (       -- pesos collected, cumulative to the period
@@ -758,14 +765,16 @@ CREATE TABLE `Territorial_Context`.`MunicipalIncome` (       -- pesos collected,
 CREATE TABLE `Territorial_Context`.`MunicipalSpending` (     -- pesos, cumulative to the period
     `municipality_id` INT          NOT NULL,
     `period`          INT          NOT NULL,
-    `sector`          VARCHAR(40)  NOT NULL,                  -- 'NO APLICA' is spending that is not investment
+    `account`         VARCHAR(60)  NOT NULL,                  -- the spending tree repeats every level: read one level
+    `product`         VARCHAR(10)  NOT NULL,
     `funding_source`  VARCHAR(60)  NOT NULL,
     `commitments`     DOUBLE       NULL,
     `obligations`     DOUBLE       NULL,
     `payments`        DOUBLE       NULL,
-    PRIMARY KEY (`municipality_id`, `period`, `sector`, `funding_source`),
+    PRIMARY KEY (`municipality_id`, `period`, `account`, `product`, `funding_source`),
+    FOREIGN KEY (`account`)         REFERENCES `Territorial_Context`.`CuipoAccounts` (`code`),
     FOREIGN KEY (`municipality_id`) REFERENCES `RelationsAndConclusions`.`Municipalities` (`id`),
-    FOREIGN KEY (`sector`)          REFERENCES `Territorial_Context`.`CuipoSectors` (`code`),
+    FOREIGN KEY (`product`)         REFERENCES `Territorial_Context`.`CuipoProducts` (`code`),
     FOREIGN KEY (`funding_source`)  REFERENCES `Territorial_Context`.`CuipoFundingSources` (`code`)
 );
 

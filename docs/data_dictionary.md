@@ -9,12 +9,12 @@ Generated from the loaded database by `python -m panel.dictionary`. The model an
 |---|---:|---|
 | `Departments` | 33 | DANE departments. |
 | `Municipalities` | 1,123 | DANE municipalities (2018 census geography). `id` is the DANE code as a number; every fact joins on it. |
-| `Sexes` | 3 | F, M, U (unknown, not reported, or total). |
+| `Sexes` | 4 | F, M, U (unknown, not reported, or total). |
 | `Population` | 53,881 | DANE projections and back-projections (2018 census base), mid-year, all areas, 1995-2042. |
 | `PopulationBySexAge` | 2,263,002 | The same by sex and age: 5-year bands, single ages 15-19 (the Saber 11 cohort), 80+. |
 | `Governments` | 6 | Presidential terms, 7 August to 7 August: Uribe I and II, Santos I and II, Duque, Petro. |
 | `Government_Phases` | 7 | Terms, with Santos II split at the final peace agreement (24 Nov 2016). |
-| `Sources` | 9 | Institutions the data comes from, with their kind: official record, memory observatory, press-based, census, administrative. |
+| `Sources` | 11 | Institutions the data comes from, with their kind: official record, memory observatory, press-based, census, administrative. |
 | `SourceDatasets` | 41 | Each dataset, file or page read, with its coverage. |
 | `ViolenceIndicators` | 7 | Catalogue of count indicators and the Galtung dimension they belong to (the legend, not a cause). |
 | `ViolenceCases` | 75,725 | Medicina Legal: homicide, suicide, intra-family violence (children; other relatives and older adults), partner and sexual violence, per municipality, year and victim's sex. Definitive 2015-2024, preliminary January 2025 to July 2026. |
@@ -22,7 +22,7 @@ Generated from the loaded database by `python -m panel.dictionary`. The model an
 | `PeriodRates` | 382,768 | Cases per 100,000 person-years by government and by phase, per municipality and measure, over the exact days each source covers. |
 | `FinalViolenceIndex` | 12,350 | Geometric mean of the four dimension indices, 2015-2025. |
 | `SmoothedValues` | 642,826 | Empirical Bayes value of each rate, mean and share that rests on a base, pulled toward the department; written by `panel.quality`. |
-| `DataQualityFlags` | 30,864 | What the validation of each source found, per municipality, column and period: error, missing, inconsistent, break, small base or extreme. Detail in docs/data_quality.md. |
+| `DataQualityFlags` | 62,730 | What the validation of each source found, per municipality, column and period: error, missing, inconsistent, break, small base or extreme. Detail in docs/data_quality.md. |
 
 ## Physical_violence
 
@@ -63,7 +63,7 @@ Generated from the loaded database by `python -m panel.dictionary`. The model an
 | Table | Rows | What it is |
 |---|---:|---|
 | `ExamPeriods` | 45 | Saber 11 periods, calendar, scale (the exam changed in 2014-2) and government in office. |
-| `MunicipalScores` | 25,717 | Saber 11 per municipality of the school, period and sex, 2010-2022 (ICFES API): students and mean scores, and z-scores against the national mean and SD of the period. |
+| `MunicipalScores` | 25,717 | Saber 11 per municipality of the school, period and sex, 2010-2022 (ICFES API). A check only: MunicipalScoresMicro, from the microdata, is the canonical table. |
 | `Schools` | 13,222 | Schools seen in the Saber 11 microdata: DANE code, name, municipality, sector (official or not) and area (urban or rural), as the newest file that names each school records them. 796 have no area. |
 | `MunicipalScoresMicro` | 28,232 | Saber 11 per municipality and period from the microdata, 2000-2022: students, mean and z-score of mathematics and of the global score: ICFES's own since 2014-2, the simple mean of the five tests before. |
 | `Students` | 11,817,681 | Each exam taker, 2000-1 to 2022-2 (ICFES period files). |
@@ -81,6 +81,50 @@ Generated from the loaded database by `python -m panel.dictionary`. The model an
 | `StudentHousehold` | 11,817,681 | What each exam taker reports about home; each period asked different questions, so blanks mean not asked. |
 | `StudentPractices` | 4,440,331 | Books at home, daily reading, internet use (asked since the 2010s). |
 | `MunicipalStudentContext` | 12,633 | What a municipality's exam takers report, 2010-2022 (ICFES API): internet, computer, car, washing machine, stratum 1-2, mother's education. |
+
+## Territorial_Context
+
+| Table | Rows | What it is |
+|---|---:|---|
+| `TerriDataIndicators` | 1,739 | DNP TerriData's indicators: code, dimension (demography, education, health, housing, public finance, municipal and fiscal performance, economy, environment, poverty, labour, justice, peace and victims, ...), name and unit. |
+| `TerriDataSources` | 143 | The entities TerriData takes each value from. |
+| `MunicipalIndicators` | 12,488,869 | Every TerriData value per municipality, indicator, year and month, numeric or text (rurality category, development environment, DNP typology, Law 617 category, PDET). |
+| `CuipoAccounts` | 1,348 | CUIPO's income account tree; each level adds up the next. |
+| `CuipoFundingSources` | 222 | CUIPO's funding sources (SGP by sector, royalties, own resources, ...). |
+| `CuipoSectors` | 29 | Sectors of the programmatic code (first two digits: 19 health, 22 education, ...). |
+| `CuipoProducts` | 3,550 | Seven-digit programmatic codes of spending lines, with their sector. |
+| `MunicipalIncome` | 505,604 | Pesos collected per municipality, account and funding source, year-end closes from 2023 and the latest quarter (CUIPO, CGR). |
+| `MunicipalSpending` | 1,523,041 | Commitments, obligations and payments per municipality, account, product and funding source, same periods (CUIPO, CGR). The account tree repeats every level: read one level (2 total, 2.3 investment, ...). |
+| `DepartmentalIndicators` | 421,302 | TerriData values for department totals, among them DANE's departmental Gini. |
+| `TerriDataCategories` | 3,692 | The labels TerriData's text indicators take (rurality category, Law 617 category, ...), once each. |
+
+## State_Action
+
+| Table | Rows | What it is |
+|---|---:|---|
+| `StateEntities` | 0 | Every State entity that can hold a responsibility, with its kind and level. |
+| `EntityJurisdictions` | 0 | Connection: entity and the municipalities it acts on, with validity. |
+| `EntityFunctionAssignments` | 0 | Connection: entity and its functions (education, security, justice, victims ...), with validity. |
+| `EntitySuccessions` | 0 | Connection: an entity and the one that replaced it. |
+| `Norms` | 0 | Each norm read: type, number, date, title, government. |
+| `NormProvisions` | 0 | Articles, paragraphs and numerals, with their text. |
+| `NormExcerpts` | 0 | The literal piece of a provision a coding rests on. |
+| `Objectives` | 0 | Desired future states named by a norm, with their type. |
+| `Problems` | 0 | Socially relevant problems: the uncomfortable fact and the explanation given to it. |
+| `Responsibilities` | 0 | What an entity must do, how far it reaches and where another's begins. |
+| `Resources` | 0 | What a norm assigns: money, staff, time, authority, information, infrastructure. |
+| `ExcerptObjectives` | 0 | Connection: excerpt and the objective coded in it, by coder. |
+| `ObjectiveResources` | 0 | Connection: objective and a resource assigned to it, by coder. |
+
+## Research_Design
+
+| Table | Rows | What it is |
+|---|---:|---|
+| `Decisions` | 37 | The decision log: what was decided, when, by whom (researcher, assistant, both) and why (research/decisions.csv). |
+| `DecisionObjects` | 73 | Connection: decision and the tables, modules or documents it governs. |
+| `TypologyRuns` | 0 | Each grouping of municipalities: method, base year. |
+| `TypologyMemberships` | 0 | Connection: municipality and its group in a run. |
+| `CaseSelections` | 0 | Connection: group and a municipality chosen as a case, with its role (typical, deviant, twin). |
 
 ## Sources and coverage
 
@@ -143,6 +187,8 @@ Rows (or cases) per source and year.
 | Saber 11 microdata | 434k | 355k | 431k | 451k | 472k | 502k | 506k | 525k | 571k | 572k | 581k | 576k | 569k | 568k | 561k | 559k | 562k | 567k | 520k | 549k | 553k |  |  |  |  |
 | Saber Pro students |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 157k | 172k | 168k | 167k | 150k |  |  |  |  |
 | MEN enrolment/dropout |  |  |  |  |  |  |  |  |  | 1,122 | 1,122 | 1,122 | 1,122 | 1,122 | 1,122 | 1,122 | 1,122 | 1,122 | 1,121 | 1,121 | 1,121 | 1,121 | 1,122 |  |  |
+| TerriData values | 89k | 97k | 72k | 174k | 141k | 160k | 169k | 193k | 317k | 396k | 438k | 424k | 476k | 460k | 538k | 555k | 754k | 679k | 893k | 543k | 536k | 445k | 420k | 241k | 159k |
+| CUIPO income rows |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 124k | 127k | 133k | 122k |
 | Population | 40.2M | 40.7M | 41.2M | 41.7M | 42.2M | 42.7M | 43.1M | 43.6M | 44.1M | 44.6M | 45.0M | 45.4M | 45.9M | 46.3M | 46.8M | 47.4M | 48.3M | 49.3M | 50.4M | 51.1M | 51.6M | 52.1M | 52.6M | 53.1M | 53.4M |
 
 ## Known problems of the data
@@ -185,5 +231,11 @@ Rows (or cases) per source and year.
   the database keeps the code written inside the file. The 2019-1 file writes its column names in lowercase.
 - **Saber 11 microdata 2000-2009** place the school's municipality by name; it is matched within the
   department, or through the school's ICFES code as later files place it.
+- **TerriData** gives no value for 21 territories: the 19 non-municipalized areas of the Amazon, San Andres
+  and Nuevo Belen de Bajira. Its values are in current pesos (finance) or the unit of each indicator; many
+  indicators exist only for some years. The rurality category (indicator 010010007) is the peer group of
+  `panel.quality`.
+- **CUIPO** starts in 2023 for municipalities on datos.gov.co; each quarter is cumulative. The money of
+  2000-2024 is in TerriData's public finance dimension.
 - **Codes**: Medicina Legal writes 5001, ICFES and DANE 05001. Every source is normalised to the DANE code;
   names never join.

@@ -61,6 +61,10 @@ python -m panel.dnp              # DNP TerriData: every indicator per municipali
 python -m panel.fiscal           # CUIPO: income and spending of each municipality, 2023 onwards
 python -m panel.certification    # MEN: which certified entity runs each municipality's education, 2011 onwards
 python -m panel.design           # the decision log (research/decisions.csv) into Research_Design
+python -m panel.lineage          # split municipalities: lineage and constant territories
+python -m panel.event_details    # CNMH armed groups and the acts committed with each event
+python -m panel.catalogs         # catalogs of the categories the facts store, with their keys
+python -m panel.gini             # check of a municipal income Gini from Saber 11 (it failed: not loaded)
 python -m panel.quality          # validates each source by its own rules; writes docs/data_quality.md
 python -m panel.dictionary       # rewrites docs/data_dictionary.md from the database
 ```

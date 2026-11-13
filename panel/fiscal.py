@@ -7,11 +7,11 @@ CUIPO (Categoria Unica de Informacion del Presupuesto Ordinario) is the budget r
 entity files each quarter to the Contaduria General de la Nacion and the Contraloria General de la
 Republica. The Contraloria publishes it on datos.gov.co:
 - 9axr-9gnb, execution of income: what was collected, by account and funding source;
-- 4f7r-epif, execution of expenditure: commitments, obligations and payments, by sector and funding source.
+- 4f7r-epif, execution of expenditure: commitments, obligations and payments, by programmatic code and funding source.
 Each quarter is cumulative, so only the year-end close (YYYY1201) and the latest quarter are kept.
 
 The entity code is CHIP's nine digits; for municipalities its last five are the DANE code
-(211054810 is Tibu, 54810). The account plan is a tree: every level is the sum of the ones below it
+(211054810 is Tibu, 54810). The account plan is a tree, for income (1 ...) and spending (2 ...): every level is the sum of the ones below it
 (1 income, 1.1 current income, 1.1.01 tax income, 1.1.02.06.001 SGP, 1.1.02.06.001.01 SGP education ...).
 All levels are kept, with their depth, so any level can be read without adding.
 
@@ -19,7 +19,8 @@ Before 2023 the same money is in DNP's TerriData (panel.dnp), dimension "Finanza
 income, tax income, transfers, royalties, investment by sector, SGP allocations by sector and the
 fiscal performance index.
 
-Loads Territorial_Context.CuipoAccounts, CuipoFundingSources, CuipoSectors, MunicipalIncome and
+Spending is read by the programmatic code of each line: sector (2 digits), program (4) and product (7).
+Loads Territorial_Context.CuipoAccounts, CuipoFundingSources, CuipoSectors, CuipoProducts, MunicipalIncome and
 MunicipalSpending.
 """
 from pathlib import Path
@@ -59,9 +60,9 @@ def income():
     return pd.concat(frames, ignore_index=True)
 
 
-SPENDING_SELECT = ("periodo, codigo_entidad, cod_sector, nom_sector, cod_fuentes_financiacion, nom_fuentes_financiacion, "
+SPENDING_SELECT = ("periodo, codigo_entidad, cuenta, nombre_cuenta, cod_programatico_mga, nom_programatico_mga, cod_fuentes_financiacion, nom_fuentes_financiacion, "
                    "sum(compromisos) as commitments, sum(obligaciones) as obligations, sum(pagos) as payments")
-SPENDING_GROUP = "periodo, codigo_entidad, cod_sector, nom_sector, cod_fuentes_financiacion, nom_fuentes_financiacion"
+SPENDING_GROUP = "periodo, codigo_entidad, cuenta, nombre_cuenta, cod_programatico_mga, nom_programatico_mga, cod_fuentes_financiacion, nom_fuentes_financiacion"
 
 
 def spending():
@@ -105,19 +106,21 @@ def validate(inc, spe):
     def add(df, mask, table, column, kind, value, note):
         if mask.any():
             f = df[mask]
-            flags.append(pd.DataFrame({"source": "CUIPO", "source_table": table, "column_name": column,
-                                       "municipality_id": f["municipality_id"], "period": f["period"].astype(str),
-                                       "kind": kind, "value": value[mask], "note": note if isinstance(note, str) else note[mask]}))
+            flags.append(pd.DataFrame({"source": "cuipo", "source_table": table, "column_name": column[mask].values,
+                                       "municipality_id": f["municipality_id"].values, "period": f["period"].astype(str).values,
+                                       "kind": kind, "value": value[mask].values,
+                                       "note": note if isinstance(note, str) else note[mask].values}))
 
     neg = inc["collected"] < 0
     add(inc, neg, "MunicipalIncome", inc["cuenta"], "error", inc["collected"], "negative collection; not loaded")
     inc = inc[~neg]
     neg = (spe[["commitments", "obligations", "payments"]] < 0).any(axis=1)
-    add(spe, neg, "MunicipalSpending", spe["cod_sector"], "error", spe["payments"], "negative spending; not loaded")
+    # spe already carries "product" (set in main)
+    add(spe, neg, "MunicipalSpending", spe["product"], "error", spe["payments"], "negative spending; not loaded")
     spe = spe[~neg]
     tol = lambda a, b: a > b * 1.01 + 1
     bad = tol(spe["payments"], spe["obligations"]) | tol(spe["obligations"], spe["commitments"])
-    add(spe, bad, "MunicipalSpending", spe["cod_sector"], "inconsistent", spe["payments"],
+    add(spe, bad, "MunicipalSpending", spe["product"], "inconsistent", spe["payments"],
         "payments above obligations or obligations above commitments")
     # the account tree: each parent is the sum of its children (all funding sources together)
     tot = inc.groupby(["municipality_id", "period", "cuenta"], as_index=False)["collected"].sum()
@@ -146,38 +149,46 @@ def main():
         df.drop(df.index[out], inplace=True)
         df["municipality_id"] = df["mun"].astype(int)
         df["period"] = df["periodo"].astype(int)
-    accounts = inc.drop_duplicates("cuenta")[["cuenta", "nombre_cuenta"]].rename(columns={"cuenta": "code", "nombre_cuenta": "name"})
+    # the programmatic code: sector (2 digits), program (4), product (7); outside investment 'NO APLICA' or 0
+    spe["product"] = spe["cod_programatico_mga"].astype(str).str.strip()
+    spe.loc[~spe["product"].str.fullmatch(r"\d{7}"), "product"] = "NO APLICA"
+    products = spe.drop_duplicates("product")[["product", "nom_programatico_mga"]].set_axis(["code", "name"], axis=1)
+    products["name"] = products["name"].astype(str).str.replace(r"\d{7}$", "", regex=True).str.strip().str.slice(0, 255)
+    products.loc[products["code"] == "NO APLICA", "name"] = "Not investment (operation, debt service)"
+    products["sector_code"] = products["code"].str[:2].where(products["code"] != "NO APLICA")
+    accounts = pd.concat([inc[["cuenta", "nombre_cuenta"]], spe[["cuenta", "nombre_cuenta"]]]).drop_duplicates("cuenta").rename(columns={"cuenta": "code", "nombre_cuenta": "name"})   # 1.x income, 2.x spending
     accounts["depth"] = accounts["code"].str.count(r"\.") + 1
     funding = pd.concat([inc[["cod_fuentes_financiacion", "nom_fuentes_financiacion"]],
                          spe[["cod_fuentes_financiacion", "nom_fuentes_financiacion"]]]) \
         .drop_duplicates("cod_fuentes_financiacion").set_axis(["code", "name"], axis=1)
-    sectors = spe.drop_duplicates("cod_sector")[["cod_sector", "nom_sector"]].set_axis(["code", "name"], axis=1)
-    for t in (accounts, funding, sectors):
+    sectors = pd.DataFrame({"code": sorted(products["sector_code"].dropna().unique())})
+    for t in (accounts, funding):
         t["name"] = t["name"].str.slice(0, 255)
     inc["collected"] = pd.to_numeric(inc["collected"], errors="coerce")
     for c in ("commitments", "obligations", "payments"):
         spe[c] = pd.to_numeric(spe[c], errors="coerce")
     inc = inc.groupby(["municipality_id", "period", "cuenta", "cod_fuentes_financiacion"], as_index=False)["collected"].sum()
-    spe = spe.groupby(["municipality_id", "period", "cod_sector", "cod_fuentes_financiacion"], as_index=False)[
+    spe = spe.groupby(["municipality_id", "period", "cuenta", "product", "cod_fuentes_financiacion"], as_index=False)[
         ["commitments", "obligations", "payments"]].sum()
 
     inc, spe, flags = validate(inc, spe)
     db = connect()
     cur = db.cursor()
-    cur.execute("DELETE FROM RelationsAndConclusions.DataQualityFlags WHERE source = 'CUIPO'")
+    cur.execute("DELETE FROM RelationsAndConclusions.DataQualityFlags WHERE source = 'cuipo'")
     if len(flags):
         load(cur, "RelationsAndConclusions.DataQualityFlags", flags,
              ["source", "source_table", "column_name", "municipality_id", "period", "kind", "value", "note"])
     cur.execute("SET FOREIGN_KEY_CHECKS = 0")
-    for t in ("MunicipalIncome", "MunicipalSpending", "CuipoAccounts", "CuipoFundingSources", "CuipoSectors"):
+    for t in ("MunicipalIncome", "MunicipalSpending", "CuipoAccounts", "CuipoFundingSources", "CuipoProducts", "CuipoSectors"):
         cur.execute(f"TRUNCATE TABLE Territorial_Context.{t}")
     load(cur, "Territorial_Context.CuipoAccounts", accounts, ["code", "name", "depth"])
     load(cur, "Territorial_Context.CuipoFundingSources", funding, ["code", "name"])
-    load(cur, "Territorial_Context.CuipoSectors", sectors, ["code", "name"])
+    load(cur, "Territorial_Context.CuipoSectors", sectors, ["code"])
+    load(cur, "Territorial_Context.CuipoProducts", products, ["code", "name", "sector_code"])
     load(cur, "Territorial_Context.MunicipalIncome", inc.rename(columns={"cuenta": "account", "cod_fuentes_financiacion": "funding_source"}),
          ["municipality_id", "period", "account", "funding_source", "collected"])
-    load(cur, "Territorial_Context.MunicipalSpending", spe.rename(columns={"cod_sector": "sector", "cod_fuentes_financiacion": "funding_source"}),
-         ["municipality_id", "period", "sector", "funding_source", "commitments", "obligations", "payments"])
+    load(cur, "Territorial_Context.MunicipalSpending", spe.rename(columns={"cuenta": "account", "cod_fuentes_financiacion": "funding_source"}),
+         ["municipality_id", "period", "account", "product", "funding_source", "commitments", "obligations", "payments"])
     cur.execute("SET FOREIGN_KEY_CHECKS = 1")
     db.commit()
     db.close()
