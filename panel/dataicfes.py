@@ -78,6 +78,8 @@ ALIASES = {
     "internet_hours": ["ESTU_DEDICACIONINTERNET"],
 }
 YES = {"si": 1, "s": 1, "no": 0, "n": 0}
+SECTOR_CODES = {"O": "OFICIAL", "N": "NO OFICIAL"}
+AREA_CODES = {"U": "URBANO", "R": "RURAL"}
 
 
 def files(folder: Path):
@@ -280,8 +282,11 @@ def main():
                 })
                 for sid, name, m, sector, area in zip(school, pick(chunk, "school_name"), mun, pick(chunk, "sector"), pick(chunk, "area")):
                     if pd.notna(sid) and sid not in schools:
-                        schools[sid] = (str(name)[:255] if pd.notna(name) else None, m, str(sector)[:40] if pd.notna(sector) else None,
-                                        str(area)[:40] if pd.notna(area) else None)
+                        sector = str(sector).strip().upper() if pd.notna(sector) else None
+                        area = str(area).strip().upper() if pd.notna(area) else None
+                        # some periods write the one-letter code instead of the word
+                        schools[sid] = (str(name)[:255] if pd.notna(name) else None, m,
+                                        SECTOR_CODES.get(sector, sector), AREA_CODES.get(area, area))
                 for p in students["exam_period_id"].unique():
                     year = int(str(p)[:4])
                     cur.execute("INSERT IGNORE INTO Education_Outcomes.ExamPeriods VALUES (%s, %s, %s, %s, %s)",

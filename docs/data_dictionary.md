@@ -62,7 +62,7 @@ Generated from the loaded database by `python -m panel.dictionary`. The model an
 |---|---:|---|
 | `ExamPeriods` | 45 | Saber 11 periods, calendar, scale (the exam changed in 2014-2) and government in office. |
 | `MunicipalScores` | 25,717 | Saber 11 per municipality of the school, period and sex, 2010-2022 (ICFES API): students and mean scores, and z-scores against the national mean and SD of the period. |
-| `Schools` | 13,222 | Schools seen in the Saber 11 microdata: DANE code and municipality (name, sector and area are written by a full `panel.dataicfes` run). |
+| `Schools` | 13,222 | Schools seen in the Saber 11 microdata: DANE code, name, municipality, sector (official or not) and area (urban or rural), as the newest file that names each school records them. 796 have no area. |
 | `MunicipalScoresMicro` | 28,232 | Saber 11 per municipality and period from the microdata, 2000-2022: students, mean and z-score of mathematics (every period) and of the global score (since 2014-2). |
 | `Students` | 11,817,681 | Each exam taker, 2000-1 to 2022-2 (ICFES period files). |
 | `StudentScores` | 11,817,681 | Each exam taker's scores; before 2014-2 sciences and social are means of the old areas. |
