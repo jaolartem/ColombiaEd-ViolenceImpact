@@ -1,5 +1,4 @@
 # Ignore specific configuration files
-config.py
 config.json
 
 # Ignore directories and their contents
@@ -16,3 +15,7 @@ config.json
 # Ignore specific data files
 dataframes.h5
 etl_errors.log
+
+# Office / LibreOffice lock files
+~$*
+.~lock.*#
