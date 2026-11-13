@@ -30,6 +30,8 @@ TABLES = {
         "PoliceDailyCases": "Police (MinDefensa): homicide, intra-family violence, sexual offences per municipality and day, January 2003 to the last update.",
         "PeriodRates": "Cases per 100,000 person-years by government and by phase, per municipality and measure, over the exact days each source covers.",
         "FinalViolenceIndex": "Geometric mean of the four dimension indices, 2015-2025.",
+        "SmoothedValues": "Empirical Bayes value of each rate, mean and share that rests on a base, pulled toward the department; written by `panel.quality`.",
+        "DataQualityFlags": "What the validation of each source found, per municipality, column and period: error, missing, inconsistent, break, small base or extreme. Detail in docs/data_quality.md.",
     },
     "Physical_violence": {
         "EventModalities": "CNMH modalities of armed-conflict violence (massacre, selective killing, forced disappearance, kidnapping, landmines, recruitment, attack on a town, act of war, damage to civilian property, sexual violence, terrorist attack).",

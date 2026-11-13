@@ -579,6 +579,48 @@ CREATE TABLE `Student_Context`.`MunicipalStudentContext` (  -- what a municipali
 
 
 -- =====================================================================================================
+-- Data quality (python -m panel.quality), the validation step of each source. Original values are never overwritten.
+-- =====================================================================================================
+
+CREATE TABLE `RelationsAndConclusions`.`SmoothedValues` (   -- empirical Bayes, toward the department
+    `source_table`    VARCHAR(80)  NOT NULL,
+    `column_name`     VARCHAR(80)  NOT NULL,                -- for PeriodRates, the measure
+    `municipality_id` INT          NOT NULL,
+    `period`          VARCHAR(40)  NOT NULL,                -- 'government:duque', '20172', ...
+    `raw_value`       DOUBLE       NULL,
+    `smoothed_value`  DOUBLE       NULL,
+    `weight`          DOUBLE       NULL,                    -- share of the municipality's own value kept (0-1)
+    `reference`       DOUBLE       NULL,                    -- the department's value it is pulled toward
+    PRIMARY KEY (`source_table`, `column_name`, `municipality_id`, `period`),
+    FOREIGN KEY (`municipality_id`) REFERENCES `RelationsAndConclusions`.`Municipalities` (`id`)
+);
+
+CREATE TABLE `RelationsAndConclusions`.`DataQualityFlags` (   -- each source checked against its own rules
+    `id`              INT          NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    `source`          VARCHAR(20)  NOT NULL,                -- DANE, ICFES, MEN, POLICE, CNMH, INDEPAZ, MEDICINA_LEGAL
+    `source_table`    VARCHAR(80)  NOT NULL,
+    `column_name`     VARCHAR(80)  NOT NULL,                -- for PeriodRates and ViolenceCases, the measure
+    `municipality_id` INT          NOT NULL,
+    `period`          VARCHAR(40)  NOT NULL,
+    `kind`            ENUM('error', 'missing', 'inconsistent', 'break', 'small_base', 'extreme') NOT NULL,
+    -- error: a value the measure does not allow; not used.
+    -- missing: no value, for a known reason.
+    -- inconsistent: the source contradicts itself.
+    -- break: a jump between years larger than the thing measured can make.
+    -- small_base: atypical only because few people stand behind it; the smoothed value is used.
+    -- extreme: atypical after weighing its base; a real case, kept as it is.
+    `value`           DOUBLE       NULL,
+    `smoothed_value`  DOUBLE       NULL,
+    `median`          DOUBLE       NULL,                    -- of the column in that period (national rate for sparse counts)
+    `robust_z`        DOUBLE       NULL,
+    `note`            VARCHAR(200) NULL,
+    KEY (`source`, `source_table`, `column_name`, `kind`),
+    KEY (`municipality_id`),
+    FOREIGN KEY (`municipality_id`) REFERENCES `RelationsAndConclusions`.`Municipalities` (`id`)
+);
+
+
+-- =====================================================================================================
 -- Views
 -- =====================================================================================================
 

@@ -21,6 +21,8 @@ Generated from the loaded database by `python -m panel.dictionary`. The model an
 | `PoliceDailyCases` | 1,095,782 | Police (MinDefensa): homicide, intra-family violence, sexual offences per municipality and day, January 2003 to the last update. |
 | `PeriodRates` | 382,768 | Cases per 100,000 person-years by government and by phase, per municipality and measure, over the exact days each source covers. |
 | `FinalViolenceIndex` | 12,350 | Geometric mean of the four dimension indices, 2015-2025. |
+| `SmoothedValues` | 642,826 | Empirical Bayes value of each rate, mean and share that rests on a base, pulled toward the department; written by `panel.quality`. |
+| `DataQualityFlags` | 30,864 | What the validation of each source found, per municipality, column and period: error, missing, inconsistent, break, small base or extreme. Detail in docs/data_quality.md. |
 
 ## Physical_violence
 

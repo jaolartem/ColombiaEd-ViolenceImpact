@@ -34,7 +34,7 @@ The project takes symmetric sociology as its frame. It assumes no structure that
 
 **Time.** Every dated fact is placed in a government: Uribe I and II, Santos I and II, the latter split into negotiation and implementation of the peace agreement, Duque, and Petro. This gives the long-term comparison from 2002 to 2026.
 
-The model is in `Tables_and_relations.sql` (seven schemas). What each table holds, its coverage and the known problems of the data are in [`docs/data_dictionary.md`](docs/data_dictionary.md).
+The model is in `Tables_and_relations.sql` (seven schemas). What each table holds, its coverage and the known problems of the data are in [`docs/data_dictionary.md`](docs/data_dictionary.md); what the validation of each source found, municipality by municipality, is in [`docs/data_quality.md`](docs/data_quality.md).
 
 ## :inbox_tray: Getting the Data
 
@@ -53,6 +53,8 @@ python -m panel.access           # schools (MEN) and health sites (REPS)
 python -m panel.student_context  # what each municipality's exam takers report, 2010-2022
 python -m panel.load_db          # everything into MariaDB/MySQL (DB_HOST, DB_USER, DB_PASS), with rates and indices
 python -m panel.dataicfes --data "path/to/Saber11 files"   # Saber 11 microdata 2000-2022, one row per student
+python -m panel.dataicfes --refresh 20061,20062           # read some periods again; --derive only cleans and aggregates
+python -m panel.quality          # validates each source by its own rules; writes docs/data_quality.md
 python -m panel.dictionary       # rewrites docs/data_dictionary.md from the database
 ```
 
