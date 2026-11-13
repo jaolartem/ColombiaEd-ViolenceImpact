@@ -33,6 +33,12 @@ def app_token(config_file: str = "config.json"):
     return None
 
 
+def dataset_description(dataset: str) -> str:
+    response = requests.get(f"{DOMAIN}/api/views/{dataset}.json", timeout=120)
+    response.raise_for_status()
+    return response.json().get("description") or ""
+
+
 def query(dataset: str, select: str, where: str = None, group: str = None, order: str = None,
           token: str = None, retries: int = 3) -> pd.DataFrame:
     """

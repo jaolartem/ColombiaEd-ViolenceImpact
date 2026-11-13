@@ -38,7 +38,7 @@ The public datasets on datos.gov.co need no user or password. An app token (envi
 ```bash
 pip install -r requirements.txt
 python -m panel.build       # violence 2015-2026, Saber 11 2010-2022, MEN 2011-2024, DANE population
-python -m panel.longterm    # Police records 2003-2026 by government, Saber 11 as z-scores
+python -m panel.longterm    # by government: Police records 2003-2026, CNMH massacres 2002-2026, Saber 11 as z-scores
 ```
 
 Both write CSV files to `output/panel/`. What each source covers, and its known problems, is written at the top of `panel/sources.py` and `panel/longterm.py`. Saber 11 before 2010 and after 2022 is only published by ICFES as files, in [DataIcfes](https://www.icfes.gov.co/investigaciones/data-icfes/).
