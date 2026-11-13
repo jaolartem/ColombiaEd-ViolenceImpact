@@ -6,3 +6,4 @@ sodapy
 mysql-connector-python
 requests
 numpy
+lxml

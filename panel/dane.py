@@ -46,3 +46,14 @@ def load_population(cache_dir: Path = Path("cache/dane")) -> pd.DataFrame:
     population = pd.concat(frames, ignore_index=True)
     population["year"] = population["year"].astype(int)
     return population.drop_duplicates(["cod_mpio", "year"], keep="last")
+
+
+def municipalities(cache_dir: Path = Path("cache/dane")) -> pd.DataFrame:
+    """DANE code, department and municipality name of every municipality (2018 census geography)."""
+    load_population(cache_dir)                       # makes sure the file is in the cache
+    spec = POPULATION_FILES["PPED-AreaMun-2018-2042_VP.xlsx"]
+    df = pd.read_excel(cache_dir / "PPED-AreaMun-2018-2042_VP.xlsx", sheet_name=spec["sheet"],
+                       header=spec["header"], dtype={"MPIO": str})
+    df = df.dropna(subset=["MPIO"]).drop_duplicates("MPIO")
+    return pd.DataFrame({"cod_mpio": normalize_code(df["MPIO"]), "department": df["DPNOM"],
+                         "municipality": df["DPMP"]}).dropna()

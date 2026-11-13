@@ -33,10 +33,18 @@ def app_token(config_file: str = "config.json"):
     return None
 
 
-def dataset_description(dataset: str) -> str:
+def _metadata(dataset: str) -> dict:
     response = requests.get(f"{DOMAIN}/api/views/{dataset}.json", timeout=120)
     response.raise_for_status()
-    return response.json().get("description") or ""
+    return response.json()
+
+
+def dataset_description(dataset: str) -> str:
+    return _metadata(dataset).get("description") or ""
+
+
+def dataset_columns(dataset: str) -> list:
+    return [c["fieldName"] for c in _metadata(dataset).get("columns", [])]
 
 
 def query(dataset: str, select: str, where: str = None, group: str = None, order: str = None,

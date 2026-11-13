@@ -6,42 +6,57 @@ In this repository, we delve into the intricate world of violence and its potent
 
 The project has made significant strides in understanding, processing, and preparing the data for detailed analysis. While the extraction phase has been largely completed, the transformation phase is currently underway. The next steps will involve a thorough data analysis, visualization, and modeling to decipher the intricate relationship between violence and educational outcomes.
 
-### :heavy_check_mark: Achievements So Far:
+### :heavy_check_mark: Done
 
-- **Modular Design**: Developed a modular and systematic approach to the ETL process, with separate modules for different file formats.
-- **Data Extraction**: Successfully extracted data from multiple file formats, including CSV and TXT.
-- **Database Schemas**: Designed a robust database structure with multiple schemas to represent different facets of violence.
-- **File Processing**: Implemented functionalities to detect and process various file formats and backup for traceability.
+- **Data**: every source is read by DANE municipality code.
+  - Violence: Medicina Legal, Police by day 2003-2026, CNMH conflict events in 11 modalities, INDEPAZ massacres, with the three massacre sources triangulated event by event.
+  - DANE: population by sex and age 1995-2042, census 2018.
+  - Education: Saber 11 aggregates and microdata 2000-2022, Saber Pro, MEN enrolment and dropout, higher education, Generacion E, ICETEX.
+  - Access: schools and health sites.
+- **Model**: seven schemas loaded into MariaDB, with rates by government and phase, and the physical, cultural, gender, structural and final indices.
+- **Documentation**: data dictionary with coverage and the known problems of each source.
 
-### :soon: Upcoming Milestones:
+### :soon: Next
 
-1. Complete the data transformation phase, ensuring data integrity, relevance, and alignment with the database structure.
-2. Load the transformed data into the designed database tables.
-3. Embark on a thorough Exploratory Data Analysis (EDA) to understand patterns and correlations.
-4. Apply machine learning techniques to predict or classify based on the data.
-5. Visualize findings using tools like Tableau and PowerBI to provide clear and actionable insights.
-6. Translate findings into geospatial representations for a holistic understanding of the data.
-7. Document the complete project, including methodologies, decisions, results, and insights.
+1. Define the research questions and the kind of analysis (cartography of associations, municipal trajectories, networks of co-occurrence, multilevel models as one more inscription).
+2. Saber 11 2023-2025 from DataIcfes.
+3. Maps by government.
 
 ## :triangular_ruler: Research Design
 
-Violence is measured per municipality (DANE code) and year in Galtung's terms, plus gender: **direct** (homicide, suicide, intra-family violence), **structural** (poverty, inequality, access to education and health), **cultural** (violence that targets identities) and **gender** (partner and sexual violence). Each indicator becomes a rate per 100,000, then a sub-index between fixed goalposts, and the sub-indices are combined with a geometric mean, as in the UNDP Human Development Index.
+**The exam as an operator.** Saber 11 translates years of a student's life into a number that universities, scholarships and credits know how to read. In some places that number opens a door, and in others it does not. Violence is followed as a material effect that opens or closes those doors: a closed road, a mine on the way to school, a recruitment, a confinement, a massacre.
 
-The analysis has two levels. The **municipality** carries the violence indices, built only from external sources (Medicina Legal, Police, DANE, MEN). The **student** carries the Saber 11 scores and what each student reports about home and family. The students' answers never enter a violence index, because the index is what explains the scores. They describe the students' lives and are compared with what DANE says about the same municipality. Only students who reached grade 11 take the exam, so the gap between the two sources measures who drops out.
+The project takes symmetric sociology as its frame. It assumes no structure that explains in advance. It records the associations (territory, armed actor, kind of event, school, exam, higher education, scholarship) so they can be described. Class, structure and power are where the description may arrive, Marx included; they are not where it starts.
 
-Trends are compared by government: Uribe I and II, Santos I and II (negotiation and implementation of the peace agreement), Duque and Petro. The data model is in `Tables_and_relations.sql`.
+**Galtung as the map's legend.** Harm is classified as **physical** (homicide, suicide, intra-family violence, conflict events), **cultural** (violence that targets an identity), **gender** (partner and sexual violence, homicide and suicide of women) and **structural** (avoidable deprivation and access). Each dimension has an index: rates per 100,000 become sub-indices between fixed goalposts, combined with a geometric mean as in the UNDP Human Development Index. The indices are one more inscription on the map, not the explanation.
+
+**Two levels.** The **municipality** (DANE code) carries everything that comes from external sources. The **student** carries the scores and what each exam taker reports about home and family. The students' answers never enter an index. They are set beside what the 2018 census says about the same municipality: only those who reached grade 11 sit the exam, so the gap measures who did not.
+
+**Time.** Every dated fact is placed in a government: Uribe I and II, Santos I and II, the latter split into negotiation and implementation of the peace agreement, Duque, and Petro. This gives the long-term comparison from 2002 to 2026.
+
+The model is in `Tables_and_relations.sql` (seven schemas). What each table holds, its coverage and the known problems of the data are in [`docs/data_dictionary.md`](docs/data_dictionary.md).
 
 ## :inbox_tray: Getting the Data
 
-The public datasets on datos.gov.co need no user or password. An app token (environment variable `SOCRATA_APP_TOKEN`, or `api.app_token` in `config.json`) only raises the rate limit.
+The public datasets on datos.gov.co need no user or password. An app token (environment variable `SOCRATA_APP_TOKEN`, or `api.app_token` in `config.json`) only raises the rate limit. Each module writes CSV files to `output/panel/` and documents its sources at the top of the file.
 
 ```bash
 pip install -r requirements.txt
-python -m panel.build       # violence 2015-2026, Saber 11 2010-2022, MEN 2011-2024, DANE population
-python -m panel.longterm    # by government: Police records 2003-2026, CNMH massacres 2002-2026, Saber 11 as z-scores
+python -m panel.build            # Medicina Legal 2015-2026, Saber 11 2010-2022 (API), MEN 2011-2024, DANE population
+python -m panel.longterm         # comparison by government with the monthly Police series and CNMH massacres
+python -m panel.police           # Police records by day, 2003-2026: homicide, intra-family and sexual violence
+python -m panel.events           # CNMH (11 modalities), INDEPAZ and Police massacres, and their triangulation
+python -m panel.identity         # homicides and suicides by the victim's identity and the circumstance
+python -m panel.census           # DANE census 2018 (IPM, NBI, dwellings, stratum) and population by sex and age
+python -m panel.door             # Saber Pro, higher-education enrolment, Generacion E, ICETEX
+python -m panel.access           # schools (MEN) and health sites (REPS)
+python -m panel.student_context  # what each municipality's exam takers report, 2010-2022
+python -m panel.load_db          # everything into MariaDB/MySQL (DB_HOST, DB_USER, DB_PASS), with rates and indices
+python -m panel.dataicfes --data "path/to/Saber11 files"   # Saber 11 microdata 2000-2022, one row per student
+python -m panel.dictionary       # rewrites docs/data_dictionary.md from the database
 ```
 
-Both write CSV files to `output/panel/`. What each source covers, and its known problems, is written at the top of `panel/sources.py` and `panel/longterm.py`. Saber 11 before 2010 and after 2022 is only published by ICFES as files, in [DataIcfes](https://www.icfes.gov.co/investigaciones/data-icfes/).
+Saber 11 microdata come from the ICFES period files (`SB11_<year><semester>`). 2023-2025 are only published on [DataIcfes](https://www.icfes.gov.co/investigaciones/data-icfes/).
 
 ## :wrench: Tools and Technologies Used
 
