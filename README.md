@@ -23,6 +23,26 @@ The project has made significant strides in understanding, processing, and prepa
 6. Translate findings into geospatial representations for a holistic understanding of the data.
 7. Document the complete project, including methodologies, decisions, results, and insights.
 
+## :triangular_ruler: Research Design
+
+Violence is measured per municipality (DANE code) and year in Galtung's terms, plus gender: **direct** (homicide, suicide, intra-family violence), **structural** (poverty, inequality, access to education and health), **cultural** (violence that targets identities) and **gender** (partner and sexual violence). Each indicator becomes a rate per 100,000, then a sub-index between fixed goalposts, and the sub-indices are combined with a geometric mean, as in the UNDP Human Development Index.
+
+The analysis has two levels. The **municipality** carries the violence indices, built only from external sources (Medicina Legal, Police, DANE, MEN). The **student** carries the Saber 11 scores and what each student reports about home and family. The students' answers never enter a violence index, because the index is what explains the scores. They describe the students' lives and are compared with what DANE says about the same municipality. Only students who reached grade 11 take the exam, so the gap between the two sources measures who drops out.
+
+Trends are compared by government: Uribe I and II, Santos I and II (negotiation and implementation of the peace agreement), Duque and Petro. The data model is in `Tables_and_relations.sql`.
+
+## :inbox_tray: Getting the Data
+
+The public datasets on datos.gov.co need no user or password. An app token (environment variable `SOCRATA_APP_TOKEN`, or `api.app_token` in `config.json`) only raises the rate limit.
+
+```bash
+pip install -r requirements.txt
+python -m panel.build       # violence 2015-2026, Saber 11 2010-2022, MEN 2011-2024, DANE population
+python -m panel.longterm    # Police records 2003-2026 by government, Saber 11 as z-scores
+```
+
+Both write CSV files to `output/panel/`. What each source covers, and its known problems, is written at the top of `panel/sources.py` and `panel/longterm.py`. Saber 11 before 2010 and after 2022 is only published by ICFES as files, in [DataIcfes](https://www.icfes.gov.co/investigaciones/data-icfes/).
+
 ## :wrench: Tools and Technologies Used
 
 - **Python**: The backbone of the project, instrumental in data processing and analysis.
