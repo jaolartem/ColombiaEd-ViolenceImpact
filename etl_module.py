@@ -1,5 +1,4 @@
-import os
-import glob
+import sys
 from file_detector import process_directory
 
 # Global variable to hold all DataFrames
@@ -23,12 +22,13 @@ class Extraction:
         Args:
         - directory_path (str): Path to the directory.
         
-        Updates:
-        - self.dataframes: Dictionary containing extracted DataFrames.
+        Returns:
+        - dict: The extracted DataFrames, keyed by unique identifier (also kept in self.dataframes
+          and merged into ALL_DFS).
         """
         self.dataframes = process_directory(directory_path)
-        print("DataFrames after processing directory:", self.dataframes.keys())  # Debugging print statement
-        ALL_DFS.update(self.dataframes) 
+        ALL_DFS.update(self.dataframes)
+        return self.dataframes
 
 class Transformation:
     """
@@ -65,7 +65,7 @@ class Transformation:
         return self.local_dfs
 
 if __name__ == "__main__":
-    folder_name = '/path/to/your/folder'  # Update with the actual path
+    folder_name = sys.argv[1] if len(sys.argv) > 1 else 'Data'
     extractor = Extraction()
     extractor.extract_from_directory(folder_name)
 

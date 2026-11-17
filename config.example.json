@@ -1,0 +1,12 @@
+{
+  "database": {
+    "DB_HOST": "localhost",
+    "DB_USER": "your_user",
+    "DB_PASS": "your_password"
+  },
+  "api": {
+    "app_token": "your_datos_gov_co_app_token",
+    "username": "your_email",
+    "password": "your_password"
+  }
+}

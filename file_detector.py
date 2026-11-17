@@ -4,7 +4,6 @@ import sys
 import pandas as pd
 from typing import Dict
 from txt_to_df import process_txt_to_dict_and_backup
-from csv_to_df import load_csv_to_dict
 from excel_to_csv import load_excel_to_dict
 
 def setup_logging(log_file: str = 'etl_errors.log') -> None:
@@ -33,9 +32,12 @@ def process_directory(directory_path: Path) -> Dict[str, pd.DataFrame]:
 
     for file_path in all_files:
         try:
-            if file_path.suffix in ['.txt', '.csv']:
+            if file_path.name.startswith(('~$', '.~lock')):
+                continue  # Office/LibreOffice lock files, not data
+            suffix = file_path.suffix.lower()
+            if suffix in ('.txt', '.csv'):
                 dfs.update(process_txt_to_dict_and_backup(file_path))
-            elif file_path.suffix in ['.xls', '.xlsx']:
+            elif suffix in ('.xls', '.xlsx'):
                 dfs.update(load_excel_to_dict(file_path))
         except FileNotFoundError as e:
             logging.error(f"File not found: {file_path}", exc_info=True)

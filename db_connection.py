@@ -7,7 +7,7 @@ def create_connection(DB_HOST, DB_USER, DB_PASS):
       connection = mysql.connector.connect(
           host= DB_HOST,
           user= DB_USER,
-          passwd= DB_PASS
+          password= DB_PASS
       )
       print("Connection to MySQL DB successful")
     except Error as e:
@@ -15,6 +15,6 @@ def create_connection(DB_HOST, DB_USER, DB_PASS):
     return connection
 
 def close_connection(connection):
-    if connection.is_connected():
+    if connection is not None and connection.is_connected():
         connection.close()
         print("MySQL connection is closed")

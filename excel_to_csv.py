@@ -25,6 +25,7 @@ def load_excel_to_dict(excel_path: Path, backup_folder: Path = Path("backup_csv"
         FileNotFoundError: If the path provided does not exist or is not as expected.
         Exception: For any unexpected errors during processing.
     """
+    excel_path = Path(excel_path)
     dfs = {}
     backup_data = []
     
@@ -34,8 +35,9 @@ def load_excel_to_dict(excel_path: Path, backup_folder: Path = Path("backup_csv"
     
     # Determine if the provided path is a directory or a single file.
     if excel_path.is_dir():
-        excel_files = list(excel_path.rglob('*.xlsx')) + list(excel_path.rglob('*.xls'))
-    elif excel_path.is_file() and excel_path.suffix in ['.xlsx', '.xls']:
+        excel_files = [p for p in excel_path.rglob('*')
+                       if p.is_file() and p.suffix.lower() in ('.xlsx', '.xls') and not p.name.startswith(('~$', '.~lock'))]
+    elif excel_path.is_file() and excel_path.suffix.lower() in ('.xlsx', '.xls'):
         excel_files = [excel_path]
     else:
         error_msg = f"Invalid path provided: {excel_path}. Expected a directory or an Excel file path."
@@ -65,7 +67,7 @@ def load_excel_to_dict(excel_path: Path, backup_folder: Path = Path("backup_csv"
         except pd.errors.EmptyDataError:
             logging.warning(f"No data in file {file_path}. Skipping.")
         except Exception as e:
-            logging.error(f"Unexpected error processing Excel file {file_path}: {e}")
+            logging.error(f"Unexpected error processing Excel file {file_path}: {e}", exc_info=True)
 
     backup_info_path = backup_folder / "backup_info.csv"
     try:
