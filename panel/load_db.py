@@ -290,11 +290,7 @@ def main():
         "share_no_electricity_service", "share_stratum_1_2"]
     census["dwellings_occupied"] = census["dwellings_occupied"].round().astype("Int64")
     load(cur, "Structural_Violence.Census2018Municipal", known(census, municipalities, label="census"), census_cols)
-    schools = read(out, "schools.csv")
-    s = schools.assign(municipality_id=code_int(schools["cod_mpio"]), sector=schools["sector"].fillna("SIN INFORMACION"))
-    s = s.groupby(["municipality_id", "year", "sector"], as_index=False)[["establishments", "sites", "enrolment"]].sum()
-    load(cur, "Structural_Violence.SchoolsByMunicipality", known(s, municipalities, label="schools"),
-         ["municipality_id", "year", "sector", "establishments", "sites", "enrolment"])
+    # schools: panel.schools loads the establishments; SchoolsByMunicipality is a view over SchoolYears
     health = read(out, "health_sites.csv")
     h = health.assign(municipality_id=code_int(health["cod_mpio"]),
                       provider_class=health["provider_class"].fillna("Sin informacion").str.slice(0, 120),

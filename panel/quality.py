@@ -418,8 +418,8 @@ def main():
     smooth = pd.concat(smooth, ignore_index=True)
     cur.execute("SET FOREIGN_KEY_CHECKS = 0")
     # the loaders that validate on entry (panel.dnp, panel.fiscal) keep their own findings
-    own = ", ".join(f"'{s}'" for s in flags["source"].unique())
-    cur.execute(f"DELETE FROM RelationsAndConclusions.DataQualityFlags WHERE source IN ({own})")
+    for src, tab in flags[["source", "source_table"]].drop_duplicates().itertuples(index=False):
+        cur.execute("DELETE FROM RelationsAndConclusions.DataQualityFlags WHERE source = %s AND source_table = %s", (src, tab))
     cur.execute("TRUNCATE TABLE RelationsAndConclusions.SmoothedValues")
     load(cur, "RelationsAndConclusions.SmoothedValues", smooth, SMOOTH_COLUMNS)
     load(cur, "RelationsAndConclusions.DataQualityFlags", flags, FLAG_COLUMNS)
@@ -457,7 +457,7 @@ def report(cur):
         "",
     ]
     for source in ORDER:
-        s = f[f["source"] == source]
+        s = f[f["source"].str.upper() == source]          # loaders write the code in either case
         if not len(s):
             continue
         lines += [f"## {source.replace('_', ' ').title() if source not in ('DANE', 'DNP', 'CUIPO', 'ICFES', 'MEN', 'CNMH', 'INDEPAZ') else source}", "",

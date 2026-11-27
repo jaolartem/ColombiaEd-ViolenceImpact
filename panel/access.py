@@ -1,14 +1,12 @@
 """
-Access: schools and health services within each municipality.
+Access: health services within each municipality (schools: panel.schools).
 
     python -m panel.access [--out output/panel]
 
-- Schools (MEN, cfw5-qzt5): every pre-school, primary and secondary establishment by year, with its
-  sector, number of sites and enrolment. Counted by municipality, year and sector.
 - Health (MinSalud, REPS c36g-9fc2): registered health providers and their sites, as of the latest
   cut-off. Counted by the municipality of the site, by class of provider and legal nature.
 
-Writes schools.csv and health_sites.csv.
+Writes health_sites.csv.
 """
 import argparse
 from pathlib import Path
@@ -16,18 +14,6 @@ from pathlib import Path
 import pandas as pd
 
 from panel import dane, socrata
-
-
-def schools(token) -> pd.DataFrame:
-    df = socrata.query("cfw5-qzt5",
-                       select="a_o, cod_dane_municipio, sector, count(*) as establishments, sum(cantidad_sedes) as sites, sum(total_matricula) as enrolment",
-                       group="a_o, cod_dane_municipio, sector", token=token)
-    df = df.rename(columns={"a_o": "year", "cod_dane_municipio": "cod_mpio"})
-    df["cod_mpio"] = dane.normalize_code(df["cod_mpio"])
-    for c in ("year", "establishments", "sites", "enrolment"):
-        df[c] = pd.to_numeric(df[c], errors="coerce")
-    print(f"  schools: {df['year'].min():.0f}-{df['year'].max():.0f}, {df['establishments'].sum():,.0f} establishment-years")
-    return df.dropna(subset=["cod_mpio"])
 
 
 def health(token) -> pd.DataFrame:
@@ -49,7 +35,6 @@ def main():
     args.out.mkdir(parents=True, exist_ok=True)
     token = socrata.app_token()
     print("access")
-    schools(token).to_csv(args.out / "schools.csv", index=False)
     health(token).to_csv(args.out / "health_sites.csv", index=False)
 
 

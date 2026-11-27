@@ -52,7 +52,9 @@ python -m panel.events           # CNMH (11 modalities), INDEPAZ and Police mass
 python -m panel.identity         # homicides and suicides by the victim's identity and the circumstance
 python -m panel.census           # DANE census 2018 (IPM, NBI, dwellings, stratum) and population by sex and age
 python -m panel.door             # Saber Pro, higher-education enrolment, Generacion E, ICETEX
-python -m panel.access           # schools (MEN) and health sites (REPS)
+python -m panel.access           # health sites (REPS)
+python -m panel.schools          # MEN: each establishment, its yearly facts and what it declared in 2016
+python -m panel.schools --areas  # Saber 11 files read again: area and site of each exam taker's school
 python -m panel.student_context  # what each municipality's exam takers report, 2010-2022
 python -m panel.load_db          # everything into MariaDB/MySQL (DB_HOST, DB_USER, DB_PASS), with rates and indices
 python -m panel.dataicfes --data "path/to/Saber11 files"   # Saber 11 microdata 2000-2022, one row per student

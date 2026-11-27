@@ -246,7 +246,7 @@ erDiagram
 
 ## Structural_Violence
 
-8 tables.
+7 tables.
 
 ```mermaid
 erDiagram
@@ -272,11 +272,6 @@ erDiagram
     legalnatures {
         varchar name PK
     }
-    schoolsbymunicipality {
-        int municipality_id PK, FK
-        year year PK
-        varchar sector PK, FK
-    }
     structuralviolenceindex {
         int municipality_id PK, FK
     }
@@ -288,16 +283,12 @@ erDiagram
     legalnatures ||--o{ healthsites : legal_nature
     municipalities ||--o{ inequality : municipality_id
     inequalitymeasures ||--o{ inequality : measure
-    municipalities ||--o{ schoolsbymunicipality : municipality_id
-    schoolsectors {
-    }
-    schoolsectors ||--o{ schoolsbymunicipality : sector
     municipalities ||--o{ structuralviolenceindex : municipality_id
 ```
 
 ## Education_Outcomes
 
-19 tables.
+25 tables.
 
 ```mermaid
 erDiagram
@@ -366,19 +357,45 @@ erDiagram
     schoolareas {
         varchar code PK
     }
+    schoolattributekinds {
+        varchar code PK
+    }
+    schoolattributes {
+        bigint school_id PK, FK
+        smallint year PK
+        int value_id PK, FK
+    }
+    schoolattributevalues {
+        int id PK
+        varchar kind_code FK
+    }
+    schoolcalendars {
+        smallint code PK
+    }
+    schoolcharacters {
+        smallint code PK
+    }
     schools {
         bigint id PK
         int municipality_id FK
         varchar sector FK
-        varchar area FK
     }
     schoolsectors {
         varchar code PK
+    }
+    schoolyears {
+        bigint school_id PK, FK
+        smallint year PK
+        int secretariat_id FK
+        varchar sector FK
+        smallint calendar_code FK
+        smallint character_code FK
     }
     students {
         varchar id PK
         int exam_period_id FK
         bigint school_id FK
+        varchar area FK
         int municipality_id FK
         char sex_id FK
     }
@@ -414,13 +431,21 @@ erDiagram
     municipalities ||--o{ saberprobymunicipality : municipality_id
     sexes ||--o{ saberprobymunicipality : sex_id
     saberproperiods ||--o{ saberprobymunicipality : periodo
+    schools ||--o{ schoolattributes : school_id
+    schoolattributevalues ||--o{ schoolattributes : value_id
+    schoolattributekinds ||--o{ schoolattributevalues : kind_code
     municipalities ||--o{ schools : municipality_id
     schoolsectors ||--o{ schools : sector
-    schoolareas ||--o{ schools : area
+    schools ||--o{ schoolyears : school_id
+    certifiedentities ||--o{ schoolyears : secretariat_id
+    schoolsectors ||--o{ schoolyears : sector
+    schoolcalendars ||--o{ schoolyears : calendar_code
+    schoolcharacters ||--o{ schoolyears : character_code
     examperiods ||--o{ students : exam_period_id
     municipalities ||--o{ students : municipality_id
     sexes ||--o{ students : sex_id
     schools ||--o{ students : school_id
+    schoolareas ||--o{ students : area
     students ||--o{ studentscores : student_id
 ```
 

@@ -22,7 +22,7 @@ Generated from the loaded database by `python -m panel.dictionary`. The model an
 | `PeriodRates` | 382,768 | Cases per 100,000 person-years by government and by phase, per municipality and measure, over the exact days each source covers. |
 | `FinalViolenceIndex` | 12,350 | Geometric mean of the four dimension indices, 2015-2025. |
 | `SmoothedValues` | 642,826 | Empirical Bayes value of each rate, mean and share that rests on a base, pulled toward the department; written by `panel.quality`. |
-| `DataQualityFlags` | 62,730 | What the validation of each source found, per municipality, column and period: error, missing, inconsistent, break, small base or extreme. Detail in docs/data_quality.md. |
+| `DataQualityFlags` | 110,814 | What the validation of each source found, per municipality, column and period: error, missing, inconsistent, break, small base or extreme. Detail in docs/data_quality.md. |
 
 ## Physical_violence
 
@@ -54,7 +54,7 @@ Generated from the loaded database by `python -m panel.dictionary`. The model an
 |---|---:|---|
 | `Census2018Municipal` | 1,122 | DANE census 2018 per municipality: IPM (census source) and its 15 deprivations, NBI and components, floors, public services including internet, people by energy stratum. |
 | `Inequality` | 0 | Empty: no municipal Gini is published yearly. Documented gap. |
-| `SchoolsByMunicipality` | 18,817 | MEN directory: establishments, sites and enrolment by municipality, year and sector, 2015-2025. |
+| `SchoolsByMunicipality` | 18,209 | View over Education_Outcomes.SchoolYears: establishments, sites and enrolment by municipality, year and sector, 2015-2025 (2023 rebuilt, decision 39). |
 | `HealthSites` | 2,914 | MinSalud REPS: registered health sites by municipality, class of provider and legal nature. |
 | `StructuralViolenceIndex` | 1,122 | Census 2018 deprivation (IPM, NBI, no internet) and lack of health sites. |
 
@@ -64,9 +64,15 @@ Generated from the loaded database by `python -m panel.dictionary`. The model an
 |---|---:|---|
 | `ExamPeriods` | 45 | Saber 11 periods, calendar, scale (the exam changed in 2014-2) and government in office. |
 | `MunicipalScores` | 25,717 | Saber 11 per municipality of the school, period and sex, 2010-2022 (ICFES API). A check only: MunicipalScoresMicro, from the microdata, is the canonical table. |
-| `Schools` | 13,222 | Schools seen in the Saber 11 microdata: DANE code, name, municipality, sector (official or not) and area (urban or rural), as the newest file that names each school records them. 796 have no area. |
+| `Schools` | 26,553 | Establishments (decision 38): DANE code, latest name and municipality. Those of the MEN directory 2015-2025 and those seen only in the Saber 11 microdata; sector as Saber 11 reports it. |
+| `SchoolYears` | 205,502 | MEN directory, one row per establishment and year, 2015-2025: certified entity that runs it, sector, calendar, character, enrolment and number of sites. 2023 rebuilt from a truncated source (decision 39). |
+| `SchoolCalendars` | 3 | MEN calendar codes: A, B, other. |
+| `SchoolCharacters` | 4 | MEN character of upper secondary: academic, technical, both, does not apply. |
+| `SchoolAttributeKinds` | 17 | What establishments declared in the MEN snapshot of 2016: zone, type, levels, grades, shifts, specialties, models, languages, ethnic groups, disabilities, boarding, stratum, provider, building owner, indigenous reserve, contracted enrolment. |
+| `SchoolAttributeValues` | 536 | Each value of each kind, written as the source writes it. |
+| `SchoolAttributes` | 585,167 | One declared value of one establishment in one year (fourth normal form: lists split into rows). |
 | `MunicipalScoresMicro` | 28,232 | Saber 11 per municipality and period from the microdata, 2000-2022: students, mean and z-score of mathematics and of the global score: ICFES's own since 2014-2, the simple mean of the five tests before. |
-| `Students` | 11,817,681 | Each exam taker, 2000-1 to 2022-2 (ICFES period files). |
+| `Students` | 11,817,681 | Each exam taker, 2000-1 to 2022-2 (ICFES period files), with the area (urban or rural) and DANE code of the site of their school as the file records them (2005-2, 2009-2 and 2010 on; 5,840 establishments have exam takers from sites in both areas). |
 | `StudentScores` | 11,817,681 | Each exam taker's scores; before 2014-2 sciences and social are means of the old areas. global_mean, the simple mean of the five tests, exists for every period. |
 | `EnrolmentAndDropout` | 15,704 | MEN: net enrolment, dropout, approval, repetition per municipality, 2011-2024. |
 | `SaberProByMunicipality` | 12,804 | Saber Pro 2018-2022 by the municipality of the school the student finished: the other side of the door. |
