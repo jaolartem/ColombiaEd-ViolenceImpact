@@ -45,7 +45,7 @@ The model is in `Tables_and_relations.sql`. Its rules (decision 29 in `research/
 | 1 | `Physical_violence.ViolenceEvents` | CNMH names the perpetrator at two levels (category and group) and up to eleven acts committed with each event; only the category and two acts were kept, as columns | catalog `PerpetratorGroups` under `Perpetrators`; catalog `SimultaneousActs` and connection `EventSimultaneousActs (event_id, act_id, persons, form_id)`, forms in `ActForms` (`panel.event_details`) |
 | 2 | `Education_Outcomes.Students.school_id` | no foreign key to `Schools` | add the key; schools seen only in the students are already in `Schools` |
 | 3 | `Education_Outcomes.Schools.sector`, `.area`; `Structural_Violence.SchoolsByMunicipality.sector` | free text | catalogs `SchoolSectors`, `SchoolAreas` |
-| 4 | `Education_Outcomes.Schools` | an establishment and its sites (sedes) are one thing | `Schools` (establishment) and `SchoolSites` (sede) from the MEN directory; schools as entities in `State_Action.StateEntities` (kind school) |
+| 4 | `Education_Outcomes.Schools` | the area was stored on the establishment, but it belongs to the site; nothing from the MEN directory beyond counts | the establishment is the unit (decision 38): `SchoolYears` from the MEN directory, the 2016 declarations in `SchoolAttributes`, area and site code on `Students` |
 | 5 | `Structural_Violence.HealthSites.provider_class`, `.legal_nature` | free text inside the key | catalogs `HealthProviderClasses`, `LegalNatures` |
 | 6 | `Education_Outcomes.IcetexCredits.sex`, `.level`, `.kind` | free text inside the key; sex does not point to `Sexes` | catalogs and the key to `Sexes` |
 | 7 | `Education_Outcomes.HigherEdEnrolment.sector_id`, `.level_id` | codes without a catalog | catalogs `HigherEdSectors`, `HigherEdLevels` |
@@ -68,10 +68,11 @@ Done:
   codes wait for the SNIES codebook.
 - 10: `DataQualityFlags.source` points to `Sources.code`, with DNP and CUIPO added.
 - 12: the data dictionary names the microdata as canonical.
+- 4: establishments with their yearly facts (`panel.schools`); 2023 rebuilt from a truncated source (decision 39); `SchoolsByMunicipality` is a view over `SchoolYears`; the area of the school is on each student's record.
 
 - 9: TerriData's 24 dimensions and 134 subcategories are catalogs; each indicator points to its subcategory.
 
-Pending: 4 (schools and their sites, from the MEN directory), 11 (the questionnaire, which needs the ICFES dictionaries for the oldest
+Pending: 11 (the questionnaire, which needs the ICFES dictionaries for the oldest
 periods) and 13 (waits for the State entities to be loaded).
 
 ## Tables of the analysis log

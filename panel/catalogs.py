@@ -38,7 +38,7 @@ STATEMENTS = [
     "UPDATE Education_Outcomes.Schools SET sector = REPLACE(sector, ' ', '_') WHERE sector LIKE '% %'",
     "INSERT IGNORE INTO Education_Outcomes.SchoolSectors (code) SELECT DISTINCT sector FROM Structural_Violence.SchoolsByMunicipality",
     "INSERT IGNORE INTO Education_Outcomes.SchoolSectors (code) SELECT DISTINCT sector FROM Education_Outcomes.Schools WHERE sector IS NOT NULL",
-    "INSERT IGNORE INTO Education_Outcomes.SchoolAreas (code) SELECT DISTINCT area FROM Education_Outcomes.Schools WHERE area IS NOT NULL",
+    "INSERT IGNORE INTO Education_Outcomes.SchoolAreas (code) SELECT DISTINCT area FROM Education_Outcomes.Students WHERE area IS NOT NULL",
     # ---- ICETEX: sex as the model's key
     "INSERT IGNORE INTO RelationsAndConclusions.Sexes VALUES ('I', 'Intersex')",
     """UPDATE Education_Outcomes.IcetexCredits SET sex = CASE sex WHEN 'Femenino' THEN 'F' WHEN 'Masculino' THEN 'M'

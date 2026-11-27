@@ -410,16 +410,6 @@ CREATE TABLE `Structural_Violence`.`Inequality` (            -- municipal Gini e
     FOREIGN KEY (`measure`)         REFERENCES `Structural_Violence`.`InequalityMeasures` (`code`)
 );
 
-CREATE TABLE `Structural_Violence`.`SchoolsByMunicipality` (    -- MEN directory, pre-school to secondary
-    `municipality_id` INT          NOT NULL,
-    `year`            YEAR         NOT NULL,
-    `sector`          VARCHAR(40)  NOT NULL,             -- OFICIAL / NO OFICIAL
-    `establishments`  INT          NOT NULL,
-    `sites`           INT          NULL,
-    `enrolment`       INT          NULL,
-    PRIMARY KEY (`municipality_id`, `year`, `sector`),
-    FOREIGN KEY (`municipality_id`) REFERENCES `RelationsAndConclusions`.`Municipalities` (`id`)
-);
 
 CREATE TABLE `Structural_Violence`.`HealthSites` (               -- MinSalud REPS, latest cut-off
     `municipality_id` INT          NOT NULL,
@@ -473,12 +463,11 @@ CREATE TABLE `Education_Outcomes`.`MunicipalScores` (    -- per municipality of 
     FOREIGN KEY (`sex_id`)          REFERENCES `RelationsAndConclusions`.`Sexes` (`id`)
 );
 
-CREATE TABLE `Education_Outcomes`.`Schools` (            -- one row per school seen in the Saber 11 microdata
-    `id`              BIGINT       NOT NULL PRIMARY KEY, -- DANE school code
-    `name`            VARCHAR(255) NULL,
+CREATE TABLE `Education_Outcomes`.`Schools` (            -- the establishment (decision 38): MEN directory and Saber 11
+    `id`              BIGINT       NOT NULL PRIMARY KEY, -- DANE code of the establishment
+    `name`            VARCHAR(255) NULL,                 -- its latest name
     `municipality_id` INT          NULL,
-    `sector`          VARCHAR(40)  NULL,
-    `area`            VARCHAR(40)  NULL,
+    `sector`          VARCHAR(40)  NULL,                 -- as Saber 11 reports it; by year in SchoolYears
     FOREIGN KEY (`municipality_id`) REFERENCES `RelationsAndConclusions`.`Municipalities` (`id`)
 );
 
@@ -486,6 +475,8 @@ CREATE TABLE `Education_Outcomes`.`Students` (           -- one exam taker in on
     `id`              VARCHAR(40) NOT NULL PRIMARY KEY,  -- ICFES estu_consecutivo
     `exam_period_id`  INT         NOT NULL,
     `school_id`       BIGINT      NULL,
+    `area`            VARCHAR(40) NULL,                  -- of the site where the exam taker studied
+    `site_code`       BIGINT      NULL,                  -- DANE code of that site (2010 on); sites are not entities
     `municipality_id` INT         NULL,                  -- where the school is
     `sex_id`          CHAR(1)     NOT NULL,
     `birth_year`      SMALLINT    NULL,
@@ -1241,6 +1232,60 @@ CREATE TABLE `Education_Outcomes`.`SaberProPeriods` (
     `year` SMALLINT NOT NULL
 );
 
+-- Schools: what each establishment is each year, and what it declared (python -m panel.schools)
+
+CREATE TABLE `Education_Outcomes`.`SchoolCalendars` (       -- MEN calendar codes
+    `code` SMALLINT    NOT NULL PRIMARY KEY,                  -- 52 A, 53 B, 1110 other
+    `name` VARCHAR(20) NOT NULL
+);
+
+CREATE TABLE `Education_Outcomes`.`SchoolCharacters` (      -- MEN character of upper secondary
+    `code` SMALLINT    NOT NULL PRIMARY KEY,                  -- 817 academic, 818 technical, 2432 both, 963 does not apply
+    `name` VARCHAR(40) NOT NULL
+);
+
+CREATE TABLE `Education_Outcomes`.`SchoolYears` (           -- what an establishment is each year (MEN directory)
+    `school_id`      BIGINT      NOT NULL,
+    `year`           SMALLINT    NOT NULL,
+    `secretariat_id` INT         NULL,                        -- the certified entity that runs it
+    `sector`         VARCHAR(40) NOT NULL,
+    `calendar_code`  SMALLINT    NOT NULL,
+    `character_code` SMALLINT    NULL,
+    `enrolment`      INT         NULL,
+    `sites`          SMALLINT    NULL,                        -- buildings (sedes); counted, not modelled
+    PRIMARY KEY (`school_id`, `year`),
+    KEY (`year`),
+    FOREIGN KEY (`school_id`)      REFERENCES `Education_Outcomes`.`Schools` (`id`),
+    FOREIGN KEY (`secretariat_id`) REFERENCES `Education_Outcomes`.`CertifiedEntities` (`id`),
+    FOREIGN KEY (`sector`)         REFERENCES `Education_Outcomes`.`SchoolSectors` (`code`),
+    FOREIGN KEY (`calendar_code`)  REFERENCES `Education_Outcomes`.`SchoolCalendars` (`code`),
+    FOREIGN KEY (`character_code`) REFERENCES `Education_Outcomes`.`SchoolCharacters` (`code`)
+);
+
+CREATE TABLE `Education_Outcomes`.`SchoolAttributeKinds` (  -- what an establishment declares (MEN snapshot)
+    `code`        VARCHAR(40)  NOT NULL PRIMARY KEY,          -- level, shift, ethnic_group, ...
+    `name`        VARCHAR(200) NOT NULL,
+    `multivalued` TINYINT(1)   NOT NULL
+);
+
+CREATE TABLE `Education_Outcomes`.`SchoolAttributeValues` (
+    `id`        INT          NOT NULL PRIMARY KEY,
+    `kind_code` VARCHAR(40)  NOT NULL,
+    `value`     VARCHAR(120) NOT NULL,                        -- literal, as the source writes it
+    UNIQUE (`kind_code`, `value`),
+    FOREIGN KEY (`kind_code`) REFERENCES `Education_Outcomes`.`SchoolAttributeKinds` (`code`)
+);
+
+CREATE TABLE `Education_Outcomes`.`SchoolAttributes` (      -- one declared value of one establishment in one year
+    `school_id` BIGINT   NOT NULL,
+    `year`      SMALLINT NOT NULL,
+    `value_id`  INT      NOT NULL,
+    PRIMARY KEY (`school_id`, `year`, `value_id`),
+    KEY (`value_id`),
+    FOREIGN KEY (`school_id`) REFERENCES `Education_Outcomes`.`Schools` (`id`),
+    FOREIGN KEY (`value_id`)  REFERENCES `Education_Outcomes`.`SchoolAttributeValues` (`id`)
+);
+
 -- =====================================================================================================
 -- Views
 -- =====================================================================================================
@@ -1274,6 +1319,13 @@ SELECT ct.`territory_id`, r.`period_kind`, r.`period_code`, r.`measure`, SUM(r.`
 FROM `RelationsAndConclusions`.`PeriodRates` r
 JOIN `RelationsAndConclusions`.`ConstantTerritoryMembers` ct ON ct.`municipality_id` = r.`municipality_id`
 GROUP BY ct.`territory_id`, r.`period_kind`, r.`period_code`, r.`measure`;
+
+CREATE VIEW `Structural_Violence`.`SchoolsByMunicipality` AS   -- establishments, sites and enrolment
+SELECT s.`municipality_id`, y.`year`, y.`sector`, COUNT(*) AS `establishments`,
+       SUM(y.`sites`) AS `sites`, SUM(y.`enrolment`) AS `enrolment`
+FROM `Education_Outcomes`.`SchoolYears` y
+JOIN `Education_Outcomes`.`Schools` s ON s.`id` = y.`school_id`
+GROUP BY s.`municipality_id`, y.`year`, y.`sector`;
 
 CREATE VIEW `Student_Context`.`StudentsVersusCensus` AS    -- exam takers 2019 against the census 2018
 SELECT c.`municipality_id`, sc.`exam_period_id`, sc.`students`,
@@ -1400,10 +1452,8 @@ ALTER TABLE RelationsAndConclusions.PeriodRates
 ALTER TABLE Structural_Violence.HealthSites
   ADD FOREIGN KEY (provider_class) REFERENCES Structural_Violence.HealthProviderClasses (name),
   ADD FOREIGN KEY (legal_nature) REFERENCES Structural_Violence.LegalNatures (name);
-ALTER TABLE Structural_Violence.SchoolsByMunicipality ADD FOREIGN KEY (sector) REFERENCES Education_Outcomes.SchoolSectors (code);
-ALTER TABLE Education_Outcomes.Schools
-  ADD FOREIGN KEY (sector) REFERENCES Education_Outcomes.SchoolSectors (code),
-  ADD FOREIGN KEY (area) REFERENCES Education_Outcomes.SchoolAreas (code);
+ALTER TABLE Education_Outcomes.Schools ADD FOREIGN KEY (sector) REFERENCES Education_Outcomes.SchoolSectors (code);
+ALTER TABLE Education_Outcomes.Students ADD FOREIGN KEY (area) REFERENCES Education_Outcomes.SchoolAreas (code);
 ALTER TABLE Education_Outcomes.IcetexCredits
   ADD FOREIGN KEY (sex) REFERENCES RelationsAndConclusions.Sexes (id),
   ADD FOREIGN KEY (level) REFERENCES Education_Outcomes.IcetexLevels (name);
